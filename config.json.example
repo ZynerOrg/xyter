@@ -1,0 +1,10 @@
+{
+  "clientId": "BOT CLIENT ID",
+  "guildId": "THE GUILD ID YOU WANT THE BOT TO WORK IN",
+  "token": "BOT TOKEN",
+  "api": {
+    "url": "scheme://DOMAIN/api/",
+    "token": "CONTROLPANEL.GG TOKEN"
+  },
+  "disableRedeem": false
+}

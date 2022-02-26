@@ -1,0 +1,34 @@
+{
+  "name": "controlpanel.gg-bot",
+  "version": "1.0.0",
+  "description": "Earn credits when chatting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "zyner",
+    "controlpanel",
+    "controlpanel.gg",
+    "vermium"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZynerOrg/controlpanel.gg-bot.git"
+  },
+  "author": "Vermium Sifell <vermium@zyner.org> (https://zyner.org)",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/ZynerOrg/controlpanel.gg-bot/issues",
+    "email": "vermium@zyner.org"
+  },
+  "dependencies": {
+    "@discordjs/rest": "^0.3.0",
+    "axios": "^0.26.0",
+    "better-sqlite3": "^7.5.0",
+    "discord-api-types": "^0.27.3",
+    "discord.js": "^13.6.0",
+    "quick.db": "^7.1.3",
+    "uuid": "^8.3.2"
+  }
+}
