@@ -10,7 +10,7 @@ module.exports = async (interaction) => {
       description: 'You need to have permission to manage this guild (MANAGE_GUILD)',
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.reply({ embeds: [embed], ephemeral: true });
   }
@@ -23,7 +23,7 @@ module.exports = async (interaction) => {
       description: "You can't take zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.reply({ embeds: [embed], ephemeral: true });
   } else {
@@ -34,7 +34,7 @@ module.exports = async (interaction) => {
       description: `You took ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
       color: 0x22bb33,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.reply({ embeds: [embed], ephemeral: true });
   }

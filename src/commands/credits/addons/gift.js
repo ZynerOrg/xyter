@@ -11,7 +11,7 @@ module.exports = async (interaction) => {
       description: "You can't pay yourself.",
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else if (amount <= 0) {
@@ -20,7 +20,7 @@ module.exports = async (interaction) => {
       description: "You can't pay zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
@@ -32,7 +32,7 @@ module.exports = async (interaction) => {
         )}`,
         color: 0xbb2124,
         timestamp: new Date(),
-        footer: { text: 'Zyner Bot' },
+        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else {
@@ -46,7 +46,7 @@ module.exports = async (interaction) => {
         } to ${user}. Your new balance is ${await credits.get(interaction.user.id)}.`,
         color: 0x22bb33,
         timestamp: new Date(),
-        footer: { text: 'Zyner Bot' },
+        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }

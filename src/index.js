@@ -2,9 +2,13 @@ const fs = require('node:fs');
 const { Client, Collection, Intents } = require('discord.js');
 require('dotenv').config();
 
-const db = require('quick.db');
+require('./helpers/database')();
 
-const credits = new db.table('credits');
+const credits = require('./helpers/database/models/creditSchema');
+
+// const db = require('quick.db');
+//
+// const credits = new db.table('credits');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
@@ -41,7 +45,12 @@ client.on('interactionCreate', async (interaction) => {
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  credits.add(message.author.id, 1);
+  credits
+    .findOneAndUpdate({ userId: message.author.id }, { $inc: { balance: 1 } }, { new: true })
+    .then(async (data) => console.log(data))
+    .catch(async (err) => {
+      console.log(err);
+    });
 
   console.log(message.author, message.content);
 });

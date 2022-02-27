@@ -28,7 +28,7 @@ module.exports = async (interaction) => {
         .join('\n')}`,
       color: 0x22bb33,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   });

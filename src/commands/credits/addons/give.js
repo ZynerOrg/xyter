@@ -20,7 +20,7 @@ module.exports = async (interaction) => {
       description: "You can't give zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
@@ -31,7 +31,7 @@ module.exports = async (interaction) => {
       description: `Gave ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
       color: 0x22bb33,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }

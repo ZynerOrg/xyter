@@ -14,7 +14,7 @@ module.exports = async (interaction) => {
       description: `Redeem is disabled until further.`,
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
@@ -28,7 +28,7 @@ module.exports = async (interaction) => {
       description: `You can't redeem below 100. Your balance is ${userCredits}.`,
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else if ((amount || userCredits) > 1000000) {
@@ -37,7 +37,7 @@ module.exports = async (interaction) => {
       description: `You can't redeem over 1,000,000. Your balance is ${userCredits}.`,
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else if (userCredits < amount) {
@@ -46,7 +46,7 @@ module.exports = async (interaction) => {
       description: `You have insufficient credits. Your balance is ${userCredits}.`,
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { text: 'Zyner Bot' },
+      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
@@ -73,7 +73,7 @@ module.exports = async (interaction) => {
           ],
           color: 0x22bb33,
           timestamp: new Date(),
-          footer: { text: 'Zyner Bot' },
+          footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
         };
         await credits.subtract(interaction.user.id, amount || userCredits);
 
@@ -86,7 +86,7 @@ module.exports = async (interaction) => {
           description: 'Something went wrong.',
           color: 0xbb2124,
           timestamp: new Date(),
-          footer: { text: 'Zyner Bot' },
+          footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
         };
         return await interaction.editReply({ embeds: [embed], ephemeral: true });
       });
