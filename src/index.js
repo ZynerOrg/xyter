@@ -46,7 +46,11 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   credits
-    .findOneAndUpdate({ userId: message.author.id }, { $inc: { balance: 1 } }, { new: true })
+    .findOneAndUpdate(
+      { userId: message.author.id },
+      { $inc: { balance: 1 } },
+      { new: true, upsert: true }
+    )
     .then(async (data) => console.log(data))
     .catch(async (err) => {
       console.log(err);

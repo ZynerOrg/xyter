@@ -25,7 +25,11 @@ module.exports = async (interaction) => {
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
     await credits
-      .findOneAndUpdate({ userId: user.id }, { $inc: { balance: amount } }, { new: true })
+      .findOneAndUpdate(
+        { userId: user.id },
+        { $inc: { balance: amount } },
+        { new: true, upsert: true }
+      )
       .then(async () => {
         const embed = {
           title: 'Give',

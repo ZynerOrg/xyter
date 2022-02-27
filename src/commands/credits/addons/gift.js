@@ -1,9 +1,11 @@
-const db = require('quick.db');
+const credits = require('../../../helpers/database/models/creditSchema');
+const debug = require('../../../handlers/debug');
+const saveUser = require('../../../helpers/saveUser');
 
-const credits = new db.table('credits');
 module.exports = async (interaction) => {
   const user = await interaction.options.getUser('user');
   const amount = await interaction.options.getInteger('amount');
+  const data = await credits.findOne({ userId: interaction.user.id });
 
   if (user.id === interaction.user.id) {
     const embed = {
@@ -24,30 +26,32 @@ module.exports = async (interaction) => {
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
-    if ((await credits.get(interaction.user.id)) < amount) {
+    if (data.balance < amount) {
       const embed = {
         title: 'Gift',
-        description: `You have insufficient credits. Your balance is ${credits.get(
-          interaction.user.id
-        )}`,
+        description: `You have insufficient credits. Your balance is ${data.balance}`,
         color: 0xbb2124,
         timestamp: new Date(),
         footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else {
-      await credits.subtract(interaction.user.id, amount);
-      await credits.add(user.id, amount);
+      const fromUser = await credits.findOne({ userId: interaction.user.id });
+      const toUser = await credits.findOne({ userId: user.id });
+
+      fromUser.balance -= amount;
+      toUser.balance += amount;
 
       const embed = {
         title: 'Gift',
         description: `You sent ${
           amount <= 1 ? `${amount} credit` : `${amount} credits`
-        } to ${user}. Your new balance is ${await credits.get(interaction.user.id)}.`,
+        } to ${user}. Your new balance is ${fromUser.balance}.`,
         color: 0x22bb33,
         timestamp: new Date(),
         footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
       };
+
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
   }
