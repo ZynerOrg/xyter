@@ -39,7 +39,7 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 client.on('messageCreate', async (message) => {
-  if (message.author.id === message.client.user.id) return;
+  if (message.author.bot) return;
 
   credits.add(message.author.id, 1);
 

@@ -57,7 +57,7 @@ module.exports = {
 
       Promise.all(
         topTen.map(async (x, i) => {
-          user = await client.users.fetch(`${x.ID}`);
+          user = await client.users.fetch(`${x.ID}`, { force: true });
           topTens.push({ index: i, user: user, credits: x.data });
         })
       ).then(async () => {
