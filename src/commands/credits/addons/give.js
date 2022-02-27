@@ -2,7 +2,6 @@ const { Permissions } = require('discord.js');
 
 const credits = require('../../../helpers/database/models/creditSchema');
 const debug = require('../../../handlers/debug');
-
 module.exports = async (interaction) => {
   if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     const embed = {
