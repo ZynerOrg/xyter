@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const creditSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.SchemaTypes.Number,
+      type: mongoose.SchemaTypes.Decimal128,
       required: true,
       unique: true,
       index: true,
