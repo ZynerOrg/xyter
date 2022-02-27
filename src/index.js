@@ -45,7 +45,7 @@ client.on('interactionCreate', async (interaction) => {
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  credits
+  await credits
     .findOneAndUpdate(
       { userId: message.author.id },
       { $inc: { balance: 1 } },

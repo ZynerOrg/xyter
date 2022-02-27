@@ -1,28 +1,17 @@
-const db = require('quick.db');
-const credits = new db.table('credits');
+const credits = require('../../../helpers/database/models/creditSchema');
+const debug = require('../../../handlers/debug');
 module.exports = async (interaction) => {
-  const { client } = interaction;
-  const all = credits.all();
-  const allSorted = all.sort((a, b) => (a.data > b.data ? -1 : 1));
+  credits.find().then(async (data) => {
+    const topTen = data.slice(0, 10);
+    const sorted = topTen.sort((a, b) => (a.balance > b.balance ? -1 : 1));
 
-  const topTen = allSorted.slice(0, 10);
-
-  const topTens = [];
-
-  Promise.all(
-    topTen.map(async (x, i) => {
-      user = await client.users.fetch(`${x.ID}`, { force: true });
-      topTens.push({ index: i, user: user, credits: x.data });
-    })
-  ).then(async () => {
     const embed = {
       title: 'Balance Top',
-      description: `Below are the top ten.\n
-      ${topTens
+      description: `Below are the top ten.\n${sorted
         .map(
-          (x) =>
-            `**Top ${x.index + 1}** - ${x.user}: ${
-              x.credits <= 1 ? `${x.credits} credit` : `${x.credits} credits`
+          (x, index) =>
+            `**Top ${index + 1}** - <@${x.userId}> ${
+              x.balance <= 1 ? `${x.balance} credit` : `${x.balance} credits`
             }`
         )
         .join('\n')}`,
