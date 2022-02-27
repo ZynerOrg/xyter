@@ -1,8 +1,7 @@
 const { Permissions } = require('discord.js');
 
-const db = require('quick.db');
-
-const credits = new db.table('credits');
+const credits = require('../../../helpers/database/models/creditSchema');
+const debug = require('../../../handlers/debug');
 module.exports = async (interaction) => {
   if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     const embed = {
@@ -12,7 +11,7 @@ module.exports = async (interaction) => {
       timestamp: new Date(),
       footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
-    return await interaction.reply({ embeds: [embed], ephemeral: true });
+    return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
   const user = await interaction.options.getUser('user');
   const amount = await interaction.options.getInteger('amount');
@@ -25,9 +24,11 @@ module.exports = async (interaction) => {
       timestamp: new Date(),
       footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
-    return await interaction.reply({ embeds: [embed], ephemeral: true });
+    return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
-    await credits.subtract(user.id, amount);
+    const toUser = await credits.findOne({ userId: user.id });
+    toUser.balance -= amount;
+    toUser.save();
 
     const embed = {
       title: 'Take',
@@ -36,6 +37,6 @@ module.exports = async (interaction) => {
       timestamp: new Date(),
       footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
-    return await interaction.reply({ embeds: [embed], ephemeral: true });
+    return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 };
