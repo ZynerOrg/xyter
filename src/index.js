@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { token } = require('./config.json');
+require('dotenv').config();
 
 const db = require('quick.db');
 
@@ -9,7 +9,7 @@ const credits = new db.table('credits');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./src/commands');
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -46,4 +46,4 @@ client.on('messageCreate', async (message) => {
   console.log(message.author, message.content);
 });
 
-client.login(token);
+client.login(process.env.BOT_TOKEN);
