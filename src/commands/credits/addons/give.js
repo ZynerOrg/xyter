@@ -1,8 +1,8 @@
 const { Permissions } = require('discord.js');
 
-const db = require('quick.db');
+const credits = require('../../../helpers/database/models/creditSchema');
+const debug = require('../../../handlers/debug');
 
-const credits = new db.table('credits');
 module.exports = async (interaction) => {
   if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     const embed = {
@@ -24,15 +24,20 @@ module.exports = async (interaction) => {
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } else {
-    await credits.add(user.id, amount);
-
-    const embed = {
-      title: 'Give',
-      description: `Gave ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
-      color: 0x22bb33,
-      timestamp: new Date(),
-      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
-    };
-    return await interaction.editReply({ embeds: [embed], ephemeral: true });
+    await credits
+      .findOneAndUpdate({ userId: user.id }, { $inc: { balance: amount } }, { new: true })
+      .then(async () => {
+        const embed = {
+          title: 'Give',
+          description: `Gave ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
+          color: 0x22bb33,
+          timestamp: new Date(),
+          footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        };
+        return await interaction.editReply({ embeds: [embed], ephemeral: true });
+      })
+      .catch(async (err) => {
+        debug(err);
+      });
   }
 };
