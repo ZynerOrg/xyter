@@ -1,5 +1,3 @@
-const { disableRedeem } = require('../../../../config.json');
-
 const credits = require('../../../helpers/database/models/creditSchema');
 const debug = require('../../../handlers/debug');
 
@@ -8,7 +6,7 @@ const api = require('../../../handlers/api.js');
 const { v4: uuidv4 } = require('uuid');
 module.exports = async (interaction) => {
   try {
-    if (disableRedeem) {
+    if (!process.env.DISABLE_REDEEM) {
       const embed = {
         title: 'Redeem failed',
         description: `Redeem is disabled until further.`,
@@ -16,7 +14,7 @@ module.exports = async (interaction) => {
         timestamp: new Date(),
         footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
       };
-      return await await interaction.editReply({ embeds: [embed], ephemeral: true });
+      return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
     const amount = await interaction.options.getInteger('amount');
 
