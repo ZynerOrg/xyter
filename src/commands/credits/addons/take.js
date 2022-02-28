@@ -25,7 +25,7 @@ module.exports = async (interaction) => {
       footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
-  } else {
+  }
     const toUser = await credits.findOne({ userId: user.id });
     toUser.balance -= amount;
     toUser.save();
@@ -38,5 +38,5 @@ module.exports = async (interaction) => {
       footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
-  }
+
 };

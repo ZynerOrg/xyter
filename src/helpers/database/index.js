@@ -4,7 +4,8 @@ module.exports = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL);
     console.log('Connected to the database');
-  } catch (e) {
+  }
+ catch (e) {
     console.log(e);
   }
 };

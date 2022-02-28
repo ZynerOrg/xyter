@@ -74,15 +74,20 @@ module.exports = {
 
     if (interaction.options.getSubcommand() === 'balance') {
       require('./addons/balance.js')(interaction);
-    } else if (interaction.options.getSubcommand() === 'gift') {
+    }
+ else if (interaction.options.getSubcommand() === 'gift') {
       require('./addons/gift.js')(interaction);
-    } else if (interaction.options.getSubcommand() === 'give') {
+    }
+ else if (interaction.options.getSubcommand() === 'give') {
       require('./addons/give.js')(interaction);
-    } else if (interaction.options.getSubcommand() === 'redeem') {
+    }
+ else if (interaction.options.getSubcommand() === 'redeem') {
       require('./addons/redeem.js')(interaction);
-    } else if (interaction.options.getSubcommand() === 'take') {
+    }
+ else if (interaction.options.getSubcommand() === 'take') {
       require('./addons/take.js')(interaction);
-    } else if (interaction.options.getSubcommand() === 'top') {
+    }
+ else if (interaction.options.getSubcommand() === 'top') {
       require('./addons/top.js')(interaction);
     }
   },

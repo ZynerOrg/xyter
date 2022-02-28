@@ -7,21 +7,22 @@ module.exports = async function saveUser(data, data2) {
         _
           ? console.log(
               `ERROR Occured while saving data (saveUser) \n${'='.repeat(50)}\n${
-                _ + '\n' + '='.repeat(50)
+                `${_ }\n${ '='.repeat(50)}`
               }`
             )
           : 'No Error'
       );
-      if (data2)
-        data2.save((_) =>
+      if (data2) {
+data2.save((_) =>
           _
             ? console.error(
                 `ERROR Occured while saving data (saveUser) \n${'='.repeat(50)}\n${
-                  _ + '\n' + '='.repeat(50)
+                  `${_ }\n${ '='.repeat(50)}`
                 }`
               )
             : 'No Error'
         );
+}
     },
     data,
     data2
