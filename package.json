@@ -1,7 +1,7 @@
 {
   "name": "controlpanel.gg-bot",
   "version": "2.0.0",
-  "description": "Earn credits when chatting",
+  "description": "Earn credits while chatting!",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
