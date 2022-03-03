@@ -2,6 +2,8 @@ const { Permissions } = require('discord.js');
 
 const credits = require('../../../helpers/database/models/creditSchema');
 const logger = require('../../../handlers/logger');
+const creditNoun = require('../../../helpers/creditNoun');
+
 module.exports = async (interaction) => {
   try {
     if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
@@ -29,7 +31,7 @@ module.exports = async (interaction) => {
       await toUser.save();
       const embed = {
         title: 'Give',
-        description: `Gave ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
+        description: `Gave ${await creditNoun(amount)} to ${user}.`,
         color: 0x22bb33,
         timestamp: new Date(),
         footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },

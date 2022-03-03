@@ -1,5 +1,7 @@
 const credits = require('../../../helpers/database/models/creditSchema');
 const logger = require('../../../handlers/logger');
+const creditNoun = require('../../../helpers/creditNoun');
+
 module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
@@ -22,9 +24,7 @@ module.exports = async (interaction) => {
 
           const embed = {
             title: 'Balance',
-            description: `${user ? `${user} has` : 'You have'} ${
-              balance <= 1 ? `${balance} credit` : `${balance} credits`
-            }.`,
+            description: `${user ? `${user} has` : 'You have'} ${await creditNoun(balance)}.`,
             color: process.env.SUCCESS_COLOR,
             timestamp: new Date(),
             footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },

@@ -1,5 +1,6 @@
 const credits = require('../../../helpers/database/models/creditSchema');
 const logger = require('../../../handlers/logger');
+const creditNoun = require('../../../helpers/creditNoun');
 
 const api = require('../../../handlers/api.js');
 
@@ -77,11 +78,7 @@ module.exports = async (interaction) => {
 
           await user.save();
 
-          await logger.debug(
-            `User: ${user.username} redeemed: ${
-              amount <= 1 ? `${amount} credit` : `${amount} credits`
-            }`
-          );
+          await logger.debug(`User: ${user.username} redeemed: ${await creditNoun(amount)}`);
           await interaction.editReply({ embeds: [embed], ephemeral: true });
         })
         .catch(async (err) => {

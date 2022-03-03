@@ -1,6 +1,7 @@
 const credits = require('../../../helpers/database/models/creditSchema');
 const logger = require('../../../handlers/logger');
 const saveUser = require('../../../helpers/saveUser');
+const creditNoun = require('../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
   try {
@@ -47,9 +48,9 @@ module.exports = async (interaction) => {
 
         const embed = {
           title: 'Gift',
-          description: `You sent ${
-            amount <= 1 ? `${amount} credit` : `${amount} credits`
-          } to ${user}. Your new balance is ${fromUser.balance}.`,
+          description: `You sent ${await creditNoun(
+            amount
+          )} to ${user}. Your new balance is ${await creditNoun(fromUser.balance)}.`,
           color: 0x22bb33,
           timestamp: new Date(),
           footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
