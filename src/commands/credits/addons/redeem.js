@@ -78,7 +78,7 @@ module.exports = async (interaction) => {
 
           await user.save();
 
-          await logger.debug(`User: ${user.username} redeemed: ${await creditNoun(amount)}`);
+          await logger.debug(`User: ${user.username} redeemed: ${creditNoun(amount)}`);
           await interaction.editReply({ embeds: [embed], ephemeral: true });
         })
         .catch(async (err) => {

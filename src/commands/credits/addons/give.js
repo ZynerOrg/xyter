@@ -31,7 +31,7 @@ module.exports = async (interaction) => {
       await toUser.save();
       const embed = {
         title: 'Give',
-        description: `Gave ${await creditNoun(amount)} to ${user}.`,
+        description: `Gave ${creditNoun(amount)} to ${user}.`,
         color: 0x22bb33,
         timestamp: new Date(),
         footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },

@@ -24,7 +24,7 @@ module.exports = async (interaction) => {
 
           const embed = {
             title: 'Balance',
-            description: `${user ? `${user} has` : 'You have'} ${await creditNoun(balance)}.`,
+            description: `${user ? `${user} has` : 'You have'} ${creditNoun(balance)}.`,
             color: process.env.SUCCESS_COLOR,
             timestamp: new Date(),
             footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },

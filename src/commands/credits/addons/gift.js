@@ -48,9 +48,9 @@ module.exports = async (interaction) => {
 
         const embed = {
           title: 'Gift',
-          description: `You sent ${await creditNoun(
+          description: `You sent ${creditNoun(
             amount
-          )} to ${user}. Your new balance is ${await creditNoun(fromUser.balance)}.`,
+          )} to ${user}. Your new balance is ${creditNoun(fromUser.balance)}.`,
           color: 0x22bb33,
           timestamp: new Date(),
           footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
