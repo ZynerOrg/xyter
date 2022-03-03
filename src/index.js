@@ -46,7 +46,8 @@ client.on('interactionCreate', async (interaction) => {
     });
     await command.execute(interaction);
     await logger.debug(`Executing command: ${interaction.commandName}`);
-  } catch (err) {
+  }
+ catch (err) {
     await logger.error(err);
     await interaction.reply({
       embeds: [
