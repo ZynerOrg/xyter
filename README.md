@@ -1,4 +1,6 @@
-### Installation
+# Controlpanel.gg Bot
+
+## Installation
 
 Rename .env.example to .env and fill in the fields.
 
