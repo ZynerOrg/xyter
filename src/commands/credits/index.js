@@ -79,15 +79,20 @@ module.exports = {
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'balance') {
       await balance(interaction);
-    } else if (interaction.options.getSubcommand() === 'gift') {
+    }
+ else if (interaction.options.getSubcommand() === 'gift') {
       await gift(interaction);
-    } else if (interaction.options.getSubcommand() === 'give') {
+    }
+ else if (interaction.options.getSubcommand() === 'give') {
       await give(interaction);
-    } else if (interaction.options.getSubcommand() === 'redeem') {
+    }
+ else if (interaction.options.getSubcommand() === 'redeem') {
       await redeem(interaction);
-    } else if (interaction.options.getSubcommand() === 'take') {
+    }
+ else if (interaction.options.getSubcommand() === 'take') {
       await take(interaction);
-    } else if (interaction.options.getSubcommand() === 'top') {
+    }
+ else if (interaction.options.getSubcommand() === 'top') {
       await top(interaction);
     }
   },
