@@ -1,7 +1,7 @@
 const { Permissions } = require('discord.js');
 
 const credits = require('../../../helpers/database/models/creditSchema');
-const debug = require('../../../handlers/debug');
+const logger = require('../../../handlers/logger');
 module.exports = async (interaction) => {
   if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     const embed = {
@@ -26,17 +26,21 @@ module.exports = async (interaction) => {
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
-    const toUser = await credits.findOne({ userId: user.id });
-    toUser.balance -= amount;
-    toUser.save();
+  const toUser = await credits.findOne({ userId: user.id });
+  toUser.balance -= amount;
+  await toUser.save();
 
-    const embed = {
-      title: 'Take',
-      description: `You took ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
-      color: 0x22bb33,
-      timestamp: new Date(),
-      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
-    };
-    return await interaction.editReply({ embeds: [embed], ephemeral: true });
-
+  const embed = {
+    title: 'Take',
+    description: `You took ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
+    color: 0x22bb33,
+    timestamp: new Date(),
+    footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+  };
+  await logger.debug(
+    `Administrator: ${interaction.user.username} took ${
+      amount <= 1 ? `${amount} credit` : `${amount} credits`
+    } from ${user.username}`
+  );
+  return await interaction.editReply({ embeds: [embed], ephemeral: true });
 };

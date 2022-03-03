@@ -1,6 +1,13 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, Permissions } = require('discord.js');
 
+const balance = require('./addons/balance.js');
+const gift = require('./addons/gift.js');
+const give = require('./addons/give.js');
+const redeem = require('./addons/redeem.js');
+const take = require('./addons/take.js');
+const top = require('./addons/top.js');
+
 module.exports = {
   permissions: new Permissions([
     Permissions.FLAGS.MANAGE_MESSAGES,
@@ -70,25 +77,18 @@ module.exports = {
       subcommand.setName('top').setDescription('Check the top balance.')
     ),
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true });
-
     if (interaction.options.getSubcommand() === 'balance') {
-      require('./addons/balance.js')(interaction);
-    }
- else if (interaction.options.getSubcommand() === 'gift') {
-      require('./addons/gift.js')(interaction);
-    }
- else if (interaction.options.getSubcommand() === 'give') {
-      require('./addons/give.js')(interaction);
-    }
- else if (interaction.options.getSubcommand() === 'redeem') {
-      require('./addons/redeem.js')(interaction);
-    }
- else if (interaction.options.getSubcommand() === 'take') {
-      require('./addons/take.js')(interaction);
-    }
- else if (interaction.options.getSubcommand() === 'top') {
-      require('./addons/top.js')(interaction);
+      await balance(interaction);
+    } else if (interaction.options.getSubcommand() === 'gift') {
+      await gift(interaction);
+    } else if (interaction.options.getSubcommand() === 'give') {
+      await give(interaction);
+    } else if (interaction.options.getSubcommand() === 'redeem') {
+      await redeem(interaction);
+    } else if (interaction.options.getSubcommand() === 'take') {
+      await take(interaction);
+    } else if (interaction.options.getSubcommand() === 'top') {
+      await top(interaction);
     }
   },
 };

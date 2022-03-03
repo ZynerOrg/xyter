@@ -1,5 +1,5 @@
 const credits = require('../../../helpers/database/models/creditSchema');
-const debug = require('../../../handlers/debug');
+const logger = require('../../../handlers/logger');
 
 const api = require('../../../handlers/api.js');
 
@@ -48,9 +48,9 @@ module.exports = async (interaction) => {
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else {
-      const code = uuidv4();
+      const code = await uuidv4();
 
-      api
+      await api
         .post('vouchers', {
           uses: 1,
           code,
@@ -77,10 +77,15 @@ module.exports = async (interaction) => {
 
           await user.save();
 
+          await logger.debug(
+            `User: ${user.username} redeemed: ${
+              amount <= 1 ? `${amount} credit` : `${amount} credits`
+            }`
+          );
           await interaction.editReply({ embeds: [embed], ephemeral: true });
         })
         .catch(async (err) => {
-          console.log(err);
+          await logger.error(err);
           const embed = {
             title: 'Redeem',
             description: 'Something went wrong.',
@@ -92,6 +97,6 @@ module.exports = async (interaction) => {
         });
     }
   } catch {
-    async (err) => debug(err);
+    async (err) => await logger.error(err);
   }
 };

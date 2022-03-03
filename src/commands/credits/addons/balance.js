@@ -1,5 +1,5 @@
 const credits = require('../../../helpers/database/models/creditSchema');
-const debug = require('../../../handlers/debug');
+const logger = require('../../../handlers/logger');
 module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
@@ -29,12 +29,11 @@ module.exports = async (interaction) => {
             timestamp: new Date(),
             footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
           };
-
           return await interaction.editReply({ embeds: [embed], ephemeral: true });
         }
       })
-      .catch(async (err) => debug(err));
+      .catch(async (err) => logger.error(err));
   } catch {
-    async (err) => debug(err);
+    async (err) => logger.error(err);
   }
 };

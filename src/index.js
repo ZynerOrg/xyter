@@ -1,14 +1,10 @@
-const fs = require('node:fs');
-const { Client, Collection, Intents } = require('discord.js');
 require('dotenv').config();
-
 require('./helpers/database')();
 
+const fs = require('node:fs');
+const { Client, Collection, Intents } = require('discord.js');
 const credits = require('./helpers/database/models/creditSchema');
-
-// const db = require('quick.db');
-//
-// const credits = new db.table('credits');
+const logger = require('./handlers/logger');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
@@ -20,8 +16,8 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-client.once('ready', () => {
-  console.log('Ready!');
+client.once('ready', async () => {
+  await logger.info('Ready!');
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -32,12 +28,40 @@ client.on('interactionCreate', async (interaction) => {
   if (!command) return;
 
   try {
+    await interaction.deferReply({
+      embeds: [
+        {
+          author: {
+            name: interaction.client.user.username,
+            icon_url: interaction.client.user.displayAvatarURL(),
+            url: 'https://bot.zyner.org/',
+          },
+          title: 'Check',
+          description: 'Please wait...',
+          color: process.env.WAIT_COLOR,
+          timestamp: new Date(),
+        },
+      ],
+      ephemeral: true,
+    });
     await command.execute(interaction);
-  }
- catch (error) {
-    console.error(error);
+    await logger.debug(`Executing command: ${interaction.commandName}`);
+  } catch (err) {
+    await logger.error(err);
     await interaction.reply({
-      content: 'There was an error while executing this command!',
+      embeds: [
+        {
+          author: {
+            name: interaction.client.user.username,
+            icon_url: interaction.client.user.displayAvatarURL(),
+            url: 'https://bot.zyner.org/',
+          },
+          title: 'Error',
+          description: 'There was an error while executing this command!',
+          color: process.env.WAIT_COLOR,
+          timestamp: new Date(),
+        },
+      ],
       ephemeral: true,
     });
   }
@@ -52,12 +76,10 @@ client.on('messageCreate', async (message) => {
       { $inc: { balance: 1 } },
       { new: true, upsert: true }
     )
-    .then(async (data) => console.log(data))
+    .then(async (data) => await logger.debug('Credits added:', message.author.id))
     .catch(async (err) => {
-      console.log(err);
+      await logger.error(err);
     });
-
-  console.log(message.author, message.content);
 });
 
 client.login(process.env.BOT_TOKEN);

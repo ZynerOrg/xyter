@@ -1,7 +1,7 @@
 const { Permissions } = require('discord.js');
 
 const credits = require('../../../helpers/database/models/creditSchema');
-const debug = require('../../../handlers/debug');
+const logger = require('../../../handlers/logger');
 module.exports = async (interaction) => {
   try {
     if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
@@ -26,7 +26,7 @@ module.exports = async (interaction) => {
     } else {
       const toUser = await credits.findOne({ userId: user.id });
       toUser.balance += amount;
-      toUser.save();
+      await toUser.save();
       const embed = {
         title: 'Give',
         description: `Gave ${amount <= 1 ? `${amount} credit` : `${amount} credits`} to ${user}.`,
@@ -34,9 +34,14 @@ module.exports = async (interaction) => {
         timestamp: new Date(),
         footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
       };
+      await logger.debug(
+        `Administrator: ${interaction.user.username} gave ${
+          amount <= 1 ? `${amount} credit` : `${amount} credits`
+        } to ${user.username}`
+      );
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
   } catch {
-    async (err) => debug(err);
+    async (err) => await logger.error(err);
   }
 };

@@ -1,5 +1,5 @@
 const credits = require('../../../helpers/database/models/creditSchema');
-const debug = require('../../../handlers/debug');
+const logger = require('../../../handlers/logger');
 const saveUser = require('../../../helpers/saveUser');
 
 module.exports = async (interaction) => {
@@ -43,7 +43,7 @@ module.exports = async (interaction) => {
         fromUser.balance -= amount;
         toUser.balance += amount;
 
-        saveUser(fromUser, toUser);
+        await saveUser(fromUser, toUser);
 
         const embed = {
           title: 'Gift',
@@ -54,11 +54,11 @@ module.exports = async (interaction) => {
           timestamp: new Date(),
           footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
         };
-
+        await logger.debug(`Gift sent from: ${interaction.user.username} to: ${user.username}`);
         return await interaction.editReply({ embeds: [embed], ephemeral: true });
       }
     }
   } catch {
-    async (err) => debug(err);
+    async (err) => await logger.error(err);
   }
 };

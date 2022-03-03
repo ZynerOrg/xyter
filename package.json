@@ -1,10 +1,11 @@
 {
   "name": "controlpanel.gg-bot",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Earn credits when chatting",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon | pino-pretty -i pid,hostname -t yyyy-mm-dd HH:MM:s"
   },
   "keywords": [
     "zyner",
@@ -30,6 +31,7 @@
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "mongoose": "^6.2.3",
+    "pino": "^7.0.0-rc.9",
     "quick.db": "^7.1.3",
     "uuid": "^8.3.2"
   }
