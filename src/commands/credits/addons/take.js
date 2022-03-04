@@ -1,6 +1,6 @@
 const { Permissions } = require('discord.js');
 
-const credits = require(`${__basedir}/helpers/database/models/creditScheme`);
+const credits = require(`${__basedir}/helpers/database/models/creditSchema`);
 const logger = require(`${__basedir}/handlers/logger`);
 const creditNoun = require(`${__basedir}/helpers/creditNoun`);
 

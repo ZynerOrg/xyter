@@ -20,6 +20,7 @@ module.exports = async (interaction) => {
     const amount = await interaction.options.getInteger('amount');
 
     const user = await credits.findOne({ userId: interaction.user.id });
+    const dmUser = interaction.client.users.cache.get(interaction.member.user.id);
 
     if ((amount || user.balance) < 100) {
       const embed = {
@@ -59,7 +60,7 @@ module.exports = async (interaction) => {
           memo: `${interaction.createdTimestamp} - ${interaction.user.id}`,
         })
         .then(async (res) => {
-          const embed = {
+          const dmEmbed = {
             title: 'Redeem',
             description: `Your new balance is ${user.balance - (amount || user.balance)}.`,
             fields: [
@@ -74,12 +75,20 @@ module.exports = async (interaction) => {
             timestamp: new Date(),
             footer: { iconURL: __config.footer.icon, text: __config.footer.text },
           };
+          const interactionEmbed = {
+            title: 'Redeem',
+            description: `Code is sent in DM!`,
+            color: __config.colors.success,
+            timestamp: new Date(),
+            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
+          };
           user.balance -= amount || user.balance;
 
           await user.save();
 
           await logger.debug(`User: ${user.username} redeemed: ${creditNoun(amount)}`);
-          await interaction.editReply({ embeds: [embed], ephemeral: true });
+          await dmUser.send({ embeds: [dmEmbed] });
+          await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
         })
         .catch(async (err) => {
           await logger.error(err);
