@@ -2,11 +2,11 @@
 
 ## Installation
 
-Rename .env.example to .env and fill in the fields.
+Rename config.json.example to config.json and fill in the fields.
 
-_Please note that MONGODB_URL needs to be inside of double quotes ("YourURL")._
+_Please note that mongodb.url needs to be inside of double quotes ("YourURL")._
 
-You can leave any of the **FOOTER\_** fields empty, it will not impact the bot.
+You can leave any of the **footer** fields empty, it will not impact the bot.
 
 Then run **node deploy-commands.js** the first time then you can start the bot by **node src/index.js**
 
