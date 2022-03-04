@@ -1,0 +1,21 @@
+{
+  "bot": {
+    "token": "required",
+    "clientId": "required",
+    "guildId": "required"
+  },
+  "credits": {
+    "url": "scheme://domain/api/", 
+    "token": "required",
+    "timeout": "5000",
+    "rate": "1",
+    "minimumLength": "5"
+  },
+  "colors": { "success": "0x22bb33", "error": "0xbb2124", "wait": "0xf0ad4e" },
+  "mongodb": {
+    "url": "mongodb+srv://username:password@server/database?retryWrites=true&w=majority"
+  },
+  "footer": { "icon": "https://avatars.githubusercontent.com/u/83163073", "text": "https://github.com/ZynerOrg/xyter" },
+  "disable": { "redeem": false },
+  "debug": false
+}

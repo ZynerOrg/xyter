@@ -1,11 +1,12 @@
+const logger = require(`${__basedir}/handlers/logger`);
+
 const mongoose = require('mongoose');
 
 module.exports = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URL);
-    console.log('Connected to the database');
-  }
- catch (e) {
-    console.log(e);
+    await mongoose.connect(__config.mongodb.url);
+    await logger.info('Connected to the database');
+  } catch (err) {
+    await logger.error(err);
   }
 };

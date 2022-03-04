@@ -1,8 +1,8 @@
 const { Permissions } = require('discord.js');
 
-const credits = require('../../../helpers/database/models/creditSchema');
-const logger = require('../../../handlers/logger');
-const creditNoun = require('../../../helpers/creditNoun');
+const credits = require(`${__basedir}/helpers/database/models/creditScheme`);
+const logger = require(`${__basedir}/handlers/logger`);
+const creditNoun = require(`${__basedir}/helpers/creditNoun`);
 
 module.exports = async (interaction) => {
   if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
@@ -11,7 +11,7 @@ module.exports = async (interaction) => {
       description: 'You need to have permission to manage this guild (MANAGE_GUILD)',
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+      footer: { iconURL: __config.footer.icon, text: __config.footer.text },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
@@ -24,7 +24,7 @@ module.exports = async (interaction) => {
       description: "You can't take zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
-      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+      footer: { iconURL: __config.footer.icon, text: __config.footer.text },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
@@ -37,7 +37,7 @@ module.exports = async (interaction) => {
     description: `You took ${creditNoun(amount)} to ${user}.`,
     color: 0x22bb33,
     timestamp: new Date(),
-    footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+    footer: { iconURL: __config.footer.icon, text: __config.footer.text },
   };
   await logger.debug(
     `Administrator: ${interaction.user.username} took ${

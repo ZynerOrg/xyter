@@ -1,19 +1,19 @@
-const credits = require('../../../helpers/database/models/creditSchema');
-const logger = require('../../../handlers/logger');
-const creditNoun = require('../../../helpers/creditNoun');
+const credits = require(`${__basedir}/helpers/database/models/creditSchema`);
+const logger = require(`${__basedir}/handlers/logger`);
+const creditNoun = require(`${__basedir}/helpers/creditNoun`);
 
-const api = require('../../../handlers/api.js');
+const api = require(`${__basedir}/handlers/api.js`);
 
 const { v4: uuidv4 } = require('uuid');
 module.exports = async (interaction) => {
   try {
-    if (!process.env.DISABLE_REDEEM) {
+    if (__config.disable.redeem) {
       const embed = {
         title: 'Redeem failed',
         description: `Redeem is disabled until further.`,
-        color: 0xbb2124,
+        color: __config.colors.error,
         timestamp: new Date(),
-        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        footer: { iconURL: __config.footer.icon, text: __config.footer.text },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
@@ -25,27 +25,27 @@ module.exports = async (interaction) => {
       const embed = {
         title: 'Redeem',
         description: `You can't redeem below 100. Your balance is ${user.balance}.`,
-        color: 0xbb2124,
+        color: __config.colors.error,
         timestamp: new Date(),
-        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        footer: { iconURL: __config.footer.icon, text: __config.footer.text },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else if ((amount || user.balance) > 1000000) {
       const embed = {
         title: 'Redeem',
         description: `You can't redeem over 1,000,000. Your balance is ${user.balance}.`,
-        color: 0xbb2124,
+        color: __config.colors.error,
         timestamp: new Date(),
-        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        footer: { iconURL: __config.footer.icon, text: __config.footer.text },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else if (user.balance < amount) {
       const embed = {
         title: 'Redeem',
         description: `You have insufficient credits. Your balance is ${user.balance}.`,
-        color: 0xbb2124,
+        color: __config.colors.error,
         timestamp: new Date(),
-        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        footer: { iconURL: __config.footer.icon, text: __config.footer.text },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else {
@@ -70,9 +70,9 @@ module.exports = async (interaction) => {
                 inline: true,
               },
             ],
-            color: 0x22bb33,
+            color: __config.colors.success,
             timestamp: new Date(),
-            footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
           };
           user.balance -= amount || user.balance;
 
@@ -86,9 +86,9 @@ module.exports = async (interaction) => {
           const embed = {
             title: 'Redeem',
             description: 'Something went wrong.',
-            color: 0xbb2124,
+            color: __config.colors.error,
             timestamp: new Date(),
-            footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
           };
           return await interaction.editReply({ embeds: [embed], ephemeral: true });
         });

@@ -1,6 +1,5 @@
-const credits = require('../../../helpers/database/models/creditSchema');
-const logger = require('../../../handlers/logger');
-const creditNoun = require('../../../helpers/creditNoun');
+const credits = require(`${__basedir}/helpers/database/models/creditSchema`);
+const creditNoun = require(`${__basedir}/helpers/creditNoun`);
 
 module.exports = async (interaction) => {
   await credits.find().then(async (data) => {
@@ -13,7 +12,7 @@ module.exports = async (interaction) => {
       description: `Below are the top ten.\n${topTen.map((x, index) => item(x, index)).join('\n')}`,
       color: 0x22bb33,
       timestamp: new Date(),
-      footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+      footer: { iconURL: __config.footer.icon, text: __config.footer.text },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   });

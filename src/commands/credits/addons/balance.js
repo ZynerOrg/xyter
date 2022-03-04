@@ -1,6 +1,6 @@
-const credits = require('../../../helpers/database/models/creditSchema');
-const logger = require('../../../handlers/logger');
-const creditNoun = require('../../../helpers/creditNoun');
+const credits = require(`${__basedir}/helpers/database/models/creditSchema`);
+const logger = require(`${__basedir}/handlers/logger`);
+const creditNoun = require(`${__basedir}/helpers/creditNoun`);
 
 module.exports = async (interaction) => {
   try {
@@ -13,9 +13,9 @@ module.exports = async (interaction) => {
           const embed = {
             title: 'Balance',
             description: `${user} has no credits.`,
-            color: process.env.SUCCESS_COLOR,
+            color: __config.colors.success,
             timestamp: new Date(),
-            footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
           };
 
           return await interaction.editReply({ embeds: [embed], ephemeral: true });
@@ -25,9 +25,9 @@ module.exports = async (interaction) => {
           const embed = {
             title: 'Balance',
             description: `${user ? `${user} has` : 'You have'} ${creditNoun(balance)}.`,
-            color: process.env.SUCCESS_COLOR,
+            color: __config.colors.success,
             timestamp: new Date(),
-            footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
           };
           return await interaction.editReply({ embeds: [embed], ephemeral: true });
         }

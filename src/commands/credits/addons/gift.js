@@ -1,7 +1,7 @@
-const credits = require('../../../helpers/database/models/creditSchema');
-const logger = require('../../../handlers/logger');
-const saveUser = require('../../../helpers/saveUser');
-const creditNoun = require('../../../helpers/creditNoun');
+const credits = require(`${__basedir}/helpers/database/models/creditSchema`);
+const logger = require(`${__basedir}/handlers/logger`);
+const saveUser = require(`${__basedir}/helpers/saveUser`);
+const creditNoun = require(`${__basedir}/helpers/creditNoun`);
 
 module.exports = async (interaction) => {
   try {
@@ -15,7 +15,7 @@ module.exports = async (interaction) => {
         description: "You can't pay yourself.",
         color: 0xbb2124,
         timestamp: new Date(),
-        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        footer: { iconURL: __config.footer.icon, text: __config.footer.text },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else if (amount <= 0) {
@@ -24,7 +24,7 @@ module.exports = async (interaction) => {
         description: "You can't pay zero or below.",
         color: 0xbb2124,
         timestamp: new Date(),
-        footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+        footer: { iconURL: __config.footer.icon, text: __config.footer.text },
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     } else {
@@ -34,7 +34,7 @@ module.exports = async (interaction) => {
           description: `You have insufficient credits. Your balance is ${data.balance}`,
           color: 0xbb2124,
           timestamp: new Date(),
-          footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+          footer: { iconURL: __config.footer.icon, text: __config.footer.text },
         };
         return await interaction.editReply({ embeds: [embed], ephemeral: true });
       } else {
@@ -48,12 +48,12 @@ module.exports = async (interaction) => {
 
         const embed = {
           title: 'Gift',
-          description: `You sent ${creditNoun(
-            amount
-          )} to ${user}. Your new balance is ${creditNoun(fromUser.balance)}.`,
+          description: `You sent ${creditNoun(amount)} to ${user}. Your new balance is ${creditNoun(
+            fromUser.balance
+          )}.`,
           color: 0x22bb33,
           timestamp: new Date(),
-          footer: { iconURL: process.env.FOOTER_ICON, text: process.env.FOOTER_TEXT },
+          footer: { iconURL: __config.footer.icon, text: __config.footer.text },
         };
         await logger.debug(`Gift sent from: ${interaction.user.username} to: ${user.username}`);
         return await interaction.editReply({ embeds: [embed], ephemeral: true });
