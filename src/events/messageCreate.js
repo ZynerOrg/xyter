@@ -30,7 +30,8 @@ module.exports = {
         );
         talkedRecently.delete(message.author.id);
       }, __config.credits.timeout);
-    } else {
+    }
+ else {
       logger.debug(
         `User: ${message.author.id} has talked within last ${
           __config.credits.timeout / 1000
