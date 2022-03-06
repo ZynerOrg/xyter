@@ -52,7 +52,8 @@ module.exports = {
       .setName('gift')
       .setDescription('Gift someone credits from your credits.')
       .addUserOption((option) => option.setName('user').setDescription('The user you want to pay.').setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will pay.').setRequired(true)))
+      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will pay.').setRequired(true))
+      .addStringOption((option) => option.setName('reason').setDescription('Your reason.')))
     .addSubcommand((subcommand) => subcommand.setName('top').setDescription('Check the top balance.'))
     .addSubcommand((subcommand) => subcommand
       .setName('transfer')

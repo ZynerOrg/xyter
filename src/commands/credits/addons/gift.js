@@ -9,6 +9,7 @@ module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
     const amount = await interaction.options.getInteger('amount');
+    const reason = await interaction.options.getString('reason');
     const data = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
 
     if (user.id === interaction.user.id) {
@@ -62,7 +63,7 @@ module.exports = async (interaction) => {
 
     const interactionEmbed = {
       title: 'Gift',
-      description: `You sent ${creditNoun(amount)} to ${user}. Your new balance is ${creditNoun(
+      description: `You sent ${creditNoun(amount)} to ${user}${reason ? ` with reason: ${reason}` : ''}. Your new balance is ${creditNoun(
         fromUser.balance,
       )}.`,
       color: 0x22bb33,
@@ -71,7 +72,7 @@ module.exports = async (interaction) => {
     };
     const dmEmbed = {
       title: 'Gift',
-      description: `You recieved ${creditNoun(amount)} from ${interaction.user}. Your new balance is ${creditNoun(
+      description: `You recieved ${creditNoun(amount)} from ${interaction.user}${reason ? ` with reason: ${reason}` : ''}. Your new balance is ${creditNoun(
         toUser.balance,
       )}.`,
       color: 0x22bb33,
