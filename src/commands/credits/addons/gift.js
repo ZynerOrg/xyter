@@ -10,6 +10,7 @@ module.exports = async (interaction) => {
     const user = await interaction.options.getUser('user');
     const amount = await interaction.options.getInteger('amount');
     const reason = await interaction.options.getString('reason');
+    // eslint-disable-next-line max-len
     const data = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
 
     if (user.id === interaction.user.id) {
@@ -72,7 +73,7 @@ module.exports = async (interaction) => {
     };
     const dmEmbed = {
       title: 'Gift',
-      description: `You recieved ${creditNoun(amount)} from ${interaction.user}${reason ? ` with reason: ${reason}` : ''}. Your new balance is ${creditNoun(
+      description: `You received ${creditNoun(amount)} from ${interaction.user}${reason ? ` with reason: ${reason}` : ''}. Your new balance is ${creditNoun(
         toUser.balance,
       )}.`,
       color: 0x22bb33,
@@ -83,8 +84,8 @@ module.exports = async (interaction) => {
     await dmUser.send({ embeds: [dmEmbed] });
     await logger.debug(`Gift sent from: ${interaction.user.username} to: ${user.username}`);
     return await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
-  } catch {
-    await logger.error();
+  } catch (e) {
+    await logger.error(e);
   }
   return true;
 };

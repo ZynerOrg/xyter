@@ -13,6 +13,7 @@ const top = require('./addons/top');
 const transfer = require('./addons/transfer');
 const set = require('./addons/set');
 const settings = require('./addons/settings');
+const work = require('./addons/work');
 
 module.exports = {
   permissions: new Permissions([
@@ -78,24 +79,17 @@ module.exports = {
     .addSubcommand((subcommand) => subcommand
       .setName('settings')
       .setDescription('Manage credit settings. (ADMIN)')
-      .addBooleanOption((option) => option
-        .setName('status')
-        .setDescription('Toggle credits.'))
-      .addStringOption((option) => option
-        .setName('url')
-        .setDescription('Controlpanel.gg URL.'))
-      .addStringOption((option) => option
-        .setName('token')
-        .setDescription('Controlpanel.gg token.'))
-      .addNumberOption((option) => option
-        .setName('rate')
-        .setDescription('Credits rate.'))
-      .addNumberOption((option) => option
-        .setName('minimum-length')
-        .setDescription('Minimum length for credits.'))
-      .addNumberOption((option) => option
-        .setName('timeout')
-        .setDescription('Timeout between credits (milliseconds).'))),
+      .addBooleanOption((option) => option.setName('status').setDescription('Toggle credits.'))
+      .addStringOption((option) => option.setName('url').setDescription('Controlpanel.gg URL.'))
+      .addStringOption((option) => option.setName('token').setDescription('Controlpanel.gg token.'))
+      .addNumberOption((option) => option.setName('rate').setDescription('Credits rate.'))
+      .addNumberOption((option) => option.setName('minimum-length').setDescription('Minimum length for credits.'))
+      .addNumberOption((option) => option.setName('work-rate').setDescription('Work rate (rate).'))
+      .addNumberOption((option) => option.setName('work-timeout').setDescription('Timeout between working for credits (milliseconds).'))
+      .addNumberOption((option) => option.setName('timeout').setDescription('Timeout between credits (milliseconds).')))
+    .addSubcommand((subcommand) => subcommand
+      .setName('work')
+      .setDescription('Work for credits.')),
   async execute(interaction) {
     const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
 
@@ -130,6 +124,8 @@ module.exports = {
       await transfer(interaction);
     } else if (interaction.options.getSubcommand() === 'set') {
       await set(interaction);
+    } else if (interaction.options.getSubcommand() === 'work') {
+      await work(interaction);
     }
     return true;
   },

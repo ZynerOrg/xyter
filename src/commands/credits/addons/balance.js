@@ -9,6 +9,7 @@ module.exports = async (interaction) => {
     const user = await interaction.options.getUser('user');
 
     await credits
+      // eslint-disable-next-line max-len
       .findOne({ userId: user ? user.id : interaction.user.id, guildId: interaction.member.guild.id })
       .then(async (data) => {
         if (!data) {

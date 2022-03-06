@@ -23,6 +23,7 @@ module.exports = async (interaction) => {
     }
     const amount = await interaction.options.getInteger('amount');
 
+    // eslint-disable-next-line max-len
     const user = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
     const dmUser = interaction.client.users.cache.get(interaction.member.user.id);
 
@@ -103,8 +104,8 @@ module.exports = async (interaction) => {
         await dmUser.send({ embeds: [dmEmbed] });
         await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
       })
-      .catch(async (err) => {
-        await logger.error(err);
+      .catch(async (e) => {
+        await logger.error(e);
         const embed = {
           title: 'Redeem',
           description: 'Something went wrong.',
@@ -114,8 +115,8 @@ module.exports = async (interaction) => {
         };
         return interaction.editReply({ embeds: [embed], ephemeral: true });
       });
-  } catch {
-    await logger.error();
+  } catch (e) {
+    await logger.error(e);
   }
   return true;
 };
