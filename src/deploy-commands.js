@@ -22,7 +22,12 @@ module.exports = async () => {
 
   const rest = new REST({ version: '9' }).setToken(config.bot.token);
 
-  rest
+  await rest.put(
+    Routes.applicationCommands(clientId),
+    { body: commands },
+  );
+
+  await rest
     .put(Routes.applicationGuildCommands(config.bot.clientId, config.bot.guildId), {
       body: commands,
     })
