@@ -5,7 +5,7 @@ const creditSchema = new mongoose.Schema(
     userId: {
       type: mongoose.SchemaTypes.Decimal128,
       required: true,
-      unique: true,
+      unique: false,
       index: true,
     },
     guildId: {
