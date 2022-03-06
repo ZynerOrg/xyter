@@ -9,7 +9,7 @@ module.exports = async (interaction) => {
     const user = await interaction.options.getUser('user');
 
     await credits
-      .findOne({ userId: user ? user.id : interaction.user.id })
+      .findOne({ userId: user ? user.id : interaction.user.id, guildId: interaction.member.guild.id })
       .then(async (data) => {
         if (!data) {
           const embed = {

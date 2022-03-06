@@ -17,7 +17,7 @@ module.exports = {
     if (!talkedRecently.has(message.author.id)) {
       await credits
         .findOneAndUpdate(
-          { userId: message.author.id },
+          { userId: message.author.id, guildId: message.guild.id },
           { $inc: { balance: guild.credits.rate } },
           { new: true, upsert: true },
         )

@@ -20,7 +20,7 @@ module.exports = async (interaction) => {
   const user = await interaction.options.getUser('user');
   const amount = await interaction.options.getInteger('amount');
 
-  const toUser = await credits.findOne({ userId: user.id });
+  const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
   toUser.balance = amount;
   await toUser.save();
 

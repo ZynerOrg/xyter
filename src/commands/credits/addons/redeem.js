@@ -23,7 +23,7 @@ module.exports = async (interaction) => {
     }
     const amount = await interaction.options.getInteger('amount');
 
-    const user = await credits.findOne({ userId: interaction.user.id });
+    const user = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
     const dmUser = interaction.client.users.cache.get(interaction.member.user.id);
 
     if ((amount || user.balance) < 100) {

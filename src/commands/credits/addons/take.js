@@ -29,7 +29,7 @@ module.exports = async (interaction) => {
     };
     return interaction.editReply({ embeds: [embed], ephemeral: true });
   }
-  const toUser = await credits.findOne({ userId: user.id });
+  const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
   toUser.balance -= amount;
   await toUser.save();
 

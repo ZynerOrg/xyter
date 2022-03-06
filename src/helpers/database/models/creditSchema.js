@@ -8,6 +8,12 @@ const creditSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    guildId: {
+      type: mongoose.SchemaTypes.Decimal128,
+      required: true,
+      unique: true,
+      index: true,
+    },
     balance: {
       type: mongoose.SchemaTypes.Number,
       required: true,

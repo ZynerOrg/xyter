@@ -3,7 +3,7 @@ const credits = require('../../../helpers/database/models/creditSchema');
 const creditNoun = require('../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
-  await credits.find().then(async (data) => {
+  await credits.find({ guildId: interaction.member.guild.id }).then(async (data) => {
     const topTen = data.sort((a, b) => (a.balance > b.balance ? -1 : 1)).slice(0, 10);
 
     const item = (x, index) => `**Top ${index + 1}** - <@${x.userId}> ${creditNoun(x.balance)}`;

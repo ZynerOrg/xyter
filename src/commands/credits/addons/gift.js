@@ -9,7 +9,7 @@ module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
     const amount = await interaction.options.getInteger('amount');
-    const data = await credits.findOne({ userId: interaction.user.id });
+    const data = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
 
     if (user.id === interaction.user.id) {
       const embed = {
@@ -41,8 +41,8 @@ module.exports = async (interaction) => {
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
-    const fromUser = await credits.findOne({ userId: interaction.user.id });
-    const toUser = await credits.findOne({ userId: user.id });
+    const fromUser = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
+    const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
 
     fromUser.balance -= amount;
     toUser.balance += amount;

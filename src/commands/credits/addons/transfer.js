@@ -20,7 +20,7 @@ module.exports = async (interaction) => {
     const from = await interaction.options.getUser('from');
     const to = await interaction.options.getUser('to');
     const amount = await interaction.options.getInteger('amount');
-    const data = await credits.findOne({ userId: from.id });
+    const data = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
 
     if (amount <= 0) {
       const embed = {
@@ -42,8 +42,8 @@ module.exports = async (interaction) => {
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
-    const fromUser = await credits.findOne({ userId: from.id });
-    const toUser = await credits.findOne({ userId: to.id });
+    const fromUser = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
+    const toUser = await credits.findOne({ userId: to.id, guildId: interaction.member.guild.id });
 
     fromUser.balance -= amount;
     toUser.balance += amount;
