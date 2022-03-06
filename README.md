@@ -1,4 +1,4 @@
-# Controlpanel.gg Bot
+# Xyter
 
 ## Installation
 
