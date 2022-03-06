@@ -10,7 +10,7 @@ module.exports = async (interaction) => {
           const embed = {
             title: 'Lookup',
             description: `${res.data.message}: ${res.data.query}`,
-            color: __config.colors.success,
+            color: __config.colors.error,
             timestamp: new Date(),
             footer: { iconURL: __config.footer.icon, text: __config.footer.text },
           };
