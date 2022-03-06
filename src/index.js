@@ -1,5 +1,6 @@
 __basedir = __dirname;
 __config = require(`${__basedir}/../config.json`);
+require('../deploy-commands')();
 require('./helpers/database')();
 
 const fs = require('node:fs');

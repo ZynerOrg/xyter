@@ -9,7 +9,8 @@
     "token": "required",
     "timeout": "5000",
     "rate": "1",
-    "minimumLength": "5"
+    "minimumLength": "5",
+    "excludedChannels": ["channel_id", "channel_id"]
   },
   "colors": { "success": "0x22bb33", "error": "0xbb2124", "wait": "0xf0ad4e" },
   "mongodb": {

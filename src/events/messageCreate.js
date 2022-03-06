@@ -9,7 +9,7 @@ module.exports = {
   async execute(message) {
     if (message.author.bot) return;
     if (message.content.length < __config.credits.minimumLength) return;
-
+    if (__config.credits.excludedChannels.includes(message.channel.id)) return;
     if (!talkedRecently.has(message.author.id)) {
       await credits
         .findOneAndUpdate(
