@@ -17,3 +17,7 @@ Then run **node deploy-commands.js** the first time then you can start the bot b
 ## Credits
 
 **Please leave of some credits or if anyone ask about the bot, give them a link to the repository. Thanks!**
+
+## Add it to your server
+
+We have a official bot for this repository. [Invite bot!](https://discord.com/api/oauth2/authorize?client_id=949998000401436673&permissions=8&scope=bot%20applications.commands)
