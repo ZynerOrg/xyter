@@ -45,7 +45,7 @@ module.exports = async (interaction) => {
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
     return interaction.editReply({ embeds: [embed], ephemeral: true });
-  } catch {
-    logger.error();
+  } catch (e) {
+    logger.error(e);
   }
 };

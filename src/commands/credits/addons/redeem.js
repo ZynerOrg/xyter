@@ -104,8 +104,8 @@ module.exports = async (interaction) => {
         await dmUser.send({ embeds: [dmEmbed] });
         await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
       })
-      .catch(async (err) => {
-        await logger.error(err);
+      .catch(async (e) => {
+        await logger.error(e);
         const embed = {
           title: 'Redeem',
           description: 'Something went wrong.',
@@ -115,8 +115,8 @@ module.exports = async (interaction) => {
         };
         return interaction.editReply({ embeds: [embed], ephemeral: true });
       });
-  } catch {
-    await logger.error();
+  } catch (e) {
+    await logger.error(e);
   }
   return true;
 };

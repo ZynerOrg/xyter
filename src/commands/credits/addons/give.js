@@ -55,8 +55,8 @@ module.exports = async (interaction) => {
       } to ${user.username}`,
     );
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
-  } catch {
-    await logger.error();
+  } catch (e) {
+    await logger.error(e);
   }
   return true;
 };

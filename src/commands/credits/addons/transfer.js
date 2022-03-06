@@ -86,8 +86,8 @@ module.exports = async (interaction) => {
 
     await logger.debug(`Gift sent from: ${interaction.user.username} to: ${to.username}`);
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
-  } catch {
-    logger.error();
+  } catch (e) {
+    logger.error(e);
   }
   return true;
 };
