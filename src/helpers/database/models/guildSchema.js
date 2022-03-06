@@ -20,23 +20,28 @@ const guildSchema = new mongoose.Schema(
         type: mongoose.SchemaTypes.String,
       },
       rate: {
-        type: mongoose.SchemaTypes.Number, default: 1,
+        type: mongoose.SchemaTypes.Number,
+        default: 1,
       },
       minimumLength: {
-        type: mongoose.SchemaTypes.Number, default: 5,
+        type: mongoose.SchemaTypes.Number,
+        default: 5,
       },
       timeout: {
-        type: mongoose.SchemaTypes.Number, default: 5000,
+        type: mongoose.SchemaTypes.Number,
+        default: 5000,
       },
       workRate: {
-        type: mongoose.SchemaTypes.Number, default: 15,
+        type: mongoose.SchemaTypes.Number,
+        default: 15,
       },
       workTimeout: {
-        type: mongoose.SchemaTypes.Number, default: 900000,
+        type: mongoose.SchemaTypes.Number,
+        default: 900000,
       },
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('guild', guildSchema);

@@ -10,7 +10,10 @@ module.exports = async (interaction) => {
 
     await credits
       // eslint-disable-next-line max-len
-      .findOne({ userId: user ? user.id : interaction.user.id, guildId: interaction.member.guild.id })
+      .findOne({
+        userId: user ? user.id : interaction.user.id,
+        guildId: interaction.member.guild.id,
+      })
       .then(async (data) => {
         if (!data) {
           const embed = {

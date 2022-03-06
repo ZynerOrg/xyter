@@ -52,7 +52,7 @@ module.exports = async (interaction) => {
     await logger.debug(
       `Administrator: ${interaction.user.username} gave ${
         amount <= 1 ? `${amount} credit` : `${amount} credits`
-      } to ${user.username}`,
+      } to ${user.username}`
     );
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } catch (e) {

@@ -21,7 +21,10 @@ module.exports = async (interaction) => {
     const to = await interaction.options.getUser('to');
     const amount = await interaction.options.getInteger('amount');
     // eslint-disable-next-line max-len
-    const fromUser = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
+    const fromUser = await credits.findOne({
+      userId: from.id,
+      guildId: interaction.member.guild.id,
+    });
     const toUser = await credits.findOne({ userId: to.id, guildId: interaction.member.guild.id });
 
     if (!fromUser) {
@@ -77,8 +80,16 @@ module.exports = async (interaction) => {
       description: `You sent ${creditNoun(amount)} from ${from} to ${to}.`,
       color: 0x22bb33,
       fields: [
-        { name: `${from.username} Balance`, value: `${fromUser.balance}`, inline: true },
-        { name: `${to.username} Balance`, value: `${toUser.balance}`, inline: true },
+        {
+          name: `${from.username} Balance`,
+          value: `${fromUser.balance}`,
+          inline: true,
+        },
+        {
+          name: `${to.username} Balance`,
+          value: `${toUser.balance}`,
+          inline: true,
+        },
       ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },

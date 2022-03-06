@@ -33,14 +33,28 @@ module.exports = async (interaction) => {
       title: 'Credits',
       description: 'Following settings is set',
       color: config.colors.success,
-      fields: [{ name: 'Status', value: `${guild.credits.status}`, inline: true },
+      fields: [
+        { name: 'Status', value: `${guild.credits.status}`, inline: true },
         { name: 'URL', value: `${guild.credits.url}`, inline: true },
         { name: 'Token', value: `${guild.credits.token}` },
         { name: 'Rate', value: `${guild.credits.rate}`, inline: true },
-        { name: 'Minimum Length', value: `${guild.credits.minimumLength}`, inline: true },
+        {
+          name: 'Minimum Length',
+          value: `${guild.credits.minimumLength}`,
+          inline: true,
+        },
         { name: 'Timeout', value: `${guild.credits.timeout}`, inline: true },
-        { name: 'Work Rate', value: `${guild.credits.workRate}`, inline: true },
-        { name: 'Work Timeout', value: `${guild.credits.workTimeout}`, inline: true }],
+        {
+          name: 'Work Rate',
+          value: `${guild.credits.workRate}`,
+          inline: true,
+        },
+        {
+          name: 'Work Timeout',
+          value: `${guild.credits.workTimeout}`,
+          inline: true,
+        },
+      ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };

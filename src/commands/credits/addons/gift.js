@@ -11,7 +11,10 @@ module.exports = async (interaction) => {
     const amount = await interaction.options.getInteger('amount');
     const reason = await interaction.options.getString('reason');
     // eslint-disable-next-line max-len
-    const data = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
+    const data = await credits.findOne({
+      userId: interaction.user.id,
+      guildId: interaction.member.guild.id,
+    });
 
     if (user.id === interaction.user.id) {
       const embed = {
@@ -44,7 +47,10 @@ module.exports = async (interaction) => {
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
     // eslint-disable-next-line max-len
-    const fromUser = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
+    const fromUser = await credits.findOne({
+      userId: interaction.user.id,
+      guildId: interaction.member.guild.id,
+    });
     const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
 
     if (!toUser) {
@@ -64,18 +70,18 @@ module.exports = async (interaction) => {
 
     const interactionEmbed = {
       title: 'Gift',
-      description: `You sent ${creditNoun(amount)} to ${user}${reason ? ` with reason: ${reason}` : ''}. Your new balance is ${creditNoun(
-        fromUser.balance,
-      )}.`,
+      description: `You sent ${creditNoun(amount)} to ${user}${
+        reason ? ` with reason: ${reason}` : ''
+      }. Your new balance is ${creditNoun(fromUser.balance)}.`,
       color: 0x22bb33,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
     const dmEmbed = {
       title: 'Gift',
-      description: `You received ${creditNoun(amount)} from ${interaction.user}${reason ? ` with reason: ${reason}` : ''}. Your new balance is ${creditNoun(
-        toUser.balance,
-      )}.`,
+      description: `You received ${creditNoun(amount)} from ${interaction.user}${
+        reason ? ` with reason: ${reason}` : ''
+      }. Your new balance is ${creditNoun(toUser.balance)}.`,
       color: 0x22bb33,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
