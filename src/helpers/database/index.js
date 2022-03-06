@@ -6,7 +6,8 @@ module.exports = async () => {
   try {
     await mongoose.connect(__config.mongodb.url);
     await logger.info('Connected to the database');
-  } catch (err) {
+  }
+ catch (err) {
     await logger.error(err);
   }
 };
