@@ -26,8 +26,7 @@ module.exports = async (interaction) => {
     // eslint-disable-next-line max-len
     guild.credits.workTimeout = workTimeout !== null ? workTimeout : guild.credits.workTimeout;
     // eslint-disable-next-line max-len
-    guild.credits.minimumLength =
-      minimumLength !== null ? minimumLength : guild.credits.minimumLength;
+    guild.credits.minimumLength = minimumLength !== null ? minimumLength : guild.credits.minimumLength;
 
     await guild.save();
     const embed = {
