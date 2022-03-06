@@ -21,6 +21,17 @@ module.exports = async (interaction) => {
   const amount = await interaction.options.getInteger('amount');
 
   const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
+
+  if (!toUser) {
+    const embed = {
+      title: 'Set',
+      description: 'That user has no credits, I can not set credits to the user',
+      color: config.colors.error,
+      timestamp: new Date(),
+      footer: { iconURL: config.footer.icon, text: config.footer.text },
+    };
+    return interaction.editReply({ embeds: [embed], ephemeral: true });
+  }
   toUser.balance = amount;
   await toUser.save();
 
