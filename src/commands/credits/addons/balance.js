@@ -8,9 +8,13 @@ module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
 
+    console.log(interaction.member.guild.id);
+
     await credits
       .findOne({ userId: user ? user.id : interaction.user.id, guildId: interaction.member.guild.id })
       .then(async (data) => {
+        console.log(data);
+
         if (!data) {
           const embed = {
             title: 'Balance',

@@ -25,6 +25,9 @@ const guildSchema = new mongoose.Schema(
       minimumLength: {
         type: mongoose.SchemaTypes.Number, default: 5,
       },
+      timeout: {
+        type: mongoose.SchemaTypes.Number, default: 5000,
+      },
     },
   },
   { timestamps: true },

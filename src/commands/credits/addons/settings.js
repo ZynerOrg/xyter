@@ -9,6 +9,7 @@ module.exports = async (interaction) => {
     const url = await interaction.options.getString('url');
     const token = await interaction.options.getString('token');
     const rate = await interaction.options.getNumber('rate');
+    const timeout = await interaction.options.getNumber('timeout');
     const minimumLength = await interaction.options.getNumber('minimum-length');
 
     const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
@@ -17,6 +18,7 @@ module.exports = async (interaction) => {
     guild.credits.url = url !== null ? url : guild.credits.url;
     guild.credits.token = token !== null ? token : guild.credits.token;
     guild.credits.rate = rate !== null ? rate : guild.credits.rate;
+    guild.credits.timeout = timeout !== null ? timeout : guild.credits.timeout;
     // eslint-disable-next-line max-len
     guild.credits.minimumLength = minimumLength !== null ? minimumLength : guild.credits.minimumLength;
 
@@ -25,7 +27,7 @@ module.exports = async (interaction) => {
       title: 'Credits',
       description: 'Following settings is set',
       color: config.colors.success,
-      fields: [{ name: 'Status', value: `${guild.credits.status}`, inline: true }, { name: 'URL', value: `${guild.credits.url}`, inline: true }, { name: 'Token', value: `${guild.credits.token}` }, { name: 'Rate', value: `${guild.credits.rate}`, inline: true }, { name: 'Minimum Length', value: `${guild.credits.minimumLength}`, inline: true }],
+      fields: [{ name: 'Status', value: `${guild.credits.status}`, inline: true }, { name: 'URL', value: `${guild.credits.url}`, inline: true }, { name: 'Token', value: `${guild.credits.token}` }, { name: 'Rate', value: `${guild.credits.rate}`, inline: true }, { name: 'Minimum Length', value: `${guild.credits.minimumLength}`, inline: true }, { name: 'Timeout', value: `${guild.credits.timeout}`, inline: true }],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };

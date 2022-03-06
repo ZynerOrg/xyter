@@ -91,7 +91,10 @@ module.exports = {
         .setDescription('Credits rate.'))
       .addNumberOption((option) => option
         .setName('minimum-length')
-        .setDescription('Minimum length for credits.'))),
+        .setDescription('Minimum length for credits.'))
+      .addNumberOption((option) => option
+        .setName('timeout')
+        .setDescription('Timeout between credits (milliseconds).'))),
   async execute(interaction) {
     const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
 
