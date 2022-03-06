@@ -1,5 +1,5 @@
-// __basedir = __dirname;
-// __config = require(`${__basedir}/config.json`);
+const logger = require(`${__basedir}/handlers/logger`);
+
 module.exports = async () => {
   const fs = require('node:fs');
   const { REST } = require('@discordjs/rest');
@@ -19,6 +19,8 @@ module.exports = async () => {
     .put(Routes.applicationGuildCommands(__config.bot.clientId, __config.bot.guildId), {
       body: commands,
     })
-    .then(() => console.log('Successfully registered application commands.'))
-    .catch(console.error);
+    .then(async () => await logger.info('Successfully registered application commands.'))
+    .catch(async (err) => {
+      await logger.error(err);
+    });
 };

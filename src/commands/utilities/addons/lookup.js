@@ -1,4 +1,7 @@
+const logger = require(`${__basedir}/handlers/logger`);
+
 const axios = require('axios');
+
 module.exports = async (interaction) => {
   try {
     const target = await interaction.options.getString('target');
