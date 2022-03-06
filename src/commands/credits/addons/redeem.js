@@ -1,11 +1,13 @@
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
 
+const guilds = require('../../../helpers/database/models/guildSchema');
 const credits = require('../../../helpers/database/models/creditSchema');
 const creditNoun = require('../../../helpers/creditNoun');
 
-const api = require('../../../handlers/api');
+// const api = require('../../../handlers/api');
 
 module.exports = async (interaction) => {
   try {
@@ -55,6 +57,13 @@ module.exports = async (interaction) => {
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
     const code = uuidv4();
+
+    const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
+
+    const api = axios.create({
+      baseURL: guild.credits.url,
+      headers: { Authorization: `Bearer ${guild.credits.token}` },
+    });
 
     await api
       .post('vouchers', {

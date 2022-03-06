@@ -1,6 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Permissions } = require('discord.js');
 
+const config = require('../../../config.json');
+const guilds = require('../../helpers/database/models/guildSchema');
+
 const balance = require('./addons/balance');
 const gift = require('./addons/gift');
 const give = require('./addons/give');
@@ -9,6 +12,7 @@ const take = require('./addons/take');
 const top = require('./addons/top');
 const transfer = require('./addons/transfer');
 const set = require('./addons/set');
+const settings = require('./addons/settings');
 
 module.exports = {
   permissions: new Permissions([
@@ -69,8 +73,43 @@ module.exports = {
         .setName('user')
         .setDescription('The user you want to set credits on.')
         .setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will set.').setRequired(true))),
+      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will set.').setRequired(true)))
+    .addSubcommand((subcommand) => subcommand
+      .setName('settings')
+      .setDescription('Manage credit settings. (ADMIN)')
+      .addBooleanOption((option) => option
+        .setName('status')
+        .setDescription('Toggle credits.'))
+      .addStringOption((option) => option
+        .setName('url')
+        .setDescription('Controlpanel.gg URL.'))
+      .addStringOption((option) => option
+        .setName('token')
+        .setDescription('Controlpanel.gg token.'))
+      .addNumberOption((option) => option
+        .setName('rate')
+        .setDescription('Credits rate.'))
+      .addNumberOption((option) => option
+        .setName('minimum-length')
+        .setDescription('Minimum length for credits.'))),
   async execute(interaction) {
+    const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
+
+    if (interaction.options.getSubcommand() === 'settings') {
+      await settings(interaction);
+    }
+
+    if (guild.credits.status === false && interaction.options.getSubcommand() !== 'settings') {
+      const embed = {
+        title: 'Credits',
+        description: 'Please enable credits by ``/credits settings``',
+        color: config.colors.error,
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+      return interaction.editReply({ embeds: [embed], ephemeral: true });
+    }
+
     if (interaction.options.getSubcommand() === 'balance') {
       await balance(interaction);
     } else if (interaction.options.getSubcommand() === 'gift') {
@@ -88,5 +127,6 @@ module.exports = {
     } else if (interaction.options.getSubcommand() === 'set') {
       await set(interaction);
     }
+    return true;
   },
 };

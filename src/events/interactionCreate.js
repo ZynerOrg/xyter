@@ -1,6 +1,8 @@
 const config = require('../../config.json');
 const logger = require('../handlers/logger');
 
+const guilds = require('../helpers/database/models/guildSchema');
+
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction) {
@@ -9,6 +11,12 @@ module.exports = {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) return;
+
+    const guildExist = await guilds.findOne({ guildId: interaction.member.guild.id });
+
+    if (!guildExist) { await guilds.create({ guildId: interaction.member.guild.id }); }
+
+    console.log(guildExist);
 
     try {
       await interaction.deferReply({

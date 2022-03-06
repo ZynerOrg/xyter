@@ -46,5 +46,5 @@
     "titleBar.inactiveBackground": "#33669999",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "cSpell.words": ["discordjs", "pino", "upsert", "uuidv"]
+  "cSpell.words": ["Controlpanel", "discordjs", "pino", "upsert", "uuidv"]
 }
