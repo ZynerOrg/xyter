@@ -1,6 +1,8 @@
 const axios = require('axios');
 
+const config = require('../../config.json');
+
 module.exports = axios.create({
-  baseURL: __config.credits.url,
-  headers: { Authorization: `Bearer ${__config.credits.token}` },
+  baseURL: config.credits.url,
+  headers: { Authorization: `Bearer ${config.credits.token}` },
 });

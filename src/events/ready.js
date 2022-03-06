@@ -1,4 +1,4 @@
-const logger = require(`${__basedir}/handlers/logger`);
+const logger = require('../handlers/logger');
 
 module.exports = {
   name: 'ready',

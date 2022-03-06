@@ -1,6 +1,7 @@
-const logger = require(`${__basedir}/handlers/logger`);
-
 const axios = require('axios');
+
+const config = require('../../../../config.json');
+const logger = require('../../../handlers/logger');
 
 module.exports = async (interaction) => {
   try {
@@ -13,9 +14,9 @@ module.exports = async (interaction) => {
           const embed = {
             title: 'Lookup',
             description: `${res.data.message}: ${res.data.query}`,
-            color: __config.colors.error,
+            color: config.colors.error,
             timestamp: new Date(),
-            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
+            footer: { iconURL: config.footer.icon, text: config.footer.text },
           };
           await interaction.editReply({ embeds: [embed] });
         } else if (res.data.status === 'success') {
@@ -35,9 +36,9 @@ module.exports = async (interaction) => {
               { name: 'ISP', value: `${res.data.isp || 'Not available'}` },
               { name: 'Organization', value: `${res.data.org || 'Not available'}` },
             ],
-            color: __config.colors.success,
+            color: config.colors.success,
             timestamp: new Date(),
-            footer: { iconURL: __config.footer.icon, text: __config.footer.text },
+            footer: { iconURL: config.footer.icon, text: config.footer.text },
           };
           await interaction.editReply({ embeds: [embed] });
         }
@@ -46,6 +47,6 @@ module.exports = async (interaction) => {
         await logger.error(err);
       });
   } catch {
-    async (err) => await logger.error(err);
+    await logger.error();
   }
 };

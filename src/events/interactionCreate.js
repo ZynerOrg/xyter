@@ -1,4 +1,5 @@
-const logger = require(`${__basedir}/handlers/logger`);
+const config = require('../../config.json');
+const logger = require('../handlers/logger');
 
 module.exports = {
   name: 'interactionCreate',
@@ -20,7 +21,7 @@ module.exports = {
             },
             title: 'Check',
             description: 'Please wait...',
-            color: __config.colors.wait,
+            color: config.colors.wait,
             timestamp: new Date(),
           },
         ],
@@ -28,8 +29,7 @@ module.exports = {
       });
       await command.execute(interaction);
       await logger.debug(`Executing command: ${interaction.commandName}`);
-    }
- catch (err) {
+    } catch (err) {
       await logger.error(err);
       await interaction.reply({
         embeds: [
@@ -41,7 +41,7 @@ module.exports = {
             },
             title: 'Error',
             description: 'There was an error while executing this command!',
-            color: __config.colors.error,
+            color: config.colors.error,
             timestamp: new Date(),
           },
         ],

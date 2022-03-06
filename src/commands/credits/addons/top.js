@@ -1,5 +1,6 @@
-const credits = require(`${__basedir}/helpers/database/models/creditSchema`);
-const creditNoun = require(`${__basedir}/helpers/creditNoun`);
+const config = require('../../../../config.json');
+const credits = require('../../../helpers/database/models/creditSchema');
+const creditNoun = require('../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
   await credits.find().then(async (data) => {
@@ -12,8 +13,8 @@ module.exports = async (interaction) => {
       description: `Below are the top ten.\n${topTen.map((x, index) => item(x, index)).join('\n')}`,
       color: 0x22bb33,
       timestamp: new Date(),
-      footer: { iconURL: __config.footer.icon, text: __config.footer.text },
+      footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
-    return await interaction.editReply({ embeds: [embed], ephemeral: true });
+    return interaction.editReply({ embeds: [embed], ephemeral: true });
   });
 };

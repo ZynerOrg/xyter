@@ -1,3 +1,6 @@
 const pino = require('pino');
-const logger = pino({ level: __config.debug ? 'debug' : 'info' });
+
+const config = require('../../config.json');
+
+const logger = pino({ level: config.debug ? 'debug' : 'info' });
 module.exports = logger;

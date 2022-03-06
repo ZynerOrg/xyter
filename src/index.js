@@ -1,10 +1,11 @@
-__basedir = __dirname;
-__config = require(`${__basedir}/../config.json`);
-require('../deploy-commands')();
+/* eslint-disable no-restricted-syntax */
+require('./deploy-commands')();
 require('./helpers/database')();
 
-const fs = require('node:fs');
+const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
+
+const config = require('../config.json');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
@@ -14,18 +15,19 @@ client.commands = new Collection();
 const commandFiles = fs.readdirSync('./src/commands');
 
 for (const file of commandFiles) {
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   const command = require(`./commands/${file}`);
   client.commands.set(command.data.name, command);
 }
 
 for (const file of eventFiles) {
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   const event = require(`./events/${file}`);
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
-  }
- else {
+  } else {
     client.on(event.name, (...args) => event.execute(...args));
   }
 }
 
-client.login(__config.bot.token);
+client.login(config.bot.token);
