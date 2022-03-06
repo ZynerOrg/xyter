@@ -56,6 +56,17 @@ module.exports = async (interaction) => {
       return interaction.editReply({ embeds: [embed], ephemeral: true });
     }
 
+    if (!fromUser) {
+      const embed = {
+        title: 'Transfer',
+        description: 'That user has no credits, I can not transfer credits from the user',
+        color: config.colors.error,
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+      return interaction.editReply({ embeds: [embed], ephemeral: true });
+    }
+
     fromUser.balance -= amount;
     toUser.balance += amount;
 
