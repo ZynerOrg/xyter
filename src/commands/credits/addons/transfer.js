@@ -20,30 +20,20 @@ module.exports = async (interaction) => {
     const from = await interaction.options.getUser('from');
     const to = await interaction.options.getUser('to');
     const amount = await interaction.options.getInteger('amount');
-    const data = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
-
-    if (amount <= 0) {
-      const embed = {
-        title: 'Transfer failed',
-        description: "You can't transfer zero or below.",
-        color: 0xbb2124,
-        timestamp: new Date(),
-        footer: { iconURL: config.footer.icon, text: config.footer.text },
-      };
-      return await interaction.editReply({ embeds: [embed], ephemeral: true });
-    }
-    if (data.balance < amount) {
-      const embed = {
-        title: 'Transfer',
-        description: `${from.username} has insufficient credits. ${from.username} balance is ${data.balance}`,
-        color: 0xbb2124,
-        timestamp: new Date(),
-        footer: { iconURL: config.footer.icon, text: config.footer.text },
-      };
-      return await interaction.editReply({ embeds: [embed], ephemeral: true });
-    }
+    // eslint-disable-next-line max-len
     const fromUser = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
     const toUser = await credits.findOne({ userId: to.id, guildId: interaction.member.guild.id });
+
+    if (!fromUser) {
+      const embed = {
+        title: 'Transfer',
+        description: 'That user has no credits, I can not transfer credits from the user',
+        color: config.colors.error,
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+      return interaction.editReply({ embeds: [embed], ephemeral: true });
+    }
 
     if (!toUser) {
       const embed = {
@@ -56,15 +46,25 @@ module.exports = async (interaction) => {
       return interaction.editReply({ embeds: [embed], ephemeral: true });
     }
 
-    if (!fromUser) {
+    if (amount <= 0) {
       const embed = {
-        title: 'Transfer',
-        description: 'That user has no credits, I can not transfer credits from the user',
-        color: config.colors.error,
+        title: 'Transfer failed',
+        description: "You can't transfer zero or below.",
+        color: 0xbb2124,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
       };
-      return interaction.editReply({ embeds: [embed], ephemeral: true });
+      return await interaction.editReply({ embeds: [embed], ephemeral: true });
+    }
+    if (fromUser.balance < amount) {
+      const embed = {
+        title: 'Transfer',
+        description: `${from.username} has insufficient credits. ${from.username} balance is ${fromUser.balance}`,
+        color: 0xbb2124,
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+      return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
 
     fromUser.balance -= amount;
@@ -87,7 +87,7 @@ module.exports = async (interaction) => {
     await logger.debug(`Gift sent from: ${interaction.user.username} to: ${to.username}`);
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   } catch {
-    await logger.error();
+    logger.error();
   }
   return true;
 };

@@ -9,7 +9,5 @@ module.exports = {
     const guildExist = await guilds.findOne({ guildId: guild.id });
 
     if (!guildExist) { await guilds.create({ guildId: guild.id }); }
-
-    console.log(guildExist);
   },
 };

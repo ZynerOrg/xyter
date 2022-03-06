@@ -16,8 +16,6 @@ module.exports = {
 
     if (!guildExist) { await guilds.create({ guildId: interaction.member.guild.id }); }
 
-    console.log(guildExist);
-
     try {
       await interaction.deferReply({
         embeds: [
