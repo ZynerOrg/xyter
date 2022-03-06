@@ -12,7 +12,7 @@ module.exports = async () => {
   const { Routes } = require('discord-api-types/v9');
 
   const commands = [];
-  const commandFiles = fs.readdirSync('./commands');
+  const commandFiles = fs.readdirSync('./src/commands');
 
   for (const file of commandFiles) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
