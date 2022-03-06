@@ -1,6 +1,6 @@
 {
   "name": "xyter",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Earn credits while chatting! And more",
   "main": "src/index.js",
   "scripts": {
