@@ -41,6 +41,7 @@ module.exports = async (interaction) => {
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
+    // eslint-disable-next-line max-len
     const fromUser = await credits.findOne({ userId: interaction.user.id, guildId: interaction.member.guild.id });
     const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
 
@@ -59,7 +60,7 @@ module.exports = async (interaction) => {
 
     await saveUser(fromUser, toUser);
 
-    const embed = {
+    const interactionEmbed = {
       title: 'Gift',
       description: `You sent ${creditNoun(amount)} to ${user}. Your new balance is ${creditNoun(
         fromUser.balance,
@@ -68,8 +69,19 @@ module.exports = async (interaction) => {
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
+    const dmEmbed = {
+      title: 'Gift',
+      description: `You recieved ${creditNoun(amount)} from ${interaction.user}. Your new balance is ${creditNoun(
+        toUser.balance,
+      )}.`,
+      color: 0x22bb33,
+      timestamp: new Date(),
+      footer: { iconURL: config.footer.icon, text: config.footer.text },
+    };
+    const dmUser = await interaction.client.users.cache.get(user.id);
+    await dmUser.send({ embeds: [dmEmbed] });
     await logger.debug(`Gift sent from: ${interaction.user.username} to: ${user.username}`);
-    return await interaction.editReply({ embeds: [embed], ephemeral: true });
+    return await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
   } catch {
     await logger.error();
   }
