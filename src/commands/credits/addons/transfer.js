@@ -47,8 +47,8 @@ module.exports = async (interaction) => {
 
     if (!toUser) {
       const embed = {
-        title: 'Set',
-        description: 'That user has no credits, I can not set credits to the user',
+        title: 'Transfer',
+        description: 'That user has no credits, I can not transfer credits to the user',
         color: config.colors.error,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
