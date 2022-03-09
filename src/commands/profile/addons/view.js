@@ -35,6 +35,18 @@ module.exports = async (interaction) => {
       },
     );
 
+    if (user === null || experience === null || credit === null) {
+      const embed = {
+        title: 'Profile',
+        description: 'You have to write something before viewing your profile!',
+        timestamp: new Date(),
+        color: config.colors.error,
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+
+      return await interaction.editReply({ embeds: [embed] });
+    }
+
     // Language variables
     const notAvailableText = i18next.t('general:not_available', { lng: await user.language });
     const reputationText = i18next.t('commands:profile:addons:view:embed:reputation', { lng: await user.language });
