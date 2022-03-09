@@ -21,23 +21,23 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-client.buttons = new Collection();
-const buttonFiles = fs.readdirSync('./src/buttons');
+// client.buttons = new Collection();
+// const buttonFiles = fs.readdirSync('./src/buttons');
 
-for (const file of buttonFiles) {
-  // eslint-disable-next-line import/no-dynamic-require, global-require
-  const button = require(`./buttons/${file}`);
-  client.buttons.set(button.customId, button);
-}
+// for (const file of buttonFiles) {
+//   // eslint-disable-next-line import/no-dynamic-require, global-require
+//   const button = require(`./buttons/${file}`);
+//   client.buttons.set(button.customId, button);
+// }
 
-client.menus = new Collection();
-const menuFiles = fs.readdirSync('./src/menus');
+// client.menus = new Collection();
+// const menuFiles = fs.readdirSync('./src/menus');
 
-for (const file of menuFiles) {
-  // eslint-disable-next-line import/no-dynamic-require, global-require
-  const menu = require(`./menus/${file}`);
-  client.menus.set(menu.customId, menu);
-}
+// for (const file of menuFiles) {
+//   // eslint-disable-next-line import/no-dynamic-require, global-require
+//   const menu = require(`./menus/${file}`);
+//   client.menus.set(menu.customId, menu);
+// }
 
 for (const file of eventFiles) {
   // eslint-disable-next-line import/no-dynamic-require, global-require
