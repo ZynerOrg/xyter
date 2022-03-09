@@ -40,8 +40,8 @@ module.exports = async () => {
                 embed: {
                   title: 'Profile',
                   reputation: 'Reputation (Global)',
-                  level: 'Level (Global)',
-                  points: 'Points (Global)',
+                  level: 'Level (Guild)',
+                  points: 'Points (Guild)',
                   credits: 'Credits (Guild)',
                   language_code: 'Language Code (Global)',
                 },
@@ -92,8 +92,8 @@ module.exports = async () => {
                 embed: {
                   title: 'Profil',
                   reputation: 'Omdöme (Globalt)',
-                  level: 'Nivå (Globalt)',
-                  points: 'Poäng (Globalt)',
+                  level: 'Nivå (Server)',
+                  points: 'Poäng (Server)',
                   credits: 'Krediter (Server)',
                   language_code: 'Språkkod (Globalt)',
                 },
