@@ -38,7 +38,7 @@ module.exports = async (interaction) => {
     if (user === null || experience === null || credit === null) {
       const embed = {
         title: 'Profile',
-        description: `${target || 'You'} have to write something before viewing ${target || 'your'} profile!`,
+        description: `${target || 'You'} have to write something before viewing ${target ? 'their' : 'your'} profile!`,
         timestamp: new Date(),
         color: config.colors.error,
         footer: { iconURL: config.footer.icon, text: config.footer.text },
