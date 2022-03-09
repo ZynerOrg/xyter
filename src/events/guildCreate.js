@@ -3,7 +3,7 @@ const logger = require('../handlers/logger');
 const guilds = require('../helpers/database/models/guildSchema');
 
 module.exports = {
-  name: 'interactionCreate',
+  name: 'guildCreate',
   async execute(guild) {
     const guildExist = await guilds
       .findOne({ guildId: guild.id })

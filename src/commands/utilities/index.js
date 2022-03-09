@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Permissions } = require('discord.js');
 
 const lookup = require('./addons/lookup');
+const users = require('./addons/users');
 
 module.exports = {
   permissions: new Permissions([
@@ -19,10 +20,15 @@ module.exports = {
       .addStringOption((option) => option
         .setName('target')
         .setDescription('The target you want to look up.')
-        .setRequired(true))),
+        .setRequired(true)))
+    .addSubcommand((subcommand) => subcommand
+      .setName('users')
+      .setDescription('Iterate all users (ADMIN)')),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'lookup') {
       await lookup(interaction);
+    } else if (interaction.options.getSubcommand() === 'users') {
+      await users(interaction);
     }
   },
 };

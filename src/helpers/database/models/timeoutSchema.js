@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const creditSchema = new mongoose.Schema(
+const timeoutSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.SchemaTypes.Decimal128,
@@ -14,15 +14,9 @@ const creditSchema = new mongoose.Schema(
       unique: false,
       index: true,
     },
-    balance: {
-      type: mongoose.SchemaTypes.Number,
-      required: true,
-      unique: false,
-      default: 0,
-      index: false,
-    },
+    timeoutId: { type: mongoose.SchemaTypes.Number },
   },
   { timestamps: true },
 );
 
-module.exports = mongoose.model('credit', creditSchema);
+module.exports = mongoose.model('timeout', timeoutSchema);

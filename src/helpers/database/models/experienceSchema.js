@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const creditSchema = new mongoose.Schema(
+const experienceSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.SchemaTypes.Decimal128,
@@ -14,7 +14,14 @@ const creditSchema = new mongoose.Schema(
       unique: false,
       index: true,
     },
-    balance: {
+    level: {
+      type: mongoose.SchemaTypes.Number,
+      required: true,
+      unique: false,
+      default: 0,
+      index: false,
+    },
+    points: {
       type: mongoose.SchemaTypes.Number,
       required: true,
       unique: false,
@@ -25,4 +32,4 @@ const creditSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model('credit', creditSchema);
+module.exports = mongoose.model('experience', experienceSchema);

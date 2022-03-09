@@ -1,3 +1,4 @@
+const i18next = require('i18next');
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
 
@@ -8,6 +9,8 @@ module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
 
+    logger.debug(i18next.t('commands:credits:general:key', { count: 1 }));
+
     await credits
       // eslint-disable-next-line max-len
       .findOne({
@@ -17,7 +20,7 @@ module.exports = async (interaction) => {
       .then(async (data) => {
         if (!data) {
           const embed = {
-            title: 'Balance',
+            title: `${i18next.t('commands:credits:addons:balance:embed:title')}`,
             description: `${user} has no credits.`,
             color: config.colors.success,
             timestamp: new Date(),
@@ -29,8 +32,8 @@ module.exports = async (interaction) => {
         const { balance } = data;
 
         const embed = {
-          title: 'Balance',
-          description: `${user ? `${user} has` : 'You have'} ${creditNoun(balance)}.`,
+          title: `${i18next.t('commands:credits:addons:balance:embed:title')}`,
+          description: `${user ? `${user} has` : 'You have'} ${i18next.t('commands:credits:general:credits', { count: balance })}.`,
           color: config.colors.success,
           timestamp: new Date(),
           footer: { iconURL: config.footer.icon, text: config.footer.text },

@@ -1,28 +1,28 @@
 const mongoose = require('mongoose');
 
-const creditSchema = new mongoose.Schema(
+const apiSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.SchemaTypes.Decimal128,
-      required: true,
-      unique: false,
-      index: true,
-    },
+
     guildId: {
       type: mongoose.SchemaTypes.Decimal128,
       required: true,
       unique: false,
       index: true,
     },
-    balance: {
-      type: mongoose.SchemaTypes.Number,
+    url: {
+      type: mongoose.SchemaTypes.String,
       required: true,
       unique: false,
-      default: 0,
-      index: false,
+      index: true,
+    },
+    token: {
+      type: mongoose.SchemaTypes.String,
+      required: true,
+      unique: false,
+      index: true,
     },
   },
   { timestamps: true },
 );
 
-module.exports = mongoose.model('credit', creditSchema);
+module.exports = mongoose.model('api', apiSchema);

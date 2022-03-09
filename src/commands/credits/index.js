@@ -6,13 +6,8 @@ const guilds = require('../../helpers/database/models/guildSchema');
 
 const balance = require('./addons/balance');
 const gift = require('./addons/gift');
-const give = require('./addons/give');
 const redeem = require('./addons/redeem');
-const take = require('./addons/take');
 const top = require('./addons/top');
-const transfer = require('./addons/transfer');
-const set = require('./addons/set');
-const settings = require('./addons/settings');
 const work = require('./addons/work');
 
 module.exports = {
@@ -25,19 +20,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('credits')
     .setDescription('Manage your credits.')
-    .addSubcommand((subcommand) => subcommand
-      .setName('give')
-      .setDescription('Give credits to a user. (ADMIN)')
-      .addUserOption((option) => option.setName('user').setDescription('The user you want to pay.').setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will pay.').setRequired(true)))
-    .addSubcommand((subcommand) => subcommand
-      .setName('take')
-      .setDescription('Take credits from a user. (ADMIN)')
-      .addUserOption((option) => option
-        .setName('user')
-        .setDescription('The user you want to take credits from.')
-        .setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will take.').setRequired(true)))
     .addSubcommand((subcommand) => subcommand
       .setName('balance')
       .setDescription("Check a user's balance.")
@@ -56,46 +38,9 @@ module.exports = {
       .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will pay.').setRequired(true))
       .addStringOption((option) => option.setName('reason').setDescription('Your reason.')))
     .addSubcommand((subcommand) => subcommand.setName('top').setDescription('Check the top balance.'))
-    .addSubcommand((subcommand) => subcommand
-      .setName('transfer')
-      .setDescription('Transfer credits from a user to another user. (ADMIN)')
-      .addUserOption((option) => option
-        .setName('from')
-        .setDescription('The user you want to take credits from.')
-        .setRequired(true))
-      .addUserOption((option) => option
-        .setName('to')
-        .setDescription('The user you want to give credits to.')
-        .setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will transfer.').setRequired(true)))
-    .addSubcommand((subcommand) => subcommand
-      .setName('set')
-      .setDescription('Set credits on a user. (ADMIN)')
-      .addUserOption((option) => option
-        .setName('user')
-        .setDescription('The user you want to set credits on.')
-        .setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will set.').setRequired(true)))
-    .addSubcommand((subcommand) => subcommand
-      .setName('settings')
-      .setDescription('Manage credit settings. (ADMIN)')
-      .addBooleanOption((option) => option.setName('status').setDescription('Toggle credits.'))
-      .addStringOption((option) => option.setName('url').setDescription('Controlpanel.gg URL.'))
-      .addStringOption((option) => option.setName('token').setDescription('Controlpanel.gg token.'))
-      .addNumberOption((option) => option.setName('rate').setDescription('Credits rate.'))
-      .addNumberOption((option) => option.setName('minimum-length').setDescription('Minimum length for credits.'))
-      .addNumberOption((option) => option.setName('work-rate').setDescription('Work rate (rate).'))
-      .addNumberOption((option) => option
-        .setName('work-timeout')
-        .setDescription('Timeout between working for credits (milliseconds).'))
-      .addNumberOption((option) => option.setName('timeout').setDescription('Timeout between credits (milliseconds).')))
     .addSubcommand((subcommand) => subcommand.setName('work').setDescription('Work for credits.')),
   async execute(interaction) {
     const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
-
-    if (interaction.options.getSubcommand() === 'settings') {
-      await settings(interaction);
-    }
 
     if (guild.credits.status === false && interaction.options.getSubcommand() !== 'settings') {
       const embed = {
@@ -112,18 +57,10 @@ module.exports = {
       await balance(interaction);
     } else if (interaction.options.getSubcommand() === 'gift') {
       await gift(interaction);
-    } else if (interaction.options.getSubcommand() === 'give') {
-      await give(interaction);
     } else if (interaction.options.getSubcommand() === 'redeem') {
       await redeem(interaction);
-    } else if (interaction.options.getSubcommand() === 'take') {
-      await take(interaction);
     } else if (interaction.options.getSubcommand() === 'top') {
       await top(interaction);
-    } else if (interaction.options.getSubcommand() === 'transfer') {
-      await transfer(interaction);
-    } else if (interaction.options.getSubcommand() === 'set') {
-      await set(interaction);
     } else if (interaction.options.getSubcommand() === 'work') {
       await work(interaction);
     }
