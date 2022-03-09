@@ -9,18 +9,19 @@ module.exports = async (interaction) => {
   try {
     const user = await interaction.options.getUser('user');
 
-    logger.debug(i18next.t('commands:credits:general:key', { count: 1 }));
-
     await credits
-      // eslint-disable-next-line max-len
-      .findOne({
-        userId: user ? user.id : interaction.user.id,
-        guildId: interaction.member.guild.id,
-      })
+      .findOne(
+        {
+          userId: user
+            ? user.id
+            : interaction.user.id,
+          guildId: interaction.member.guild.id,
+        },
+      )
       .then(async (data) => {
         if (!data) {
           const embed = {
-            title: `${i18next.t('commands:credits:addons:balance:embed:title')}`,
+            title: 'Balance',
             description: `${user} has no credits.`,
             color: config.colors.success,
             timestamp: new Date(),
@@ -32,8 +33,8 @@ module.exports = async (interaction) => {
         const { balance } = data;
 
         const embed = {
-          title: `${i18next.t('commands:credits:addons:balance:embed:title')}`,
-          description: `${user ? `${user} has` : 'You have'} ${i18next.t('commands:credits:general:credits', { count: balance })}.`,
+          title: 'Balance',
+          description: `${user ? `${user} has` : 'You have'} ${creditNoun(balance)}.`,
           color: config.colors.success,
           timestamp: new Date(),
           footer: { iconURL: config.footer.icon, text: config.footer.text },

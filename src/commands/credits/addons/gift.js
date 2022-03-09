@@ -19,7 +19,7 @@ module.exports = async (interaction) => {
 
     if (user.id === interaction.user.id) {
       const embed = {
-        title: `${i18next.t('commands:credits:addons:gift:embed:title')}`,
+        title: 'Gift',
         description: "You can't pay yourself.",
         color: 0xbb2124,
         timestamp: new Date(),
@@ -29,7 +29,7 @@ module.exports = async (interaction) => {
     }
     if (amount <= 0) {
       const embed = {
-        title: `${i18next.t('commands:credits:addons:gift:embed:title')}`,
+        title: 'Gift',
         description: "You can't pay zero or below.",
         color: 0xbb2124,
         timestamp: new Date(),
@@ -39,7 +39,7 @@ module.exports = async (interaction) => {
     }
     if (data.balance < amount) {
       const embed = {
-        title: `${i18next.t('commands:credits:addons:gift:embed:title')}`,
+        title: 'Gift',
         description: `You have insufficient credits. Your balance is ${data.balance}`,
         color: 0xbb2124,
         timestamp: new Date(),
@@ -56,7 +56,7 @@ module.exports = async (interaction) => {
 
     if (!toUser) {
       const embed = {
-        title: `${i18next.t('commands:credits:addons:gift:embed:title')}`,
+        title: 'Gift',
         description: 'That user has no credits, I can not gift credits to the user',
         color: config.colors.error,
         timestamp: new Date(),
@@ -70,7 +70,7 @@ module.exports = async (interaction) => {
     await saveUser(fromUser, toUser);
 
     const interactionEmbed = {
-      title: `${i18next.t('commands:credits:addons:gift:embed:title')}`,
+      title: 'Gift',
       description: `You sent ${creditNoun(amount)} to ${user}${
         reason ? ` with reason: ${reason}` : ''
       }. Your new balance is ${creditNoun(fromUser.balance)}.`,
@@ -79,7 +79,7 @@ module.exports = async (interaction) => {
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
     const dmEmbed = {
-      title: `${i18next.t('commands:credits:addons:gift:embed:title')}`,
+      title: 'Gift',
       description: `You received ${creditNoun(amount)} from ${interaction.user}${
         reason ? ` with reason: ${reason}` : ''
       }. Your new balance is ${creditNoun(toUser.balance)}.`,
