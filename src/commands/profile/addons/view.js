@@ -63,10 +63,10 @@ module.exports = async (interaction) => {
       },
       color: config.colors.success,
       fields: [
-        { name: `:loudspeaker: ${reputationText}`, value: `${await user.reputation || `${notAvailableText}`}`, inline: true },
+        { name: `:money_with_wings: ${creditsText}`, value: `${await credit.balance || `${notAvailableText}`}`, inline: true },
         { name: `:squeeze_bottle: ${levelText}`, value: `${await experience.level || `${notAvailableText}`}`, inline: true },
         { name: `:squeeze_bottle: ${pointsText}`, value: `${await experience.points || `${notAvailableText}`}`, inline: true },
-        { name: `:money_with_wings: ${creditsText}`, value: `${await credit.balance || `${notAvailableText}`}`, inline: true },
+        { name: `:loudspeaker: ${reputationText}`, value: `${await user.reputation || `${notAvailableText}`}`, inline: true },
         { name: `:rainbow_flag: ${languageCodeText}`, value: `${await user.language || `${notAvailableText}`}`, inline: true },
       ],
       timestamp: new Date(),
