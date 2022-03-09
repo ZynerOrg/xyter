@@ -14,38 +14,97 @@ module.exports = async () => {
               credits_one: '{{count}} credit',
               credits_other: '{{count}} credits',
             },
-            addons: { balance: { embed: { title: 'Credits' } }, gift: { embed: { title: 'Gift' } } },
+            addons: {
+              balance: { embed: { title: 'Credits' } },
+              gift: { embed: { title: 'Gift' } },
+            },
+          },
+          reputation: {
+            addons: {
+              give: {
+                version01: {
+                  embed: {
+                    title: 'Reputation',
+                    description:
+                      'You have given reputation within the last day, you can not repute now!',
+                  },
+                },
+                version02: { embed: { title: 'Reputation', description: 'You have given {{user}} a {{type}} reputation!' } },
+                version03: { embed: { title: 'Reputation', description: 'You can not repute yourself.' } },
+              },
+            },
           },
           profile: {
             addons: {
               view: {
                 embed: {
-                  title: 'Profile', reputation: 'Reputation (Global)', level: 'Level (Global)', points: 'Points (Global)', credits: 'Credits (Guild)', language_code: 'Language Code (Global)',
+                  title: 'Profile',
+                  reputation: 'Reputation (Global)',
+                  level: 'Level (Global)',
+                  points: 'Points (Global)',
+                  credits: 'Credits (Guild)',
+                  language_code: 'Language Code (Global)',
                 },
               },
-              settings: { embed: { title: 'Profile', description: 'Following settings is set', fields: { language: 'Language' } } },
+              settings: {
+                embed: {
+                  title: 'Profile',
+                  description: 'Following settings is set',
+                  fields: { language: 'Language' },
+                },
+              },
             },
           },
         },
       },
       sv: {
-        general: { not_available: 'Ej tillgängligt' },
+        general: { not_available: 'Otillgänglig' },
         commands: {
           credits: {
             general: {
               credits_one: '{{count}} krona',
               credits_other: '{{count}} kronor',
             },
-            addons: { balance: { embed: { title: 'Krediter' } }, gift: { embed: { title: 'Gåva' } } },
+            addons: {
+              balance: { embed: { title: 'Krediter' } },
+              gift: { embed: { title: 'Gåva' } },
+            },
           },
+          reputation: {
+            addons: {
+              give: {
+                version01: {
+                  embed: {
+                    title: 'Omdöme',
+                    description:
+                      'Du har redan gett omdöme inom den senaste dagen, du kan inte ge ett omdöme just nu!',
+                  },
+                },
+                version02: { embed: { title: 'Omdöme', description: 'Du har gett {{user}} ett {{type}} omdöme!' } },
+                version03: { embed: { title: 'Omdöme', description: 'Du kan inte ge dig själv ett omdöme.' } },
+              },
+            },
+          },
+
           profile: {
             addons: {
               view: {
                 embed: {
-                  title: 'Profil', reputation: 'Omdöme (Globalt)', level: 'Nivå (Globalt)', points: 'Poäng (Globalt)', credits: 'Krediter (Server)', language_code: 'Språkkod (Globalt)',
+                  title: 'Profil',
+                  reputation: 'Omdöme (Globalt)',
+                  level: 'Nivå (Globalt)',
+                  points: 'Poäng (Globalt)',
+                  credits: 'Krediter (Server)',
+                  language_code: 'Språkkod (Globalt)',
                 },
               },
-              settings: { embed: { title: 'Profil', description: 'Följande inställningar är satta', fields: { language: 'Språk' } } },
+              settings: {
+                embed: {
+                  title: 'Profil',
+                  description: 'Följande inställningar är satta',
+                  fields: { language: 'Språk' },
+                },
+              },
             },
           },
         },

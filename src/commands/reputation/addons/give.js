@@ -14,15 +14,17 @@ module.exports = async (interaction) => {
   const target = await interaction.options.getUser('target');
   const type = await interaction.options.getString('type');
 
+  // Get user object
+
+  const user = await users.findOne({ userId: interaction.member.id });
+
   // Check if user has a timeout
 
-  const isTimeout = await timeouts.findOne(
-    {
-      guildId: member.guild.id,
-      userId: member.id,
-      timeoutId: 2,
-    },
-  );
+  const isTimeout = await timeouts.findOne({
+    guildId: member.guild.id,
+    userId: member.id,
+    timeoutId: 2,
+  });
 
   // If user is not on timeout
 
@@ -30,23 +32,30 @@ module.exports = async (interaction) => {
     // Do not allow self reputation
 
     if (target.id === interaction.member.id) {
-    // Build embed
+      // Build embed
 
-      const embed = { title: 'Reputation', description: 'You can not repute yourself' };
+      const embed = {
+        title: i18next.t('commands:reputation:addons:give:version03:embed:title', {
+          lng: await user.language,
+        }),
+        description: i18next.t('commands:reputation:addons:give:version02:embed:title', {
+          lng: await user.language,
+        }),
+      };
 
       // Send reply
 
       return interaction.editReply({ embeds: [embed] });
     }
 
-    // Get user object
-
-    const user = await users.findOne({ userId: interaction.member.id });
-
     // Math operators depending on type of reputation
 
-    if (type === 'positive') { user.reputation += 1; }
-    if (type === 'negative') { user.reputation -= 1; }
+    if (type === 'positive') {
+      user.reputation += 1;
+    }
+    if (type === 'negative') {
+      user.reputation -= 1;
+    }
 
     // Save user
 
@@ -55,8 +64,14 @@ module.exports = async (interaction) => {
     // Build embed
 
     const embed = {
-      title: 'Reputation',
-      description: `You have given ${target} a ${type} reputation!`,
+      title: i18next.t('commands:reputation:addons:give:version02:embed:title', {
+        lng: await user.language,
+      }),
+      description: i18next.t('commands:reputation:addons:give:version02:embed:description', {
+        lng: await user.language,
+        user: target,
+        type,
+      }),
       timestamp: new Date(),
       color: config.colors.success,
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -68,17 +83,17 @@ module.exports = async (interaction) => {
 
     // Send debug message
 
-    await logger.debug(`Guild: ${member.guild.id} User: ${member.id} has given ${target.id} a ${type} reputation.`);
+    await logger.debug(
+      `Guild: ${member.guild.id} User: ${member.id} has given ${target.id} a ${type} reputation.`,
+    );
 
     // Create a timeout for the user
 
-    await timeouts.create(
-      {
-        guildId: member.guild.id,
-        userId: member.id,
-        timeoutId: 2,
-      },
-    );
+    await timeouts.create({
+      guildId: member.guild.id,
+      userId: member.id,
+      timeoutId: 2,
+    });
 
     setTimeout(async () => {
       await logger.debug(
@@ -95,8 +110,12 @@ module.exports = async (interaction) => {
     }, 86400000);
   } else {
     const embed = {
-      title: 'Reputation',
-      description: 'You have given reputation within the last day, you can not repute now!',
+      title: i18next.t('commands:reputation:addons:give:version01:embed:title', {
+        lng: await user.language,
+      }),
+      description: i18next.t('commands:reputation:addons:give:version01:embed:description', {
+        lng: await user.language,
+      }),
       timestamp: new Date(),
       color: config.colors.error,
       footer: { iconURL: config.footer.icon, text: config.footer.text },

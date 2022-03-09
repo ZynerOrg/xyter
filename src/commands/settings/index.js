@@ -41,7 +41,7 @@ module.exports = {
           .setName('language')
           .setDescription('Configure your language')
           .addChoice('English', 'en')
-          .addChoice('Swedish', 'se')))),
+          .addChoice('Swedish', 'sv')))),
   async execute(interaction) {
     if (interaction.options.getSubcommandGroup() === 'guild') {
       await guild(interaction);
