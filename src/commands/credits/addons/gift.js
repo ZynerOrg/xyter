@@ -11,7 +11,7 @@ module.exports = async (interaction) => {
     const user = await interaction.options.getUser('user');
     const amount = await interaction.options.getInteger('amount');
     const reason = await interaction.options.getString('reason');
-    // eslint-disable-next-line max-len
+
     const data = await credits.findOne({
       userId: interaction.user.id,
       guildId: interaction.member.guild.id,

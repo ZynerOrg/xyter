@@ -36,5 +36,9 @@ module.exports = async (interaction) => {
 
   // Send debug message
 
-  await logger.debug(`Guild: ${member.guild.id} User: ${member.id} executed /${interaction.commandName} ${interaction.options.getSubcommandGroup()} ${interaction.options.getSubcommand()}`);
+  await logger.debug(
+    `Guild: ${member.guild.id} User: ${member.id} executed /${
+      interaction.commandName
+    } ${interaction.options.getSubcommandGroup()} ${interaction.options.getSubcommand()}`
+  );
 };

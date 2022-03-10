@@ -49,6 +49,8 @@ module.exports = async (interaction) => {
 
     // Send debug message
 
-    await logger.debug(`Guild: ${member.guild.id} User: ${member.id} has changed appearance settings.`);
+    await logger.debug(
+      `Guild: ${member.guild.id} User: ${member.id} has changed appearance settings.`
+    );
   });
 };

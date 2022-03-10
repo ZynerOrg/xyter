@@ -34,10 +34,7 @@ module.exports = async (interaction) => {
 
   // Get fromUser object
 
-  const fromUser = await credits.findOne({
-    userId: from.id,
-    guildId: interaction.member.guild.id,
-  });
+  const fromUser = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
 
   // Get toUser object
 
@@ -117,6 +114,10 @@ module.exports = async (interaction) => {
 
     // Send debug message
 
-    await logger.debug(`Guild: ${member.guild.id} User: ${member.id} transferred ${creditNoun(amount)} from ${from.id} to ${to.id}.`);
+    await logger.debug(
+      `Guild: ${member.guild.id} User: ${member.id} transferred ${creditNoun(amount)} from ${
+        from.id
+      } to ${to.id}.`
+    );
   });
 };

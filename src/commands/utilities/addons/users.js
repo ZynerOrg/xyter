@@ -16,7 +16,9 @@ module.exports = async (interaction) => {
     // eslint-disable-next-line max-len
     const userList = await interaction.client.users.cache.filter((user) => !user.bot);
 
-    userList.map((user) => { logger.info(user); });
+    userList.map((user) => {
+      logger.info(user);
+    });
 
     // await interaction.client.guilds.cache.get(interaction.member.guild.id).then((user) => logger.info(user));
 

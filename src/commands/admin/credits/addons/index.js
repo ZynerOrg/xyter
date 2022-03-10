@@ -4,5 +4,8 @@ const take = require('./take');
 const transfer = require('./transfer');
 
 module.exports = {
-  give, set, take, transfer,
+  give,
+  set,
+  take,
+  transfer,
 };

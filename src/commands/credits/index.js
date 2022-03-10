@@ -11,33 +11,43 @@ const top = require('./addons/top');
 const work = require('./addons/work');
 
 module.exports = {
-  permissions: new Permissions([
-    Permissions.FLAGS.MANAGE_MESSAGES,
-    Permissions.FLAGS.ADMINISTRATOR,
-  ]),
-  guildOnly: true,
-  botAdminOnly: false,
   data: new SlashCommandBuilder()
     .setName('credits')
     .setDescription('Manage your credits.')
-    .addSubcommand((subcommand) => subcommand
-      .setName('balance')
-      .setDescription("Check a user's balance.")
-      .addUserOption((option) => option
-        .setName('user')
-        .setDescription('The user whose balance you want to check.')
-        .setRequired(false)))
-    .addSubcommand((subcommand) => subcommand
-      .setName('redeem')
-      .setDescription('Redeem your credits.')
-      .addIntegerOption((option) => option.setName('amount').setDescription('How much credit you want to withdraw.')))
-    .addSubcommand((subcommand) => subcommand
-      .setName('gift')
-      .setDescription('Gift someone credits from your credits.')
-      .addUserOption((option) => option.setName('user').setDescription('The user you want to pay.').setRequired(true))
-      .addIntegerOption((option) => option.setName('amount').setDescription('The amount you will pay.').setRequired(true))
-      .addStringOption((option) => option.setName('reason').setDescription('Your reason.')))
-    .addSubcommand((subcommand) => subcommand.setName('top').setDescription('Check the top balance.'))
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('balance')
+        .setDescription("Check a user's balance.")
+        .addUserOption((option) =>
+          option
+            .setName('user')
+            .setDescription('The user whose balance you want to check.')
+            .setRequired(false)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('redeem')
+        .setDescription('Redeem your credits.')
+        .addIntegerOption((option) =>
+          option.setName('amount').setDescription('How much credit you want to withdraw.')
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('gift')
+        .setDescription('Gift someone credits from your credits.')
+        .addUserOption((option) =>
+          option.setName('user').setDescription('The user you want to pay.').setRequired(true)
+        )
+        .addIntegerOption((option) =>
+          option.setName('amount').setDescription('The amount you will pay.').setRequired(true)
+        )
+        .addStringOption((option) => option.setName('reason').setDescription('Your reason.'))
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName('top').setDescription('Check the top balance.')
+    )
     .addSubcommand((subcommand) => subcommand.setName('work').setDescription('Work for credits.')),
   async execute(interaction) {
     const guild = await guilds.findOne({ guildId: interaction.member.guild.id });

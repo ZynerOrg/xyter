@@ -84,7 +84,7 @@ module.exports = async (interaction) => {
     // Send debug message
 
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} has given ${target.id} a ${type} reputation.`,
+      `Guild: ${member.guild.id} User: ${member.id} has given ${target.id} a ${type} reputation.`
     );
 
     // Create a timeout for the user
@@ -97,7 +97,7 @@ module.exports = async (interaction) => {
 
     setTimeout(async () => {
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${member.id} has not repute within last day, reputation can be given`,
+        `Guild: ${member.guild.id} User: ${member.id} has not repute within last day, reputation can be given`
       );
 
       // When timeout is out, remove it from the database
@@ -124,7 +124,7 @@ module.exports = async (interaction) => {
     await interaction.editReply({ embeds: [embed] });
 
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} has repute within last day, no reputation can be given`,
+      `Guild: ${member.guild.id} User: ${member.id} has repute within last day, no reputation can be given`
     );
   }
 };

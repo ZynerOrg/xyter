@@ -11,13 +11,11 @@ module.exports = async (interaction) => {
 
   // Check if user has a timeout
 
-  const isTimeout = await timeouts.findOne(
-    {
-      guildId: member.guild.id,
-      userId: member.id,
-      timeoutId: 3,
-    },
-  );
+  const isTimeout = await timeouts.findOne({
+    guildId: member.guild.id,
+    userId: member.id,
+    timeoutId: 3,
+  });
 
   // If user is not on timeout
 
@@ -32,7 +30,7 @@ module.exports = async (interaction) => {
           guildId: interaction.member.guild.id,
         },
         { $inc: { balance: creditsEarned } },
-        { new: true, upsert: true },
+        { new: true, upsert: true }
       )
       .then(async () => {
         logger.debug(`Credits added to user: ${interaction.member.id}`);
@@ -49,17 +47,17 @@ module.exports = async (interaction) => {
 
     // Create a timeout for the user
 
-    await timeouts.create(
-      {
-        guildId: member.guild.id,
-        userId: member.id,
-        timeoutId: 3,
-      },
-    );
+    await timeouts.create({
+      guildId: member.guild.id,
+      userId: member.id,
+      timeoutId: 3,
+    });
 
     setTimeout(async () => {
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${member.id} has not worked within the last ${guild.work.timeout / 1000} seconds, work can be done`,
+        `Guild: ${member.guild.id} User: ${member.id} has not worked within the last ${
+          guild.work.timeout / 1000
+        } seconds, work can be done`
       );
 
       // When timeout is out, remove it from the database
@@ -73,7 +71,9 @@ module.exports = async (interaction) => {
   } else {
     const embed = {
       title: 'Work',
-      description: `You have worked within the last ${guild.work.timeout / 1000} seconds, you can not work now!`,
+      description: `You have worked within the last ${
+        guild.work.timeout / 1000
+      } seconds, you can not work now!`,
       timestamp: new Date(),
       color: config.colors.error,
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -82,7 +82,7 @@ module.exports = async (interaction) => {
     await interaction.editReply({ embeds: [embed] });
 
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} has worked within last day, no work can be done`,
+      `Guild: ${member.guild.id} User: ${member.id} has worked within last day, no work can be done`
     );
   }
 };

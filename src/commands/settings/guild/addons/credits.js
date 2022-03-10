@@ -39,24 +39,13 @@ module.exports = async (interaction) => {
 
   // Modify values
 
-  guild.credits.status = status !== null
-    ? status
-    : guild.credits.status;
-  guild.credits.rate = rate !== null
-    ? rate
-    : guild.credits.rate;
-  guild.credits.timeout = timeout !== null
-    ? timeout
-    : guild.credits.timeout;
-  guild.credits.workRate = workRate !== null
-    ? workRate
-    : guild.credits.workRate;
-  guild.credits.workTimeout = workTimeout !== null
-    ? workTimeout
-    : guild.credits.workTimeout;
-  guild.credits.minimumLength = minimumLength !== null
-    ? minimumLength
-    : guild.credits.minimumLength;
+  guild.credits.status = status !== null ? status : guild.credits.status;
+  guild.credits.rate = rate !== null ? rate : guild.credits.rate;
+  guild.credits.timeout = timeout !== null ? timeout : guild.credits.timeout;
+  guild.credits.workRate = workRate !== null ? workRate : guild.credits.workRate;
+  guild.credits.workTimeout = workTimeout !== null ? workTimeout : guild.credits.workTimeout;
+  guild.credits.minimumLength =
+    minimumLength !== null ? minimumLength : guild.credits.minimumLength;
 
   // Save guild
 

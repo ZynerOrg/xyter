@@ -6,5 +6,10 @@ const apis = require('./apiSchema');
 const timeouts = require('./timeoutSchema');
 
 module.exports = {
-  credits, experiences, users, guilds, apis, timeouts,
+  credits,
+  experiences,
+  users,
+  guilds,
+  apis,
+  timeouts,
 };

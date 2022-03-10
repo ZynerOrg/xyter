@@ -16,7 +16,7 @@ const timeoutSchema = new mongoose.Schema(
     },
     timeoutId: { type: mongoose.SchemaTypes.Number },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('timeout', timeoutSchema);

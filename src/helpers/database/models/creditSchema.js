@@ -22,7 +22,7 @@ const creditSchema = new mongoose.Schema(
       index: false,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('credit', creditSchema);

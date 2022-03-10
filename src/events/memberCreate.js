@@ -9,7 +9,6 @@ module.exports = {
     //   .findOne({ guildId: guild.id })
     //   .then(logger.debug(`Found guild: ${guild.id}`))
     //   .catch(logger.error);
-
     // if (!guildExist) {
     //   await guilds
     //     .create({ guildId: guild.id })

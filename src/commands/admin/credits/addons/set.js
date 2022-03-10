@@ -77,7 +77,7 @@ module.exports = async (interaction) => {
     await logger.debug(
       `Administrator: ${interaction.user.username} set ${
         amount <= 1 ? `${amount} credit` : `${amount} credits`
-      } on ${user.username}`,
+      } on ${user.username}`
     );
     // Send reply
 
@@ -85,6 +85,8 @@ module.exports = async (interaction) => {
 
     // Send debug message
 
-    await logger.debug(`Guild: ${member.guild.id} User: ${member.id} set ${user.id} to ${creditNoun(amount)}.`);
+    await logger.debug(
+      `Guild: ${member.guild.id} User: ${member.id} set ${user.id} to ${creditNoun(amount)}.`
+    );
   });
 };

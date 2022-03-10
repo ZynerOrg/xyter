@@ -31,27 +31,27 @@ module.exports = async (interaction) => {
 
   // Update API credentials
 
-  await apis.findOneAndUpdate(
-    { guildId: member.guild.id },
-    { url, token },
-    { new: true, upsert: true },
-  ).then(async () => {
-    // Build embed
+  await apis
+    .findOneAndUpdate({ guildId: member.guild.id }, { url, token }, { new: true, upsert: true })
+    .then(async () => {
+      // Build embed
 
-    const embed = {
-      title: 'Settings',
-      color: config.colors.success,
-      description: 'Pterodactyl settings is saved!',
-      timestamp: new Date(),
-      footer: { iconURL: config.footer.icon, text: config.footer.text },
-    };
+      const embed = {
+        title: 'Settings',
+        color: config.colors.success,
+        description: 'Pterodactyl settings is saved!',
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
 
-    // Send reply
+      // Send reply
 
-    await interaction.editReply({ embeds: [embed], ephemeral: true });
+      await interaction.editReply({ embeds: [embed], ephemeral: true });
 
-    // Send debug message
+      // Send debug message
 
-    await logger.debug(`Guild: ${member.guild.id} User: ${member.id} has changed api credentials.`);
-  });
+      await logger.debug(
+        `Guild: ${member.guild.id} User: ${member.id} has changed api credentials.`
+      );
+    });
 };

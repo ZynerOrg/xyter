@@ -2,9 +2,7 @@ const { Permissions } = require('discord.js');
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
 
-const {
-  give, take, set, transfer,
-} = require('./addons');
+const { give, take, set, transfer } = require('./addons');
 
 module.exports = async (interaction) => {
   // Destructure member
@@ -46,5 +44,9 @@ module.exports = async (interaction) => {
 
   // Send debug message
 
-  await logger.debug(`Guild: ${member.guild.id} User: ${member.id} executed /${interaction.commandName} ${interaction.options.getSubcommandGroup()} ${interaction.options.getSubcommand()}`);
+  await logger.debug(
+    `Guild: ${member.guild.id} User: ${member.id} executed /${
+      interaction.commandName
+    } ${interaction.options.getSubcommandGroup()} ${interaction.options.getSubcommand()}`
+  );
 };

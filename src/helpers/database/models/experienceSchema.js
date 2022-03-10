@@ -29,7 +29,7 @@ const experienceSchema = new mongoose.Schema(
       index: false,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('experience', experienceSchema);

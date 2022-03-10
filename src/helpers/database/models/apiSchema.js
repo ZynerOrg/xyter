@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const apiSchema = new mongoose.Schema(
   {
-
     guildId: {
       type: mongoose.SchemaTypes.Decimal128,
       required: true,
@@ -22,7 +21,7 @@ const apiSchema = new mongoose.Schema(
       index: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('api', apiSchema);

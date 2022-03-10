@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
     },
     reputation: { type: mongoose.SchemaTypes.Number, default: 0 },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('user', userSchema);
