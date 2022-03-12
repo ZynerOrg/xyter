@@ -1,6 +1,12 @@
 const logger = require('../handlers/logger');
 
-const { users, guilds, experiences, credits, timeouts } = require('../helpers/database/models');
+const {
+  users,
+  guilds,
+  experiences,
+  credits,
+  timeouts,
+} = require('../helpers/database/models');
 
 module.exports = {
   name: 'messageCreate',
@@ -15,7 +21,10 @@ module.exports = {
 
     // Create user if not already created
 
-    await users.findOne({ userId: message.author.id }, { new: true, upsert: true });
+    await users.findOne(
+      { userId: message.author.id },
+      { new: true, upsert: true }
+    );
 
     // Stop if message content is shorter than guild configured minimum length
 
@@ -44,7 +53,9 @@ module.exports = {
           { new: true, upsert: true }
         )
         .then(async () =>
-          logger.debug(`Guild: ${message.guild.id} Credits added to user: ${message.author.id}`)
+          logger.debug(
+            `Guild: ${message.guild.id} Credits added to user: ${message.author.id}`
+          )
         )
         .catch(async (err) => {
           await logger.error(err);
@@ -59,7 +70,9 @@ module.exports = {
           { new: true, upsert: true }
         )
         .then(async () =>
-          logger.debug(`Guild: ${message.guild.id} Points added to user: ${message.author.id}`)
+          logger.debug(
+            `Guild: ${message.guild.id} Points added to user: ${message.author.id}`
+          )
         )
         .catch(async (err) => {
           await logger.error(err);
@@ -75,7 +88,9 @@ module.exports = {
 
       setTimeout(async () => {
         await logger.debug(
-          `Guild: ${message.guild.id} User: ${message.author.id} has not talked within last ${
+          `Guild: ${message.guild.id} User: ${
+            message.author.id
+          } has not talked within last ${
             guild.credits.timeout / 1000
           } seconds, credits can be given`
         );
@@ -90,7 +105,9 @@ module.exports = {
       }, guild.credits.timeout);
     } else {
       await logger.debug(
-        `Guild: ${message.guild.id} User: ${message.author.id} has talked within last ${
+        `Guild: ${message.guild.id} User: ${
+          message.author.id
+        } has talked within last ${
           guild.credits.timeout / 1000
         } seconds, no credits given`
       );

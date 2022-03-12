@@ -17,10 +17,16 @@ module.exports = {
             .setName('pterodactyl')
             .setDescription('Controlpanel.gg')
             .addStringOption((option) =>
-              option.setName('url').setDescription('The api url').setRequired(true)
+              option
+                .setName('url')
+                .setDescription('The api url')
+                .setRequired(true)
             )
             .addStringOption((option) =>
-              option.setName('token').setDescription('The api token').setRequired(true)
+              option
+                .setName('token')
+                .setDescription('The api token')
+                .setRequired(true)
             )
         )
         .addSubcommand((command) =>
@@ -28,10 +34,14 @@ module.exports = {
             .setName('credits')
             .setDescription('Credits')
             .addBooleanOption((option) =>
-              option.setName('status').setDescription('Should credits be enabled?')
+              option
+                .setName('status')
+                .setDescription('Should credits be enabled?')
             )
             .addNumberOption((option) =>
-              option.setName('rate').setDescription('Amount of credits per message.')
+              option
+                .setName('rate')
+                .setDescription('Amount of credits per message.')
             )
             .addNumberOption((option) =>
               option
@@ -39,17 +49,23 @@ module.exports = {
                 .setDescription('Minimum length of message to earn credits.')
             )
             .addNumberOption((option) =>
-              option.setName('work-rate').setDescription('Maximum amount of credits on work.')
+              option
+                .setName('work-rate')
+                .setDescription('Maximum amount of credits on work.')
             )
             .addNumberOption((option) =>
               option
                 .setName('work-timeout')
-                .setDescription('Timeout between work schedules (milliseconds).')
+                .setDescription(
+                  'Timeout between work schedules (milliseconds).'
+                )
             )
             .addNumberOption((option) =>
               option
                 .setName('timeout')
-                .setDescription('Timeout between earning credits (milliseconds).')
+                .setDescription(
+                  'Timeout between earning credits (milliseconds).'
+                )
             )
         )
     )

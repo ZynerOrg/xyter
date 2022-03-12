@@ -11,7 +11,9 @@ module.exports = {
         .setName('view')
         .setDescription('View a profile.')
         .addUserOption((option) =>
-          option.setName('target').setDescription('The profile you wish to view')
+          option
+            .setName('target')
+            .setDescription('The profile you wish to view')
         )
     ),
   async execute(interaction) {

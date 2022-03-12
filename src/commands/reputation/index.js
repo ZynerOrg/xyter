@@ -13,7 +13,10 @@ module.exports = {
         .setName('give')
         .setDescription('Give reputation for a user')
         .addUserOption((option) =>
-          option.setName('target').setDescription('The user you want to repute.').setRequired(true)
+          option
+            .setName('target')
+            .setDescription('The user you want to repute.')
+            .setRequired(true)
         )
         .addStringOption((option) =>
           option

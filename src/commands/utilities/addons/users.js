@@ -8,13 +8,16 @@ module.exports = async (interaction) => {
     if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
       const embed = {
         title: 'Users failed',
-        description: 'You need to have permission to manage this guild (MANAGE_GUILD)',
+        description:
+          'You need to have permission to manage this guild (MANAGE_GUILD)',
       };
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
 
     // eslint-disable-next-line max-len
-    const userList = await interaction.client.users.cache.filter((user) => !user.bot);
+    const userList = await interaction.client.users.cache.filter(
+      (user) => !user.bot
+    );
 
     userList.map((user) => {
       logger.info(user);

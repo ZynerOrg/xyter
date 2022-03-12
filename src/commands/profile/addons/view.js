@@ -2,7 +2,11 @@ const i18next = require('i18next');
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
 
-const { users, credits, experiences } = require('../../../helpers/database/models');
+const {
+  users,
+  credits,
+  experiences,
+} = require('../../../helpers/database/models');
 
 module.exports = async (interaction) => {
   try {
@@ -11,7 +15,9 @@ module.exports = async (interaction) => {
     // Options
     const target = await interaction.options.getUser('target');
 
-    const discordUser = await interaction.client.users.fetch(`${target ? target.id : member.id}`);
+    const discordUser = await interaction.client.users.fetch(
+      `${target ? target.id : member.id}`
+    );
 
     // Databases
     //   Fetch user from user
@@ -32,7 +38,9 @@ module.exports = async (interaction) => {
     if (user === null || experience === null || credit === null) {
       const embed = {
         title: 'Profile',
-        description: `${target || 'You'} have to write something before viewing ${
+        description: `${
+          target || 'You'
+        } have to write something before viewing ${
           target ? 'their' : 'your'
         } profile!`,
         timestamp: new Date(),
@@ -44,22 +52,33 @@ module.exports = async (interaction) => {
     }
 
     // Language variables
-    const notAvailableText = i18next.t('general:not_available', { lng: await user.language });
-    const reputationText = i18next.t('commands:profile:addons:view:embed:reputation', {
+    const notAvailableText = i18next.t('general:not_available', {
       lng: await user.language,
     });
+    const reputationText = i18next.t(
+      'commands:profile:addons:view:embed:reputation',
+      {
+        lng: await user.language,
+      }
+    );
     const levelText = i18next.t('commands:profile:addons:view:embed:level', {
       lng: await user.language,
     });
     const pointsText = i18next.t('commands:profile:addons:view:embed:points', {
       lng: await user.language,
     });
-    const creditsText = i18next.t('commands:profile:addons:view:embed:credits', {
-      lng: await user.language,
-    });
-    const languageCodeText = i18next.t('commands:profile:addons:view:embed:language_code', {
-      lng: await user.language,
-    });
+    const creditsText = i18next.t(
+      'commands:profile:addons:view:embed:credits',
+      {
+        lng: await user.language,
+      }
+    );
+    const languageCodeText = i18next.t(
+      'commands:profile:addons:view:embed:language_code',
+      {
+        lng: await user.language,
+      }
+    );
 
     // Create embed
     const embed = {

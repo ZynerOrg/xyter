@@ -6,7 +6,9 @@ module.exports = {
     const { client } = guild;
     await guilds.findOne({ guildId: guild.id }, { new: true, upsert: true });
     await client.user.setPresence({
-      activities: [{ type: 'WATCHING', name: `${client.guilds.cache.size} guilds` }],
+      activities: [
+        { type: 'WATCHING', name: `${client.guilds.cache.size} guilds` },
+      ],
       status: 'online',
     });
   },

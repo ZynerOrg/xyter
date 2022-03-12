@@ -32,11 +32,15 @@ module.exports = async () => {
                 version02: {
                   embed: {
                     title: 'Reputation',
-                    description: 'You have given {{user}} a {{type}} reputation!',
+                    description:
+                      'You have given {{user}} a {{type}} reputation!',
                   },
                 },
                 version03: {
-                  embed: { title: 'Reputation', description: 'You can not repute yourself.' },
+                  embed: {
+                    title: 'Reputation',
+                    description: 'You can not repute yourself.',
+                  },
                 },
               },
             },
@@ -94,7 +98,10 @@ module.exports = async () => {
                   },
                 },
                 version03: {
-                  embed: { title: 'Omdöme', description: 'Du kan inte ge dig själv ett omdöme.' },
+                  embed: {
+                    title: 'Omdöme',
+                    description: 'Du kan inte ge dig själv ett omdöme.',
+                  },
                 },
               },
             },

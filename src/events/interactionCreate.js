@@ -13,7 +13,10 @@ module.exports = {
 
       if (!command) return;
 
-      await guilds.findOne({ guildId: member.guild.id }, { new: true, upsert: true });
+      await guilds.findOne(
+        { guildId: member.guild.id },
+        { new: true, upsert: true }
+      );
 
       try {
         await interaction.deferReply({

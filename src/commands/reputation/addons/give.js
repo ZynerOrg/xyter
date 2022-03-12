@@ -35,12 +35,18 @@ module.exports = async (interaction) => {
       // Build embed
 
       const embed = {
-        title: i18next.t('commands:reputation:addons:give:version03:embed:title', {
-          lng: await user.language,
-        }),
-        description: i18next.t('commands:reputation:addons:give:version02:embed:title', {
-          lng: await user.language,
-        }),
+        title: i18next.t(
+          'commands:reputation:addons:give:version03:embed:title',
+          {
+            lng: await user.language,
+          }
+        ),
+        description: i18next.t(
+          'commands:reputation:addons:give:version02:embed:title',
+          {
+            lng: await user.language,
+          }
+        ),
       };
 
       // Send reply
@@ -64,14 +70,20 @@ module.exports = async (interaction) => {
     // Build embed
 
     const embed = {
-      title: i18next.t('commands:reputation:addons:give:version02:embed:title', {
-        lng: await user.language,
-      }),
-      description: i18next.t('commands:reputation:addons:give:version02:embed:description', {
-        lng: await user.language,
-        user: target,
-        type,
-      }),
+      title: i18next.t(
+        'commands:reputation:addons:give:version02:embed:title',
+        {
+          lng: await user.language,
+        }
+      ),
+      description: i18next.t(
+        'commands:reputation:addons:give:version02:embed:description',
+        {
+          lng: await user.language,
+          user: target,
+          type,
+        }
+      ),
       timestamp: new Date(),
       color: config.colors.success,
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -110,12 +122,18 @@ module.exports = async (interaction) => {
     }, 86400000);
   } else {
     const embed = {
-      title: i18next.t('commands:reputation:addons:give:version01:embed:title', {
-        lng: await user.language,
-      }),
-      description: i18next.t('commands:reputation:addons:give:version01:embed:description', {
-        lng: await user.language,
-      }),
+      title: i18next.t(
+        'commands:reputation:addons:give:version01:embed:title',
+        {
+          lng: await user.language,
+        }
+      ),
+      description: i18next.t(
+        'commands:reputation:addons:give:version01:embed:description',
+        {
+          lng: await user.language,
+        }
+      ),
       timestamp: new Date(),
       color: config.colors.error,
       footer: { iconURL: config.footer.icon, text: config.footer.text },

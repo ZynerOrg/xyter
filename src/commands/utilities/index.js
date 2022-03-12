@@ -11,7 +11,9 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('lookup')
-        .setDescription('Lookup a domain or ip. (Request sent over HTTP, proceed with caution!)')
+        .setDescription(
+          'Lookup a domain or ip. (Request sent over HTTP, proceed with caution!)'
+        )
         .addStringOption((option) =>
           option
             .setName('target')

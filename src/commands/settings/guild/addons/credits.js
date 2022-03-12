@@ -42,8 +42,10 @@ module.exports = async (interaction) => {
   guild.credits.status = status !== null ? status : guild.credits.status;
   guild.credits.rate = rate !== null ? rate : guild.credits.rate;
   guild.credits.timeout = timeout !== null ? timeout : guild.credits.timeout;
-  guild.credits.workRate = workRate !== null ? workRate : guild.credits.workRate;
-  guild.credits.workTimeout = workTimeout !== null ? workTimeout : guild.credits.workTimeout;
+  guild.credits.workRate =
+    workRate !== null ? workRate : guild.credits.workRate;
+  guild.credits.workTimeout =
+    workTimeout !== null ? workTimeout : guild.credits.workTimeout;
   guild.credits.minimumLength =
     minimumLength !== null ? minimumLength : guild.credits.minimumLength;
 
@@ -86,6 +88,8 @@ module.exports = async (interaction) => {
 
     // Send debug message
 
-    await logger.debug(`Guild: ${member.guild.id} User: ${member.id} has changed credit details.`);
+    await logger.debug(
+      `Guild: ${member.guild.id} User: ${member.id} has changed credit details.`
+    );
   });
 };

@@ -32,7 +32,11 @@ module.exports = async (interaction) => {
   // Update API credentials
 
   await apis
-    .findOneAndUpdate({ guildId: member.guild.id }, { url, token }, { new: true, upsert: true })
+    .findOneAndUpdate(
+      { guildId: member.guild.id },
+      { url, token },
+      { new: true, upsert: true }
+    )
     .then(async () => {
       // Build embed
 
