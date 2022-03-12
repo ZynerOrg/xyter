@@ -45,14 +45,18 @@ module.exports = async (interaction) => {
 
   // Get toUser object
 
-  const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
+  const toUser = await credits.findOne({
+    userId: user.id,
+    guildId: interaction.member.guild.id,
+  });
 
   // Stop if user has zero or below credits
 
   if (!toUser) {
     const embed = {
       title: 'Take',
-      description: 'That user has no credits, I can not take credits from the user',
+      description:
+        'That user has no credits, I can not take credits from the user',
       color: config.colors.error,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -86,7 +90,9 @@ module.exports = async (interaction) => {
     // Send debug message
 
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} took ${creditNoun(amount)} from ${user.id}.`
+      `Guild: ${member.guild.id} User: ${member.id} took ${creditNoun(
+        amount
+      )} from ${user.id}.`
     );
   });
 };

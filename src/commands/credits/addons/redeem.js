@@ -27,7 +27,9 @@ module.exports = async (interaction) => {
       userId: interaction.user.id,
       guildId: interaction.member.guild.id,
     });
-    const dmUser = interaction.client.users.cache.get(interaction.member.user.id);
+    const dmUser = interaction.client.users.cache.get(
+      interaction.member.user.id
+    );
 
     if ((amount || user.balance) < 100) {
       const embed = {
@@ -61,7 +63,9 @@ module.exports = async (interaction) => {
     }
     const code = uuidv4();
 
-    const apiCredentials = await apis.findOne({ guildId: interaction.member.guild.id });
+    const apiCredentials = await apis.findOne({
+      guildId: interaction.member.guild.id,
+    });
 
     const api = axios.create({
       baseURL: apiCredentials.url,
@@ -78,7 +82,9 @@ module.exports = async (interaction) => {
       .then(async () => {
         const dmEmbed = {
           title: 'Redeem',
-          description: `Your new balance is ${user.balance - (amount || user.balance)}.`,
+          description: `Your new balance is ${
+            user.balance - (amount || user.balance)
+          }.`,
           fields: [
             { name: 'Code', value: `${code}`, inline: true },
             {
@@ -102,9 +108,14 @@ module.exports = async (interaction) => {
 
         await user.save();
 
-        await logger.debug(`User: ${user.username} redeemed: ${creditNoun(amount)}`);
+        await logger.debug(
+          `User: ${user.username} redeemed: ${creditNoun(amount)}`
+        );
         await dmUser.send({ embeds: [dmEmbed] });
-        await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
+        await interaction.editReply({
+          embeds: [interactionEmbed],
+          ephemeral: true,
+        });
       })
       .catch(async (e) => {
         await logger.error(e);

@@ -1,6 +1,10 @@
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
-const { guilds, credits, timeouts } = require('../../../helpers/database/models');
+const {
+  guilds,
+  credits,
+  timeouts,
+} = require('../../../helpers/database/models');
 const creditNoun = require('../../../helpers/creditNoun');
 
 const workedRecently = new Set();
@@ -20,7 +24,9 @@ module.exports = async (interaction) => {
   // If user is not on timeout
 
   if (!isTimeout) {
-    const guild = await guilds.findOne({ guildId: interaction.member.guild.id });
+    const guild = await guilds.findOne({
+      guildId: interaction.member.guild.id,
+    });
 
     const creditsEarned = Math.floor(Math.random() * guild.credits.workRate);
     await credits
@@ -55,7 +61,9 @@ module.exports = async (interaction) => {
 
     setTimeout(async () => {
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${member.id} has not worked within the last ${
+        `Guild: ${member.guild.id} User: ${
+          member.id
+        } has not worked within the last ${
           guild.work.timeout / 1000
         } seconds, work can be done`
       );

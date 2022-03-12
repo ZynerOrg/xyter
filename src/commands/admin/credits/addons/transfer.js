@@ -34,18 +34,25 @@ module.exports = async (interaction) => {
 
   // Get fromUser object
 
-  const fromUser = await credits.findOne({ userId: from.id, guildId: interaction.member.guild.id });
+  const fromUser = await credits.findOne({
+    userId: from.id,
+    guildId: interaction.member.guild.id,
+  });
 
   // Get toUser object
 
-  const toUser = await credits.findOne({ userId: to.id, guildId: interaction.member.guild.id });
+  const toUser = await credits.findOne({
+    userId: to.id,
+    guildId: interaction.member.guild.id,
+  });
 
   // Stop if fromUser has zero credits or below
 
   if (!fromUser) {
     const embed = {
       title: 'Transfer',
-      description: 'That user has no credits, I can not transfer credits from the user',
+      description:
+        'That user has no credits, I can not transfer credits from the user',
       color: config.colors.error,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -58,7 +65,8 @@ module.exports = async (interaction) => {
   if (!toUser) {
     const embed = {
       title: 'Transfer',
-      description: 'That user has no credits, I can not transfer credits to the user',
+      description:
+        'That user has no credits, I can not transfer credits to the user',
       color: config.colors.error,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -115,9 +123,9 @@ module.exports = async (interaction) => {
     // Send debug message
 
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} transferred ${creditNoun(amount)} from ${
-        from.id
-      } to ${to.id}.`
+      `Guild: ${member.guild.id} User: ${member.id} transferred ${creditNoun(
+        amount
+      )} from ${from.id} to ${to.id}.`
     );
   });
 };

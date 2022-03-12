@@ -16,10 +16,16 @@ module.exports = {
             .setName('give')
             .setDescription('Give credits to a user')
             .addUserOption((option) =>
-              option.setName('user').setDescription('The user you want to pay.').setRequired(true)
+              option
+                .setName('user')
+                .setDescription('The user you want to pay.')
+                .setRequired(true)
             )
             .addIntegerOption((option) =>
-              option.setName('amount').setDescription('The amount you will pay.').setRequired(true)
+              option
+                .setName('amount')
+                .setDescription('The amount you will pay.')
+                .setRequired(true)
             )
         )
         .addSubcommand((command) =>
@@ -33,7 +39,10 @@ module.exports = {
                 .setRequired(true)
             )
             .addIntegerOption((option) =>
-              option.setName('amount').setDescription('The amount you will set.').setRequired(true)
+              option
+                .setName('amount')
+                .setDescription('The amount you will set.')
+                .setRequired(true)
             )
         )
         .addSubcommand((command) =>
@@ -47,7 +56,10 @@ module.exports = {
                 .setRequired(true)
             )
             .addIntegerOption((option) =>
-              option.setName('amount').setDescription('The amount you will take.').setRequired(true)
+              option
+                .setName('amount')
+                .setDescription('The amount you will take.')
+                .setRequired(true)
             )
         )
         .addSubcommand((command) =>

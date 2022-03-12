@@ -30,7 +30,9 @@ module.exports = async (interaction) => {
 
         const embed = {
           title: 'Balance',
-          description: `${user ? `${user} has` : 'You have'} ${creditNoun(balance)}.`,
+          description: `${user ? `${user} has` : 'You have'} ${creditNoun(
+            balance
+          )}.`,
           color: config.colors.success,
           timestamp: new Date(),
           footer: { iconURL: config.footer.icon, text: config.footer.text },

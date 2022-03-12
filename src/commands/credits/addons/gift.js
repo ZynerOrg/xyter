@@ -52,12 +52,16 @@ module.exports = async (interaction) => {
       userId: interaction.user.id,
       guildId: interaction.member.guild.id,
     });
-    const toUser = await credits.findOne({ userId: user.id, guildId: interaction.member.guild.id });
+    const toUser = await credits.findOne({
+      userId: user.id,
+      guildId: interaction.member.guild.id,
+    });
 
     if (!toUser) {
       const embed = {
         title: 'Gift',
-        description: 'That user has no credits, I can not gift credits to the user',
+        description:
+          'That user has no credits, I can not gift credits to the user',
         color: config.colors.error,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -80,7 +84,9 @@ module.exports = async (interaction) => {
     };
     const dmEmbed = {
       title: 'Gift',
-      description: `You received ${creditNoun(amount)} from ${interaction.user}${
+      description: `You received ${creditNoun(amount)} from ${
+        interaction.user
+      }${
         reason ? ` with reason: ${reason}` : ''
       }. Your new balance is ${creditNoun(toUser.balance)}.`,
       color: 0x22bb33,
@@ -89,8 +95,13 @@ module.exports = async (interaction) => {
     };
     const dmUser = await interaction.client.users.cache.get(user.id);
     await dmUser.send({ embeds: [dmEmbed] });
-    await logger.debug(`Gift sent from: ${interaction.user.username} to: ${user.username}`);
-    return await interaction.editReply({ embeds: [interactionEmbed], ephemeral: true });
+    await logger.debug(
+      `Gift sent from: ${interaction.user.username} to: ${user.username}`
+    );
+    return await interaction.editReply({
+      embeds: [interactionEmbed],
+      ephemeral: true,
+    });
   } catch (e) {
     await logger.error(e);
   }
