@@ -1,13 +1,38 @@
 {
   // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
   // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
-
   // List of extensions which should be recommended for users of this workspace.
   "recommendations": [
+    "2gua.rainbow-brackets",
+    "abrahamwilliam007.es7-javascript-class-snippets",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
     "dbaeumer.vscode-eslint",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
     "esbenp.prettier-vscode",
-    "CoenraadS.bracket-pair-colorizer-2",
-    "seatonjiang.gitmoji-vscode"
+    "GitHub.github-vscode-theme",
+    "IronGeek.vscode-env",
+    "xabikos.JavaScriptSnippets",
+    "wix.vscode-import-cost",
+    "vscode-icons-team.vscode-icons",
+    "VisualStudioExptTeam.vscodeintellicode",
+    "teledemic.branch-warnings",
+    "TabNine.tabnine-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "seatonjiang.gitmoji-vscode",
+    "sburg.vscode-javascript-booster",
+    "kisstkondoros.vscode-codemetrics",
+    "mgmcdermott.vscode-language-babel",
+    "mhutchie.git-graph",
+    "mikestead.dotenv",
+    "mongodb.mongodb-vscode",
+    "ms-vscode-remote.remote-wsl-recommender",
+    "ms-vscode.js-debug",
+    "ms-vscode.js-debug-companion",
+    "ms-vscode.references-view",
+    "ms-vscode.vscode-js-profile-table",
+    "pflannery.vscode-versionlens"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []
