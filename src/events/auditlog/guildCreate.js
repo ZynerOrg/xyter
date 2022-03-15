@@ -1,1 +1,1 @@
-//Emitted whenever the client joins a guild.
+// Emitted whenever the client joins a guild.

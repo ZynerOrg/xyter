@@ -50,7 +50,7 @@ module.exports = async (interaction) => {
   }
 
   // If credits
-  else if (credits) {
+  if (credits) {
     // Create embed object
     const embed = {
       title: ':dollar: Credits - Balance',

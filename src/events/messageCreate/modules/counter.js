@@ -8,6 +8,7 @@ const {
   counters,
   timeouts,
 } = require('../../../helpers/database/models');
+
 module.exports = async (guildDB, userDB, message) => {
   const { guild, channel, content } = message;
 
