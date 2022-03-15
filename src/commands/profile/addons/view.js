@@ -12,6 +12,7 @@ module.exports = async (interaction) => {
   try {
     // Destructure member
     const { member } = await interaction;
+    const { guild } = member;
 
     // Get options
     const target = await interaction.options.getUser('target');
@@ -22,67 +23,10 @@ module.exports = async (interaction) => {
     );
 
     // Get user object
-    const user = await users.findOne({ userId: await discordUser.id });
-
-    // Get experience object
-    const experience = await experiences.findOne({
+    const userDB = await users.findOne({
       userId: await discordUser.id,
-      guildId: await member.guild.id,
+      guildId: guild.id,
     });
-
-    // Get credit object
-    const credit = await credits.findOne({
-      userId: await discordUser.id,
-      guildId: await member.guild.id,
-    });
-
-    // If any of the objects return is null
-    if (user === null || experience === null || credit === null) {
-      // Create embed object
-      const embed = {
-        title: 'Profile',
-        description: `${
-          target || 'You'
-        } have to write something before viewing ${
-          target ? 'their' : 'your'
-        } profile!`,
-        timestamp: new Date(),
-        color: config.colors.error,
-        footer: { iconURL: config.footer.icon, text: config.footer.text },
-      };
-
-      // Send interaction reply
-      return await interaction.editReply({ embeds: [embed] });
-    }
-
-    // Language variables
-    const notAvailableText = i18next.t('general:not_available', {
-      lng: await user.language,
-    });
-    const reputationText = i18next.t(
-      'commands:profile:addons:view:embed:reputation',
-      {
-        lng: await user.language,
-      }
-    );
-    const levelText = i18next.t('commands:profile:addons:view:embed:level', {
-      lng: await user.language,
-    });
-    const pointsText = i18next.t('commands:profile:addons:view:embed:points', {
-      lng: await user.language,
-    });
-    const creditsText = i18next.t(
-      'commands:profile:addons:view:embed:credits',
-      {
-        lng: await user.language,
-      }
-    );
-    const languageCodeText = i18next.t(
-      'commands:profile:addons:view:embed:language_code',
-      {
-        lng: await user.language,
-      }
-    );
 
     // Create embed object
     const embed = {
@@ -93,28 +37,28 @@ module.exports = async (interaction) => {
       color: config.colors.success,
       fields: [
         {
-          name: `:money_with_wings: ${creditsText}`,
-          value: `${(await credit.balance) || `${notAvailableText}`}`,
+          name: `:dollar: Credits`,
+          value: `${userDB.credits || 'Not found'}`,
           inline: true,
         },
         {
-          name: `:squeeze_bottle: ${levelText}`,
-          value: `${(await experience.level) || `${notAvailableText}`}`,
+          name: `:squeeze_bottle: Level`,
+          value: `${userDB.level || 'Not found'}`,
           inline: true,
         },
         {
-          name: `:squeeze_bottle: ${pointsText}`,
-          value: `${(await experience.points) || `${notAvailableText}`}`,
+          name: `:squeeze_bottle: Points`,
+          value: `${userDB.points || 'Not found'}`,
           inline: true,
         },
         {
-          name: `:loudspeaker: ${reputationText}`,
-          value: `${(await user.reputation) || `${notAvailableText}`}`,
+          name: `:loudspeaker: Reputation`,
+          value: `${userDB.reputation || 'Not found'}`,
           inline: true,
         },
         {
-          name: `:rainbow_flag: ${languageCodeText}`,
-          value: `${(await user.language) || `${notAvailableText}`}`,
+          name: `:rainbow_flag: Language`,
+          value: `${userDB.language || 'Not found'}`,
           inline: true,
         },
       ],

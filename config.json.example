@@ -29,5 +29,9 @@
     "name": "someone",
     "url": "scheme://domain.tld"
   },
-  "debug": false
+  "debug": false,
+  "reputation": {
+    "timeout": 86400000
+  },
+  "importToDB": false
 }

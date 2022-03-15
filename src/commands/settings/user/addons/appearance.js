@@ -7,27 +7,28 @@ const { users } = require('../../../../helpers/database/models');
 module.exports = async (interaction) => {
   // Destructure member
   const { member } = interaction;
+  const { guild } = member;
 
   // Get options
   const language = await interaction.options.getString('language');
 
   // Get user object
-  const user = await users.findOne({ userId: interaction.member.id });
+  const userDB = await users.findOne({ userId: member.id, guildId: guild.id });
 
   // Modify values
-  user.language = language !== null ? language : user.language;
+  userDB.language = language !== null ? language : userDB.language;
 
   // Save guild
-  await user.save().then(async () => {
+  await userDB.save().then(async () => {
     // Create embed object
     const embed = {
-      title: 'Settings - User - Appearance',
+      title: ':hammer: Settings - User [Appearance]',
       description: 'Following settings is set!',
       color: config.colors.success,
       fields: [
         {
           name: '🏳️‍🌈 Language',
-          value: `${user.language}`,
+          value: `${userDB.language}`,
           inline: true,
         },
       ],

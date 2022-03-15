@@ -68,6 +68,33 @@ module.exports = {
                 )
             )
         )
+        .addSubcommand((command) =>
+          command
+            .setName('points')
+            .setDescription('Points')
+            .addBooleanOption((option) =>
+              option
+                .setName('status')
+                .setDescription('Should credits be enabled?')
+            )
+            .addNumberOption((option) =>
+              option
+                .setName('rate')
+                .setDescription('Amount of credits per message.')
+            )
+            .addNumberOption((option) =>
+              option
+                .setName('minimum-length')
+                .setDescription('Minimum length of message to earn credits.')
+            )
+            .addNumberOption((option) =>
+              option
+                .setName('timeout')
+                .setDescription(
+                  'Timeout between earning credits (milliseconds).'
+                )
+            )
+        )
     )
     .addSubcommandGroup((group) =>
       group

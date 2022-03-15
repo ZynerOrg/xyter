@@ -14,7 +14,7 @@ module.exports = async (interaction) => {
   if (!member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - Guild [Credits]',
+      title: ':hammer: Settings - Guild [Points]',
       color: config.colors.error,
       description: `You don't have permission to manage this!`,
       timestamp: new Date(),
@@ -30,8 +30,6 @@ module.exports = async (interaction) => {
   const rate = await interaction.options.getNumber('rate');
   const timeout = await interaction.options.getNumber('timeout');
   const minimumLength = await interaction.options.getNumber('minimum-length');
-  const workRate = await interaction.options.getNumber('work-rate');
-  const workTimeout = await interaction.options.getNumber('work-timeout');
 
   // Get guild object
   const guildDB = await guilds.findOne({
@@ -43,10 +41,6 @@ module.exports = async (interaction) => {
   guildDB.credits.rate = rate !== null ? rate : guildDB.credits.rate;
   guildDB.credits.timeout =
     timeout !== null ? timeout : guildDB.credits.timeout;
-  guildDB.credits.workRate =
-    workRate !== null ? workRate : guildDB.credits.workRate;
-  guildDB.credits.workTimeout =
-    workTimeout !== null ? workTimeout : guildDB.credits.workTimeout;
   guildDB.credits.minimumLength =
     minimumLength !== null ? minimumLength : guildDB.credits.minimumLength;
 
@@ -54,17 +48,12 @@ module.exports = async (interaction) => {
   await guildDB.save().then(async () => {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - Guild [Credits]',
+      title: ':hammer: Settings - Guild [Points]',
       description: 'Following settings is set!',
       color: config.colors.success,
       fields: [
         { name: '🤖 Status', value: `${guildDB.credits.status}`, inline: true },
         { name: '📈 Rate', value: `${guildDB.credits.rate}`, inline: true },
-        {
-          name: '📈 Work Rate',
-          value: `${guildDB.credits.workRate}`,
-          inline: true,
-        },
         {
           name: '🔨 Minimum Length',
           value: `${guildDB.credits.minimumLength}`,
@@ -73,11 +62,6 @@ module.exports = async (interaction) => {
         {
           name: '⏰ Timeout',
           value: `${guildDB.credits.timeout}`,
-          inline: true,
-        },
-        {
-          name: '⏰ Work Timeout',
-          value: `${guildDB.credits.workTimeout}`,
           inline: true,
         },
       ],
@@ -90,7 +74,7 @@ module.exports = async (interaction) => {
 
     // Send debug message
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} has changed credit details.`
+      `Guild: ${guild.id} User: ${member.id} has changed credit details.`
     );
   });
 };

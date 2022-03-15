@@ -4,9 +4,9 @@ const { users, experiences, credits } = require('./database/models');
 const logger = require('../handlers/logger');
 
 module.exports = async (user, guild) => {
-  const userData = await users.findOne({ userId: user.id });
+  const userData = await users.findOne({ userId: user.id, guildId: guild.id });
   if (!userData) {
-    users.create({ userId: user.id });
+    users.create({ userId: user.id, guildId: guild.id });
     logger.debug(`User: ${user.id} added user collection`);
   } else {
     logger.debug(`User: ${user.id} already in user collection`);

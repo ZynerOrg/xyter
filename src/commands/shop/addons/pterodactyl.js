@@ -7,66 +7,60 @@ const { credits, apis } = require('../../../helpers/database/models');
 const creditNoun = require('../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
-  // Needs to be made multi-guild
-  if (config.disable.redeem) {
-    // Create embed object
-    const embed = {
-      title: ':shopping_cart: Shop - Pterodactyl failed',
-      description: 'This item in the shop is currently disabled.',
-      color: config.colors.error,
-      timestamp: new Date(),
-      footer: { iconURL: config.footer.icon, text: config.footer.text },
-    };
-
-    // Send interaction reply
-    return await interaction.editReply({ embeds: [embed], ephemeral: true });
-  }
+  const { member } = interaction;
+  const { guild } = member;
 
   // Get options
   const amount = await interaction.options.getInteger('amount');
 
   // Get user object
-  const user = await credits.findOne({
-    userId: interaction.user.id,
-    guildId: interaction.member.guild.id,
+  const userDB = await users.findOne({
+    userId: member.id,
+    guildId: guild.id,
   });
 
   // Get DM user object
-  const dmUser = interaction.client.users.cache.get(interaction.member.user.id);
+  const dmUser = interaction.client.users.cache.get(member.id);
 
-  // Stop if amount or user balance is below 100
-  if ((amount || user.balance) < 100) {
+  // Stop if amount or user credits is below 100
+  if ((amount || userDB.credits) < 100) {
     const embed = {
       title: ':shopping_cart: Shop - Pterodactyl',
       description: `You **can't** withdraw for __Pterodactyl__ below **100**.`,
       color: config.colors.error,
-      fields: [{ name: 'Your balance', value: `${creditNoun(user.balance)}` }],
+      fields: [
+        { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+      ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 
-  // Stop if amount or user balance is above 1.000.000
-  if ((amount || user.balance) > 1000000) {
+  // Stop if amount or user credits is above 1.000.000
+  if ((amount || userDB.credits) > 1000000) {
     const embed = {
       title: ':shopping_cart: Shop - Pterodactyl',
       description: `You **can't** withdraw for __Pterodactyl__ above **1.000.000**.`,
       color: config.colors.error,
-      fields: [{ name: 'Your balance', value: `${creditNoun(user.balance)}` }],
+      fields: [
+        { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+      ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
     return await interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 
-  // Stop if user balance is below amount
-  if (user.balance < amount) {
+  // Stop if user credits is below amount
+  if (userDB.credits < amount) {
     const embed = {
       title: ':shopping_cart: Shop - Pterodactyl',
       description: `You have **insufficient** credits.`,
       color: config.colors.error,
-      fields: [{ name: 'Your balance', value: `${creditNoun(user.balance)}` }],
+      fields: [
+        { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+      ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
@@ -78,7 +72,7 @@ module.exports = async (interaction) => {
 
   // Get api object
   const apiCredentials = await apis.findOne({
-    guildId: interaction.member.guild.id,
+    guildId: guild.id,
   });
 
   // Create a api instance
@@ -97,8 +91,8 @@ module.exports = async (interaction) => {
     .post('vouchers', {
       uses: 1,
       code,
-      credits: amount || user.balance,
-      memo: `${interaction.createdTimestamp} - ${interaction.user.id}`,
+      credits: amount || userDB.credits,
+      memo: `${interaction.createdTimestamp} - ${member.id}`,
     })
 
     // If successful
@@ -111,7 +105,7 @@ module.exports = async (interaction) => {
           { name: 'Code', value: `${code}`, inline: true },
           {
             name: 'Credits',
-            value: `${amount || user.balance}`,
+            value: `${amount || userDB.credits}`,
             inline: true,
           },
         ],
@@ -129,17 +123,17 @@ module.exports = async (interaction) => {
         footer: { iconURL: config.footer.icon, text: config.footer.text },
       };
 
-      // Withdraw amount from user balance
-      user.balance -= amount || user.balance;
+      // Withdraw amount from user credits
+      userDB.credits -= amount || userDB.credits;
 
-      // Save new balance
-      await user
+      // Save new credits
+      await userDB
         .save()
         // If successful
         .then(async () => {
           // Send debug message
           await logger.debug(
-            `User: ${user.username} redeemed: ${creditNoun(amount)}`
+            `User: ${member.username} redeemed: ${creditNoun(amount)}`
           );
 
           // Send DM message

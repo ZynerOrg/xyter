@@ -7,17 +7,21 @@ const { users, timeouts } = require('../../../helpers/database/models');
 module.exports = async (interaction) => {
   // Destructure member
   const { member } = interaction;
+  const { guild } = member;
 
   // Get options
   const target = await interaction.options.getUser('target');
   const type = await interaction.options.getString('type');
 
   // Get user object
-  const user = await users.findOne({ userId: interaction.member.id });
+  const userDB = await users.findOne({
+    userId: member.id,
+    guildId: guild.id,
+  });
 
   // Check if user has a timeout
   const isTimeout = await timeouts.findOne({
-    guildId: member.guild.id,
+    guildId: guild.id,
     userId: member.id,
     timeoutId: 2,
   });
@@ -28,18 +32,11 @@ module.exports = async (interaction) => {
     if (target.id === interaction.member.id) {
       // Create embed object
       const embed = {
-        title: i18next.t(
-          'commands:reputation:addons:give:version03:embed:title',
-          {
-            lng: await user.language,
-          }
-        ),
-        description: i18next.t(
-          'commands:reputation:addons:give:version02:embed:title',
-          {
-            lng: await user.language,
-          }
-        ),
+        title: ':loudspeaker: Reputation - Give',
+        description: 'You can not repute yourself.',
+        timestamp: new Date(),
+        color: config.colors.error,
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
       };
 
       // Send interaction reply
@@ -48,24 +45,19 @@ module.exports = async (interaction) => {
 
     // If type is positive
     if (type === 'positive') {
-      user.reputation += 1;
+      userDB.reputation += 1;
     }
 
     // If type is negative
     if (type === 'negative') {
-      user.reputation -= 1;
+      userDB.reputation -= 1;
     }
 
     // Save user
-    await user.save().then(async () => {
+    await userDB.save().then(async () => {
       // Create embed object
       const embed = {
-        title: i18next.t(
-          'commands:reputation:addons:give:version02:embed:title',
-          {
-            lng: await user.language,
-          }
-        ),
+        title: ':loudspeaker: Reputation - Give',
         description: `You have given ${target} a ${type} reputation!`,
         timestamp: new Date(),
         color: config.colors.success,
@@ -91,7 +83,11 @@ module.exports = async (interaction) => {
     setTimeout(async () => {
       // send debug message
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${member.id} has not repute within last day, reputation can be given`
+        `Guild: ${member.guild.id} User: ${
+          member.id
+        } has not repute within last ${
+          config.reputation.timeout / 1000
+        } seconds, reputation can be given`
       );
 
       // When timeout is out, remove it from the database
@@ -100,22 +96,14 @@ module.exports = async (interaction) => {
         userId: member.id,
         timeoutId: 2,
       });
-    }, 86400000);
+    }, config.reputation.timeout);
   } else {
     // Create embed object
     const embed = {
-      title: i18next.t(
-        'commands:reputation:addons:give:version01:embed:title',
-        {
-          lng: await user.language,
-        }
-      ),
-      description: i18next.t(
-        'commands:reputation:addons:give:version01:embed:description',
-        {
-          lng: await user.language,
-        }
-      ),
+      title: ':loudspeaker: Reputation - Give',
+      description: `You have given reputation within the last ${
+        config.reputation.timeout / 1000
+      } seconds, you can not repute now!`,
       timestamp: new Date(),
       color: config.colors.error,
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -126,7 +114,9 @@ module.exports = async (interaction) => {
 
     // Send debug message
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} has repute within last day, no reputation can be given`
+      `Guild: ${member.guild.id} User: ${member.id} has repute within last ${
+        config.reputation.timeout / 1000
+      } seconds, no reputation can be given`
     );
   }
 };

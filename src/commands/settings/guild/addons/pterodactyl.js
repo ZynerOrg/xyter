@@ -9,12 +9,13 @@ const { apis } = require('../../../../helpers/database/models');
 module.exports = async (interaction) => {
   // Destructure member
   const { member } = interaction;
+  const { guild } = member;
 
   // Check permission
   if (!member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: 'Settings - Guild - Pterodactyl',
+      title: ':hammer: Settings - Guild [Pterodactyl]',
       color: config.colors.error,
       description: 'You do not have permission to manage this!',
       timestamp: new Date(),
@@ -34,7 +35,7 @@ module.exports = async (interaction) => {
 
   await apis
     .findOneAndUpdate(
-      { guildId: member.guild.id },
+      { guildId: guild.id },
       { url, token },
       { new: true, upsert: true }
     )
@@ -42,7 +43,7 @@ module.exports = async (interaction) => {
       // Build embed
 
       const embed = {
-        title: 'Settings - Guild - Pterodactyl',
+        title: ':hammer: Settings - Guild [Pterodactyl]',
         color: config.colors.success,
         description: 'Pterodactyl settings is saved!',
         timestamp: new Date(),
@@ -56,7 +57,7 @@ module.exports = async (interaction) => {
       // Send debug message
 
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${member.id} has changed api credentials.`
+        `Guild: ${guild.id} User: ${member.id} has changed api credentials.`
       );
     });
 };

@@ -38,9 +38,9 @@ module.exports = {
           command
             .setName('cancel')
             .setDescription('Cancel a custom role')
-            .addStringOption((option) =>
+            .addRoleOption((option) =>
               option
-                .setName('name')
+                .setName('role')
                 .setDescription('Name of the role you wish to cancel.')
             )
         )

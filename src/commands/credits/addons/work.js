@@ -10,82 +10,76 @@ const creditNoun = require('../../../helpers/creditNoun');
 module.exports = async (interaction) => {
   // Destructure member
   const { member } = interaction;
+  const { guild } = member;
 
   // Check if user has a timeout
   const isTimeout = await timeouts.findOne({
-    guildId: member.guild.id,
+    guildId: guild.id,
     userId: member.id,
-    timeoutId: 3,
+    timeoutId: '2022-03-15-19-16',
   });
 
-  const guild = await guilds.findOne({
-    guildId: member.guild.id,
+  const guildDB = await guilds.findOne({
+    guildId: guild.id,
   });
 
   // If user is not on timeout
   if (!isTimeout) {
     // Make a variable of how much credits user will earn based on random multiplied with work rate
-    const creditsEarned = Math.floor(Math.random() * guild.credits.workRate);
+    const creditsEarned = Math.floor(Math.random() * guildDB.credits.workRate);
 
-    // Add credits to user
-    await credits
-      .findOneAndUpdate(
-        {
-          userId: interaction.member.id,
-          guildId: interaction.member.guild.id,
-        },
-        { $inc: { balance: creditsEarned } },
-        { new: true, upsert: true }
-      )
+    const userDB = await users.findOne({
+      userId: member.id,
+      guildId: guild.id,
+    });
 
-      // If successful
-      .then(async () => {
-        // Send debug message
-        logger.debug(`Credits added to user: ${interaction.member.id}`);
+    userDB.credits += creditsEarned;
 
-        // Create embed object
-        const embed = {
-          title: 'Work',
-          description: `You earned ${creditNoun(creditsEarned)}`,
-          color: config.colors.success,
-          timestamp: new Date(),
-          footer: { iconURL: config.footer.icon, text: config.footer.text },
-        };
+    await userDB.save().then(async () => {
+      // Send debug message
+      await logger.debug(`Credits added to user: ${interaction.member.id}`);
 
-        // Send interaction reply
-        return interaction.editReply({ embeds: [embed], ephemeral: true });
-      });
+      // Create embed object
+      const embed = {
+        title: ':dollar: Credits - Work',
+        description: `You have earned ${creditNoun(creditsEarned)}`,
+        color: config.colors.success,
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+
+      // Send interaction reply
+      return interaction.editReply({ embeds: [embed], ephemeral: true });
+    });
 
     // Create a timeout for the user
     await timeouts.create({
-      guildId: member.guild.id,
+      guildId: guild.id,
       userId: member.id,
-      timeoutId: 3,
+      timeoutId: '2022-03-15-19-16',
     });
 
     setTimeout(async () => {
       // Send debug message
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${
-          member.id
-        } has not worked within the last ${
-          guild.work.timeout / 1000
+        `Guild: ${guild.id} User: ${member.id} has not worked within the last ${
+          guildDB.work.timeout / 1000
         } seconds, work can be done`
       );
 
       // When timeout is out, remove it from the database
       await timeouts.deleteOne({
-        guildId: member.guild.id,
+        guildId: guild.id,
         userId: member.id,
-        timeoutId: 3,
+        timeoutId: '2022-03-15-19-16',
       });
-    }, 86400000);
+    }, guildDB.credits.workTimeout);
   } else {
     // Create embed object
     const embed = {
-      title: 'Work',
+      title: ':dollar: Credits - Work',
       description: `You have worked within the last ${
-        guild.credits.workTimeout / 1000
+        guildDB.credits.workTimeout / 1000
       } seconds, you can not work now!`,
       timestamp: new Date(),
       color: config.colors.error,
@@ -97,7 +91,7 @@ module.exports = async (interaction) => {
 
     // Send debug message
     await logger.debug(
-      `Guild: ${member.guild.id} User: ${member.id} has worked within last day, no work can be done`
+      `Guild: ${guild.id} User: ${member.id} has worked within last day, no work can be done`
     );
   }
 };

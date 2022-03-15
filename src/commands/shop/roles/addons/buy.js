@@ -4,8 +4,7 @@ const config = require('../../../../../config.json');
 const logger = require('../../../../handlers/logger');
 
 const {
-  credits,
-  apis,
+  users,
   shopRoles,
   guilds,
 } = require('../../../../helpers/database/models');
@@ -13,6 +12,7 @@ const creditNoun = require('../../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
   const { member } = interaction;
+  const { guild } = member;
 
   const name = await interaction.options.getString('name');
 
@@ -22,32 +22,47 @@ module.exports = async (interaction) => {
       color: 'RED',
       reason: `${interaction.member.id} bought from shop`,
     })
-    .then(async (data) => {
+    .then(async (role) => {
       // Get guild object
-      const guild = await guilds.findOne({
+      const guildDB = await guilds.findOne({
         guildId: interaction.member.guild.id,
       });
 
-      const userObject = await credits.findOne({
+      const userDB = await users.findOne({
         userId: member.id,
-        guildId: interaction.member.guild.id,
+        guildId: guild.id,
       });
-      const { pricePerHour } = guild.shop.roles;
+      const { pricePerHour } = guildDB.shop.roles;
 
-      userObject.balance -= pricePerHour;
+      userDB.credits -= pricePerHour;
 
-      shopRoles.create({
-        roleId: data.id,
+      await userDB.save();
+
+      await shopRoles.create({
+        roleId: role.id,
         userId: member.id,
-        guildId: member.guild.id,
+        guildId: guild.id,
         pricePerHour,
         lastPayed: new Date(),
       });
 
-      interaction.member.roles.add(data.id);
-      shopRoles.find().then((data) => console.log(data));
+      member.roles.add(role.id);
+      await shopRoles.find().then((role) => console.log(role));
+
+      const embed = {
+        title: ':shopping_cart: Shop - Roles [Buy]',
+        description: `You have bought ${role.name} for ${guildDB.shop.roles.pricePerHour} per hour.`,
+        color: config.colors.success,
+        fields: [
+          { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+        ],
+        timestamp: new Date(),
+        footer: { iconURL: config.footer.icon, text: config.footer.text },
+      };
+      return await interaction.editReply({
+        embeds: [embed],
+        ephemeral: true,
+      });
     })
     .catch(console.error);
-
-  await interaction.editReply({ content: 'Roles bought' });
 };

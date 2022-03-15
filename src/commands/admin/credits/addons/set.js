@@ -4,7 +4,7 @@ const logger = require('../../../../handlers/logger');
 
 // Database models
 
-const { credits } = require('../../../../helpers/database/models');
+const { users } = require('../../../../helpers/database/models');
 const creditNoun = require('../../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
@@ -15,7 +15,7 @@ module.exports = async (interaction) => {
   if (!member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: 'Admin',
+      title: ':toolbox: Admin - Credits [Set]',
       color: config.colors.error,
       description: 'You do not have permission to manage this!',
       timestamp: new Date(),
@@ -34,7 +34,7 @@ module.exports = async (interaction) => {
   if (amount <= 0) {
     // Create embed object
     const embed = {
-      title: 'Give',
+      title: ':toolbox: Admin - Credits [Set]',
       description: "You can't give zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
@@ -45,17 +45,17 @@ module.exports = async (interaction) => {
     return interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 
-  // Get toUser object
-  const toUser = await credits.findOne({
+  // Get toUserDB object
+  const toUserDB = await users.findOne({
     userId: user.id,
     guildId: interaction.member.guild.id,
   });
 
-  // If toUser has no credits
-  if (!toUser) {
+  // If toUserDB has no credits
+  if (!toUserDB) {
     // Create embed object
     const embed = {
-      title: 'Set',
+      title: ':toolbox: Admin - Credits [Set]',
       description:
         'That user has no credits, I can not set credits to the user',
       color: config.colors.error,
@@ -67,18 +67,18 @@ module.exports = async (interaction) => {
     return interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 
-  // Set toUser with amount
-  toUser.balance = amount;
+  // Set toUserDB with amount
+  toUserDB.credits = amount;
 
-  // Save toUser
-  await toUser
+  // Save toUserDB
+  await toUserDB
     .save()
 
     // If successful
     .then(async () => {
       // Create embed object
       const embed = {
-        title: 'Set',
+        title: ':toolbox: Admin - Credits [Set]',
         description: `You set ${creditNoun(amount)} on ${user}.`,
         color: 0x22bb33,
         timestamp: new Date(),

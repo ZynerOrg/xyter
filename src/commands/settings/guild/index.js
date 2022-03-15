@@ -2,7 +2,7 @@ const { Permissions } = require('discord.js');
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
 
-const { pterodactyl, credits } = require('./addons');
+const { pterodactyl, credits, points } = require('./addons');
 
 module.exports = async (interaction) => {
   // Destructure member
@@ -33,6 +33,12 @@ module.exports = async (interaction) => {
   else if (interaction.options.getSubcommand() === 'credits') {
     // Execute credits addon
     await credits(interaction);
+  }
+
+  // If subcommand is points
+  else if (interaction.options.getSubcommand() === 'points') {
+    // Execute points addon
+    await points(interaction);
   }
 
   // Send debug message

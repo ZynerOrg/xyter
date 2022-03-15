@@ -11,13 +11,7 @@ const guildSchema = new mongoose.Schema(
     credits: {
       status: {
         type: mongoose.SchemaTypes.Boolean,
-        default: false,
-      },
-      url: {
-        type: mongoose.SchemaTypes.String,
-      },
-      token: {
-        type: mongoose.SchemaTypes.String,
+        default: true,
       },
       rate: {
         type: mongoose.SchemaTypes.Number,
@@ -42,6 +36,10 @@ const guildSchema = new mongoose.Schema(
     },
     shop: {
       roles: {
+        status: {
+          type: mongoose.SchemaTypes.Boolean,
+          default: true,
+        },
         pricePerHour: {
           type: mongoose.SchemaTypes.Number,
           default: 5,
@@ -52,12 +50,6 @@ const guildSchema = new mongoose.Schema(
       status: {
         type: mongoose.SchemaTypes.Boolean,
         default: false,
-      },
-      url: {
-        type: mongoose.SchemaTypes.String,
-      },
-      token: {
-        type: mongoose.SchemaTypes.String,
       },
       rate: {
         type: mongoose.SchemaTypes.Number,

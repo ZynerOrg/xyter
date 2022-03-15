@@ -4,7 +4,7 @@ const logger = require('../../../../handlers/logger');
 
 // Database models
 
-const { credits } = require('../../../../helpers/database/models');
+const { users } = require('../../../../helpers/database/models');
 const creditNoun = require('../../../../helpers/creditNoun');
 const saveUser = require('../../../../helpers/saveUser');
 
@@ -16,7 +16,7 @@ module.exports = async (interaction) => {
   if (!member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: 'Admin',
+      title: ':toolbox: Admin - Credits [Transfer]',
       color: config.colors.error,
       description: 'You do not have permission to manage this!',
       timestamp: new Date(),
@@ -33,13 +33,13 @@ module.exports = async (interaction) => {
   const amount = await interaction.options.getInteger('amount');
 
   // Get fromUser object
-  const fromUser = await credits.findOne({
+  const fromUser = await users.findOne({
     userId: from.id,
     guildId: interaction.member.guild.id,
   });
 
   // Get toUser object
-  const toUser = await credits.findOne({
+  const toUser = await users.findOne({
     userId: to.id,
     guildId: interaction.member.guild.id,
   });
@@ -48,7 +48,7 @@ module.exports = async (interaction) => {
   if (!fromUser) {
     // Create embed object
     const embed = {
-      title: 'Transfer',
+      title: ':toolbox: Admin - Credits [Transfer]',
       description:
         'That user has no credits, I can not transfer credits from the user',
       color: config.colors.error,
@@ -64,7 +64,7 @@ module.exports = async (interaction) => {
   if (!toUser) {
     // Create embed object
     const embed = {
-      title: 'Transfer',
+      title: ':toolbox: Admin - Credits [Transfer]',
       description:
         'That user has no credits, I can not transfer credits to the user',
       color: config.colors.error,
@@ -80,9 +80,9 @@ module.exports = async (interaction) => {
   if (amount <= 0) {
     // Create embed object
     const embed = {
-      title: 'Transfer failed',
+      title: ':toolbox: Admin - Credits [Transfer]',
       description: "You can't transfer zero or below.",
-      color: 0xbb2124,
+      color: config.colors.error,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
@@ -92,10 +92,10 @@ module.exports = async (interaction) => {
   }
 
   // Withdraw amount from fromUser
-  fromUser.balance -= amount;
+  fromUser.credits -= amount;
 
   // Deposit amount to toUser
-  toUser.balance += amount;
+  toUser.credits += amount;
 
   // Save users
   await saveUser(fromUser, toUser)
@@ -103,18 +103,18 @@ module.exports = async (interaction) => {
     .then(async () => {
       // Create embed object
       const embed = {
-        title: 'Transfer',
+        title: ':toolbox: Admin - Credits [Transfer]',
         description: `You sent ${creditNoun(amount)} from ${from} to ${to}.`,
-        color: 0x22bb33,
+        color: config.colors.success,
         fields: [
           {
             name: `${from.username} Balance`,
-            value: `${fromUser.balance}`,
+            value: `${fromUser.credits}`,
             inline: true,
           },
           {
             name: `${to.username} Balance`,
-            value: `${toUser.balance}`,
+            value: `${toUser.credits}`,
             inline: true,
           },
         ],

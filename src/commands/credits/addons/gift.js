@@ -1,7 +1,7 @@
 const config = require('../../../../config.json');
 const logger = require('../../../handlers/logger');
 
-const credits = require('../../../helpers/database/models/creditSchema');
+const { users } = require('../../../helpers/database/models');
 const saveUser = require('../../../helpers/saveUser');
 const creditNoun = require('../../../helpers/creditNoun');
 
@@ -12,9 +12,18 @@ module.exports = async (interaction) => {
     const amount = await interaction.options.getInteger('amount');
     const reason = await interaction.options.getString('reason');
 
-    // Get data object
-    const data = await credits.findOne({
+    const { member } = interaction;
+    const { guild } = member;
+
+    // Get fromUserDB object
+    const fromUserDB = await users.findOne({
       userId: interaction.user.id,
+      guildId: interaction.member.guild.id,
+    });
+
+    // Get toUserDB object
+    const toUserDB = await users.findOne({
+      userId: user.id,
       guildId: interaction.member.guild.id,
     });
 
@@ -22,7 +31,7 @@ module.exports = async (interaction) => {
     if (user.id === interaction.user.id) {
       // Create embed object
       const embed = {
-        title: 'Gift',
+        title: ':dollar: Credits - Gift',
         description: "You can't pay yourself.",
         color: 0xbb2124,
         timestamp: new Date(),
@@ -37,7 +46,7 @@ module.exports = async (interaction) => {
     if (amount <= 0) {
       // Create embed object
       const embed = {
-        title: 'Gift',
+        title: ':dollar: Credits - Gift',
         description: "You can't pay zero or below.",
         color: 0xbb2124,
         timestamp: new Date(),
@@ -49,11 +58,11 @@ module.exports = async (interaction) => {
     }
 
     // If user has below gifting amount
-    if (data.balance < amount) {
+    if (fromUserDB.credits < amount) {
       // Create embed
       const embed = {
-        title: 'Gift',
-        description: `You have insufficient credits. Your balance is ${data.balance}`,
+        title: ':dollar: Credits - Gift',
+        description: `You have insufficient credits. Your credits is ${fromUserDB.credits}`,
         color: 0xbb2124,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -63,23 +72,11 @@ module.exports = async (interaction) => {
       return await interaction.editReply({ embeds: [embed], ephemeral: true });
     }
 
-    // Get fromUser object
-    const fromUser = await credits.findOne({
-      userId: interaction.user.id,
-      guildId: interaction.member.guild.id,
-    });
-
-    // Get toUser object
-    const toUser = await credits.findOne({
-      userId: user.id,
-      guildId: interaction.member.guild.id,
-    });
-
-    // If toUser has no credits
-    if (!toUser) {
+    // If toUserDB has no credits
+    if (!toUserDB) {
       // Create embed object
       const embed = {
-        title: 'Gift',
+        title: ':dollar: Credits - Gift',
         description:
           'That user has no credits, I can not gift credits to the user',
         color: config.colors.error,
@@ -91,20 +88,20 @@ module.exports = async (interaction) => {
       return interaction.editReply({ embeds: [embed], ephemeral: true });
     }
 
-    // Withdraw amount from fromUser
-    fromUser.balance -= amount;
+    // Withdraw amount from fromUserDB
+    fromUserDB.credits -= amount;
 
-    // Deposit amount to toUser
-    toUser.balance += amount;
+    // Deposit amount to toUserDB
+    toUserDB.credits += amount;
 
     // Save users
-    await saveUser(fromUser, toUser).then(async () => {
+    await saveUser(fromUserDB, toUserDB).then(async () => {
       // Create interaction embed object
       const interactionEmbed = {
-        title: 'Gift',
+        title: ':dollar: Credits - Gift',
         description: `You sent ${creditNoun(amount)} to ${user}${
           reason ? ` with reason: ${reason}` : ''
-        }. Your new balance is ${creditNoun(fromUser.balance)}.`,
+        }. Your new credits is ${creditNoun(fromUserDB.credits)}.`,
         color: 0x22bb33,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -112,12 +109,12 @@ module.exports = async (interaction) => {
 
       // Create DM embed object
       const dmEmbed = {
-        title: 'Gift',
+        title: ':dollar: Credits - Gift',
         description: `You received ${creditNoun(amount)} from ${
           interaction.user
         }${
           reason ? ` with reason: ${reason}` : ''
-        }. Your new balance is ${creditNoun(toUser.balance)}.`,
+        }. Your new credits is ${creditNoun(toUserDB.credits)}.`,
         color: 0x22bb33,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -131,7 +128,7 @@ module.exports = async (interaction) => {
 
       // Send debug message
       await logger.debug(
-        `Gift sent from: ${interaction.user.username} to: ${user.username}`
+        `Guild: ${guild.id} User: ${member.id} gift sent from: ${interaction.user.id} to: ${user.id}`
       );
 
       // Send interaction reply

@@ -3,19 +3,20 @@ const config = require('../../../../../config.json');
 const logger = require('../../../../handlers/logger');
 
 // Database models
-const { credits } = require('../../../../helpers/database/models');
+const { users } = require('../../../../helpers/database/models');
 
 const creditNoun = require('../../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
   // Destructure member
   const { member } = interaction;
+  const { guild } = member;
 
   // Check permission
   if (!member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: 'Admin',
+      title: ':toolbox: Admin - Credits [Give]',
       color: config.colors.error,
       description: 'You do not have permission to manage this!',
       timestamp: new Date(),
@@ -34,7 +35,7 @@ module.exports = async (interaction) => {
   if (amount <= 0) {
     // Create embed object
     const embed = {
-      title: 'Give',
+      title: ':toolbox: Admin - Credits [Give]',
       description: "You can't give zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
@@ -45,17 +46,17 @@ module.exports = async (interaction) => {
     return interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 
-  // Get toUser object
-  const toUser = await credits.findOne({
+  // Get toUserDB object
+  const toUserDB = await users.findOne({
     userId: user.id,
     guildId: interaction.member.guild.id,
   });
 
-  // If toUser has no credits
-  if (!toUser) {
+  // If toUserDB has no credits
+  if (!toUserDB) {
     // Create embed object
     const embed = {
-      title: 'Give',
+      title: ':toolbox: Admin - Credits [Give]',
       description:
         'That user has no credits, I can not give credits to the user',
       color: config.colors.error,
@@ -67,18 +68,18 @@ module.exports = async (interaction) => {
     return interaction.editReply({ embeds: [embed], ephemeral: true });
   }
 
-  // Deposit amount to toUser
-  toUser.balance += amount;
+  // Deposit amount to toUserDB
+  toUserDB.credits += amount;
 
-  // Save toUser
-  await toUser
+  // Save toUserDB
+  await toUserDB
     .save()
 
     // If successful
     .then(async () => {
       // Create embed object
       const embed = {
-        title: 'Give',
+        title: ':toolbox: Admin - Credits [Give]',
         description: `Gave ${creditNoun(amount)} to ${user}.`,
         color: 0x22bb33,
         timestamp: new Date(),
@@ -97,9 +98,9 @@ module.exports = async (interaction) => {
 
       // Send debug message
       await logger.debug(
-        `Guild: ${member.guild.id} User: ${member.id} gave ${
-          user.id
-        } ${creditNoun(amount)}.`
+        `Guild: ${guild.id} User: ${member.id} gave ${user.id} ${creditNoun(
+          amount
+        )}.`
       );
     });
 };

@@ -5,7 +5,7 @@ const logger = require('../handlers/logger');
 
 module.exports = async (guild) => {
   const api = await apis.findOne({ guildId: guild.id });
-  const guildData = await guilds.find({ guildId: guild.id });
+  const guildData = await guilds.findOne({ guildId: guild.id });
   if (!api) {
     apis.create({ guildId: guild.id });
     logger.debug(`Guild: ${guild.id} added api collection`);

@@ -4,7 +4,7 @@ const logger = require('../../../../handlers/logger');
 
 // Database models
 
-const { credits } = require('../../../../helpers/database/models');
+const { users } = require('../../../../helpers/database/models');
 const creditNoun = require('../../../../helpers/creditNoun');
 
 module.exports = async (interaction) => {
@@ -15,7 +15,7 @@ module.exports = async (interaction) => {
   if (!member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: 'Admin',
+      title: ':toolbox: Admin - Credits [Take]',
       color: config.colors.error,
       description: 'You do not have permission to manage this!',
       timestamp: new Date(),
@@ -34,7 +34,7 @@ module.exports = async (interaction) => {
   if (amount <= 0) {
     // Give embed object
     const embed = {
-      title: 'Take',
+      title: ':toolbox: Admin - Credits [Take]',
       description: "You can't take zero or below.",
       color: 0xbb2124,
       timestamp: new Date(),
@@ -46,7 +46,7 @@ module.exports = async (interaction) => {
   }
 
   // Get toUser object
-  const toUser = await credits.findOne({
+  const toUser = await users.findOne({
     userId: user.id,
     guildId: interaction.member.guild.id,
   });
@@ -55,7 +55,7 @@ module.exports = async (interaction) => {
   if (!toUser) {
     // Create embed object
     const embed = {
-      title: 'Take',
+      title: ':toolbox: Admin - Credits [Take]',
       description:
         'That user has no credits, I can not take credits from the user',
       color: config.colors.error,
@@ -68,7 +68,7 @@ module.exports = async (interaction) => {
   }
 
   // Withdraw amount from toUser
-  toUser.balance -= amount;
+  toUser.credits -= amount;
 
   // Save toUser
   await toUser
@@ -78,7 +78,7 @@ module.exports = async (interaction) => {
     .then(async () => {
       // Create embed object
       const embed = {
-        title: 'Take',
+        title: ':toolbox: Admin - Credits [Take]',
         description: `You took ${creditNoun(amount)} to ${user}.`,
         color: 0x22bb33,
         timestamp: new Date(),

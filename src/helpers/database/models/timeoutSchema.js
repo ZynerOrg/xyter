@@ -14,7 +14,7 @@ const timeoutSchema = new mongoose.Schema(
       unique: false,
       index: true,
     },
-    timeoutId: { type: mongoose.SchemaTypes.Number },
+    timeoutId: { type: mongoose.SchemaTypes.String },
   },
   { timestamps: true }
 );

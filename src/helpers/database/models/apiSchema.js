@@ -13,14 +13,14 @@ const apiSchema = new mongoose.Schema(
       required: true,
       unique: false,
       index: true,
-      default: 'https://bg.zyner.org/api/',
+      default: 'https://localhost/api/',
     },
     token: {
       type: mongoose.SchemaTypes.String,
       required: true,
       unique: false,
       index: true,
-      default: 'your_token',
+      default: 'token',
     },
   },
   { timestamps: true }
