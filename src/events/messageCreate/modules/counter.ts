@@ -1,7 +1,7 @@
-import logger from '../../../handlers/logger';
-import counters from '../../../helpers/database/models/counterSchema';
+import logger from "../../../handlers/logger";
+import counters from "../../../helpers/database/models/counterSchema";
 
-import { Message } from 'discord.js';
+import { Message } from "discord.js";
 
 export default async (guildDB: any, userDB: any, message: Message) => {
   const { guild, channel, content } = message;

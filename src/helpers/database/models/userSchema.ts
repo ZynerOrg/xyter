@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
     },
     language: {
       type: mongoose.SchemaTypes.String,
-      default: 'en',
+      default: "en",
     },
     reputation: { type: mongoose.SchemaTypes.Number, default: 0 },
     credits: { type: mongoose.SchemaTypes.Number, default: 0 },
@@ -26,4 +26,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('user', userSchema);
+export default mongoose.model("user", userSchema);

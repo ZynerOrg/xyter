@@ -1,8 +1,8 @@
-import config from '../../../../config.json';
-import { CommandInteraction } from 'discord.js';
+import config from "../../../../config.json";
+import { CommandInteraction } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   const interactionEmbed = {
-    title: ':hammer: Utilities - About',
+    title: ":hammer: Utilities - About",
     description: `This bot is hosted by ${
       config.hoster.url
         ? `[${config.hoster.name}](${config.hoster.url})`

@@ -1,9 +1,9 @@
-import { Permissions, CommandInteraction } from 'discord.js';
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
+import { Permissions, CommandInteraction } from "discord.js";
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
 
 // Database models
-import guilds from '../../../../helpers/database/models/guildSchema';
+import guilds from "../../../../helpers/database/models/guildSchema";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
@@ -13,7 +13,7 @@ export default async (interaction: CommandInteraction) => {
   if (!interaction?.memberPermissions?.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - Guild [Points]',
+      title: ":hammer: Settings - Guild [Points]",
       color: config.colors.error as any,
       description: `You don't have permission to manage this!`,
       timestamp: new Date(),
@@ -25,10 +25,10 @@ export default async (interaction: CommandInteraction) => {
   }
 
   // Get options
-  const status = await interaction.options.getBoolean('status');
-  const rate = await interaction.options.getNumber('rate');
-  const timeout = await interaction.options.getNumber('timeout');
-  const minimumLength = await interaction.options.getNumber('minimum-length');
+  const status = await interaction.options.getBoolean("status");
+  const rate = await interaction.options.getNumber("rate");
+  const timeout = await interaction.options.getNumber("timeout");
+  const minimumLength = await interaction.options.getNumber("minimum-length");
 
   // Get guild object
   const guildDB = await guilds.findOne({
@@ -47,19 +47,19 @@ export default async (interaction: CommandInteraction) => {
   await guildDB.save().then(async () => {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - Guild [Points]',
-      description: 'Following settings is set!',
+      title: ":hammer: Settings - Guild [Points]",
+      description: "Following settings is set!",
       color: config.colors.success as any,
       fields: [
-        { name: '🤖 Status', value: `${guildDB.credits.status}`, inline: true },
-        { name: '📈 Rate', value: `${guildDB.credits.rate}`, inline: true },
+        { name: "🤖 Status", value: `${guildDB.credits.status}`, inline: true },
+        { name: "📈 Rate", value: `${guildDB.credits.rate}`, inline: true },
         {
-          name: '🔨 Minimum Length',
+          name: "🔨 Minimum Length",
           value: `${guildDB.credits.minimumLength}`,
           inline: true,
         },
         {
-          name: '⏰ Timeout',
+          name: "⏰ Timeout",
           value: `${guildDB.credits.timeout}`,
           inline: true,
         },

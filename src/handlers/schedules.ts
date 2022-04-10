@@ -1,11 +1,11 @@
-import schedule from 'node-schedule';
-import users from '../helpers/database/models/userSchema';
-import shopRoles from '../helpers/database/models/shopRolesSchema';
-import guilds from '../helpers/database/models/guildSchema';
-import logger from './logger';
-import { Client } from 'discord.js';
+import schedule from "node-schedule";
+import users from "../helpers/database/models/userSchema";
+import shopRoles from "../helpers/database/models/shopRolesSchema";
+import guilds from "../helpers/database/models/guildSchema";
+import logger from "./logger";
+import { Client } from "discord.js";
 export default async (client: Client) => {
-  schedule.scheduleJob('*/30 * * * *', async () => {
+  schedule.scheduleJob("*/30 * * * *", async () => {
     shopRoles.find().then(async (shopRoles: any) => {
       shopRoles.map(async (shopRole: any) => {
         const payed = new Date(shopRole.lastPayed);
@@ -45,6 +45,6 @@ export default async (client: Client) => {
       });
     });
 
-    await logger.debug('Checking schedules! (Every 30 minutes)');
+    await logger.debug("Checking schedules! (Every 30 minutes)");
   });
 };

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const apiSchema = new mongoose.Schema(
   {
@@ -13,17 +13,17 @@ const apiSchema = new mongoose.Schema(
       required: true,
       unique: false,
       index: true,
-      default: 'https://localhost/api/',
+      default: "https://localhost/api/",
     },
     token: {
       type: mongoose.SchemaTypes.String,
       required: true,
       unique: false,
       index: true,
-      default: 'token',
+      default: "token",
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('api', apiSchema);
+export default mongoose.model("api", apiSchema);

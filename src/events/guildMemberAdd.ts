@@ -1,10 +1,10 @@
-import users from '../helpers/database/models/userSchema';
-import logger from '../handlers/logger';
+import users from "../helpers/database/models/userSchema";
+import logger from "../handlers/logger";
 
-import { GuildMember } from 'discord.js';
+import { GuildMember } from "discord.js";
 
 export default {
-  name: 'guildMemberAdd',
+  name: "guildMemberAdd",
   async execute(member: GuildMember) {
     await users
       .create({ userId: member?.id, guildId: member?.guild?.id })

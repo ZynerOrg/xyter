@@ -1,15 +1,15 @@
-import i18next from 'i18next';
-import config from '../../../../config.json';
-import logger from '../../../handlers/logger';
-import users from '../../../helpers/database/models/userSchema';
-import { CommandInteraction } from 'discord.js';
+import i18next from "i18next";
+import config from "../../../../config.json";
+import logger from "../../../handlers/logger";
+import users from "../../../helpers/database/models/userSchema";
+import { CommandInteraction } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   try {
     // Destructure member
     const { member } = await interaction;
 
     // Get options
-    const target = await interaction.options.getUser('target');
+    const target = await interaction.options.getUser("target");
 
     // Get discord user object
     const discordUser = await interaction.client.users.fetch(
@@ -32,27 +32,27 @@ export default async (interaction: CommandInteraction) => {
       fields: [
         {
           name: `:dollar: Credits`,
-          value: `${userDB.credits || 'Not found'}`,
+          value: `${userDB.credits || "Not found"}`,
           inline: true,
         },
         {
           name: `:squeeze_bottle: Level`,
-          value: `${userDB.level || 'Not found'}`,
+          value: `${userDB.level || "Not found"}`,
           inline: true,
         },
         {
           name: `:squeeze_bottle: Points`,
-          value: `${userDB.points || 'Not found'}`,
+          value: `${userDB.points || "Not found"}`,
           inline: true,
         },
         {
           name: `:loudspeaker: Reputation`,
-          value: `${userDB.reputation || 'Not found'}`,
+          value: `${userDB.reputation || "Not found"}`,
           inline: true,
         },
         {
           name: `:rainbow_flag: Language`,
-          value: `${userDB.language || 'Not found'}`,
+          value: `${userDB.language || "Not found"}`,
           inline: true,
         },
       ],

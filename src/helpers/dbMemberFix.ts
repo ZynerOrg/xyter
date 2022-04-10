@@ -1,27 +1,21 @@
-import users from './database/models/userSchema';
-import logger from '../handlers/logger';
-import { Guild, User } from 'discord.js';
+import users from "./database/models/userSchema";
+import logger from "../handlers/logger";
+import { Guild, User } from "discord.js";
 
-export default async (user: User, guild: Guild) => 
-{
+export default async (user: User, guild: Guild) => {
   const userData = await users.findOne({ userId: user.id, guildId: guild.id });
-  if (!userData) 
-{
+  if (!userData) {
     users
       .create({ userId: user.id, guildId: guild.id })
-      .then(async () => 
-{
+      .then(async () => {
         await logger.debug(`User: ${user.id} added user collection`);
       })
-      .catch(async (e) => 
-{
+      .catch(async (e) => {
         await logger.error(
           `User: ${user.id} failed to added user collection ${e}`
         );
       });
-  }
- else 
-{
+  } else {
     logger.debug(`User: ${user.id} already in user collection`);
   }
 

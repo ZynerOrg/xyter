@@ -1,16 +1,16 @@
-import guilds from '../helpers/database/models/guildSchema';
-import users from '../helpers/database/models/userSchema';
-import apis from '../helpers/database/models/apiSchema';
-import counters from '../helpers/database/models/counterSchema';
-import shopRoles from '../helpers/database/models/shopRolesSchema';
-import timeouts from '../helpers/database/models/timeoutSchema';
+import guilds from "../helpers/database/models/guildSchema";
+import users from "../helpers/database/models/userSchema";
+import apis from "../helpers/database/models/apiSchema";
+import counters from "../helpers/database/models/counterSchema";
+import shopRoles from "../helpers/database/models/shopRolesSchema";
+import timeouts from "../helpers/database/models/timeoutSchema";
 
-import logger from '../handlers/logger';
+import logger from "../handlers/logger";
 
-import { Guild } from 'discord.js';
+import { Guild } from "discord.js";
 
 export default {
-  name: 'guildDelete',
+  name: "guildDelete",
   async execute(guild: Guild) {
     // Destructure client
     const { client } = guild;
@@ -67,9 +67,9 @@ export default {
     // Set client status
     await client?.user?.setPresence({
       activities: [
-        { type: 'WATCHING', name: `${client.guilds.cache.size} guilds` },
+        { type: "WATCHING", name: `${client.guilds.cache.size} guilds` },
       ],
-      status: 'online',
+      status: "online",
     });
   },
 };

@@ -1,9 +1,9 @@
-import { Permissions, CommandInteraction } from 'discord.js';
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
+import { Permissions, CommandInteraction } from "discord.js";
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
 
 // Database models
-import guilds from '../../../../helpers/database/models/guildSchema';
+import guilds from "../../../../helpers/database/models/guildSchema";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
@@ -13,7 +13,7 @@ export default async (interaction: CommandInteraction) => {
   if (!interaction?.memberPermissions?.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - Guild [Credits]',
+      title: ":hammer: Settings - Guild [Credits]",
       color: config.colors.error as any,
       description: `You don't have permission to manage this!`,
       timestamp: new Date(),
@@ -25,12 +25,12 @@ export default async (interaction: CommandInteraction) => {
   }
 
   // Get options
-  const status = await interaction.options.getBoolean('status');
-  const rate = await interaction.options.getNumber('rate');
-  const timeout = await interaction.options.getNumber('timeout');
-  const minimumLength = await interaction.options.getNumber('minimum-length');
-  const workRate = await interaction.options.getNumber('work-rate');
-  const workTimeout = await interaction.options.getNumber('work-timeout');
+  const status = await interaction.options.getBoolean("status");
+  const rate = await interaction.options.getNumber("rate");
+  const timeout = await interaction.options.getNumber("timeout");
+  const minimumLength = await interaction.options.getNumber("minimum-length");
+  const workRate = await interaction.options.getNumber("work-rate");
+  const workTimeout = await interaction.options.getNumber("work-timeout");
 
   // Get guild object
   const guildDB = await guilds.findOne({
@@ -53,29 +53,29 @@ export default async (interaction: CommandInteraction) => {
   await guildDB.save().then(async () => {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - Guild [Credits]',
-      description: 'Following settings is set!',
+      title: ":hammer: Settings - Guild [Credits]",
+      description: "Following settings is set!",
       color: config.colors.success as any,
       fields: [
-        { name: '🤖 Status', value: `${guildDB.credits.status}`, inline: true },
-        { name: '📈 Rate', value: `${guildDB.credits.rate}`, inline: true },
+        { name: "🤖 Status", value: `${guildDB.credits.status}`, inline: true },
+        { name: "📈 Rate", value: `${guildDB.credits.rate}`, inline: true },
         {
-          name: '📈 Work Rate',
+          name: "📈 Work Rate",
           value: `${guildDB.credits.workRate}`,
           inline: true,
         },
         {
-          name: '🔨 Minimum Length',
+          name: "🔨 Minimum Length",
           value: `${guildDB.credits.minimumLength}`,
           inline: true,
         },
         {
-          name: '⏰ Timeout',
+          name: "⏰ Timeout",
           value: `${guildDB.credits.timeout}`,
           inline: true,
         },
         {
-          name: '⏰ Work Timeout',
+          name: "⏰ Work Timeout",
           value: `${guildDB.credits.workTimeout}`,
           inline: true,
         },

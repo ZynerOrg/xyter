@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const guildSchema = new mongoose.Schema(
   {
@@ -68,4 +68,4 @@ const guildSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('guild', guildSchema);
+export default mongoose.model("guild", guildSchema);

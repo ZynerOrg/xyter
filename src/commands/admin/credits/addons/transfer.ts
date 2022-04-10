@@ -1,13 +1,13 @@
-import { Permissions, CommandInteraction } from 'discord.js';
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
+import { Permissions, CommandInteraction } from "discord.js";
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
 
 // Database models
 
-import users from '../../../../helpers/database/models/userSchema';
+import users from "../../../../helpers/database/models/userSchema";
 
-import creditNoun from '../../../../helpers/creditNoun';
-import saveUser from '../../../../helpers/saveUser';
+import creditNoun from "../../../../helpers/creditNoun";
+import saveUser from "../../../../helpers/saveUser";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
@@ -17,9 +17,9 @@ export default async (interaction: CommandInteraction) => {
   if (!interaction?.memberPermissions?.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Transfer]',
+      title: ":toolbox: Admin - Credits [Transfer]",
       color: config.colors.error as any,
-      description: 'You do not have permission to manage this!',
+      description: "You do not have permission to manage this!",
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
@@ -29,9 +29,9 @@ export default async (interaction: CommandInteraction) => {
   }
 
   // Get options
-  const from = await interaction.options.getUser('from');
-  const to = await interaction.options.getUser('to');
-  const amount = await interaction.options.getInteger('amount');
+  const from = await interaction.options.getUser("from");
+  const to = await interaction.options.getUser("to");
+  const amount = await interaction.options.getInteger("amount");
 
   // Get fromUser object
   const fromUser = await users.findOne({
@@ -49,9 +49,9 @@ export default async (interaction: CommandInteraction) => {
   if (!fromUser) {
     // Create embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Transfer]',
+      title: ":toolbox: Admin - Credits [Transfer]",
       description:
-        'That user has no credits, I can not transfer credits from the user',
+        "That user has no credits, I can not transfer credits from the user",
       color: config.colors.error as any,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -65,9 +65,9 @@ export default async (interaction: CommandInteraction) => {
   if (!toUser) {
     // Create embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Transfer]',
+      title: ":toolbox: Admin - Credits [Transfer]",
       description:
-        'That user has no credits, I can not transfer credits to the user',
+        "That user has no credits, I can not transfer credits to the user",
       color: config.colors.error as any,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -83,7 +83,7 @@ export default async (interaction: CommandInteraction) => {
   if (amount <= 0) {
     // Create embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Transfer]',
+      title: ":toolbox: Admin - Credits [Transfer]",
       description: "You can't transfer zero or below.",
       color: config.colors.error as any,
       timestamp: new Date(),
@@ -106,7 +106,7 @@ export default async (interaction: CommandInteraction) => {
     .then(async () => {
       // Create embed object
       const embed = {
-        title: ':toolbox: Admin - Credits [Transfer]',
+        title: ":toolbox: Admin - Credits [Transfer]",
         description: `You sent ${creditNoun(amount)} from ${from} to ${to}.`,
         color: config.colors.success as any,
         fields: [

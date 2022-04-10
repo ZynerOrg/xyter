@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const timeoutSchema = new mongoose.Schema(
   {
@@ -19,4 +19,4 @@ const timeoutSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('timeout', timeoutSchema);
+export default mongoose.model("timeout", timeoutSchema);

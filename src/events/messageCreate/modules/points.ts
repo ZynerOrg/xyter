@@ -1,7 +1,7 @@
-import logger from '../../../handlers/logger';
-import timeouts from '../../../helpers/database/models/timeoutSchema';
+import logger from "../../../handlers/logger";
+import timeouts from "../../../helpers/database/models/timeoutSchema";
 
-import { Message } from 'discord.js';
+import { Message } from "discord.js";
 export default async (guildDB: any, userDB: any, message: Message) => {
   const { author, guild, channel, content } = message;
 
@@ -12,7 +12,7 @@ export default async (guildDB: any, userDB: any, message: Message) => {
   const isTimeout = await timeouts.findOne({
     guildId: guild?.id,
     userId: author.id,
-    timeoutId: '2022-03-15-17-41',
+    timeoutId: "2022-03-15-17-41",
   });
 
   // If user is not on timeout
@@ -37,7 +37,7 @@ export default async (guildDB: any, userDB: any, message: Message) => {
     await timeouts.create({
       guildId: guild?.id,
       userId: author.id,
-      timeoutId: '2022-03-15-17-41',
+      timeoutId: "2022-03-15-17-41",
     });
 
     setTimeout(async () => {
@@ -54,7 +54,7 @@ export default async (guildDB: any, userDB: any, message: Message) => {
       await timeouts.deleteOne({
         guildId: guild?.id,
         userId: author.id,
-        timeoutId: '2022-03-15-17-41',
+        timeoutId: "2022-03-15-17-41",
       });
     }, guildDB.points.timeout);
   } else {

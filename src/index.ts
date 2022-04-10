@@ -1,13 +1,13 @@
 // Dependencies
-import { Client, Intents } from 'discord.js'; // discord.js
+import { Client, Intents } from "discord.js"; // discord.js
 
-import database from './helpers/database/index';
-import events from './handlers/events';
-import commands from './handlers/commands';
-import locale from './handlers/locale';
-import schedules from './handlers/schedules';
+import database from "./helpers/database/index";
+import events from "./handlers/events";
+import commands from "./handlers/commands";
+import locale from "./handlers/locale";
+import schedules from "./handlers/schedules";
 
-import config from '../config.json'; // config.json
+import config from "../config.json"; // config.json
 
 (async () => {
   // Initialize discord.js client

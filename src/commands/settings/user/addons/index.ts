@@ -1,3 +1,3 @@
-import appearance from './appearance';
+import appearance from "./appearance";
 
 export default { appearance };

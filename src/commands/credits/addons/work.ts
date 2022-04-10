@@ -1,10 +1,10 @@
-import config from '../../../../config.json';
-import logger from '../../../handlers/logger';
-import guilds from '../../../helpers/database/models/guildSchema';
-import users from '../../../helpers/database/models/userSchema';
-import timeouts from '../../../helpers/database/models/timeoutSchema';
-import creditNoun from '../../../helpers/creditNoun';
-import { CommandInteraction } from 'discord.js';
+import config from "../../../../config.json";
+import logger from "../../../handlers/logger";
+import guilds from "../../../helpers/database/models/guildSchema";
+import users from "../../../helpers/database/models/userSchema";
+import timeouts from "../../../helpers/database/models/timeoutSchema";
+import creditNoun from "../../../helpers/creditNoun";
+import { CommandInteraction } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   // Destructure member
   const { member } = interaction;
@@ -13,7 +13,7 @@ export default async (interaction: CommandInteraction) => {
   const isTimeout = await timeouts.findOne({
     guildId: interaction?.guild?.id,
     userId: interaction?.user?.id,
-    timeoutId: '2022-03-15-19-16',
+    timeoutId: "2022-03-15-19-16",
   });
 
   const guildDB = await guilds.findOne({
@@ -38,7 +38,7 @@ export default async (interaction: CommandInteraction) => {
 
       // Create embed object
       const embed = {
-        title: ':dollar: Credits - Work',
+        title: ":dollar: Credits - Work",
         description: `You have earned ${creditNoun(creditsEarned)}`,
         color: config.colors.success as any,
         timestamp: new Date(),
@@ -53,7 +53,7 @@ export default async (interaction: CommandInteraction) => {
     await timeouts.create({
       guildId: interaction?.guild?.id,
       userId: interaction?.user?.id,
-      timeoutId: '2022-03-15-19-16',
+      timeoutId: "2022-03-15-19-16",
     });
 
     setTimeout(async () => {
@@ -70,13 +70,13 @@ export default async (interaction: CommandInteraction) => {
       await timeouts.deleteOne({
         guildId: interaction?.guild?.id,
         userId: interaction?.user?.id,
-        timeoutId: '2022-03-15-19-16',
+        timeoutId: "2022-03-15-19-16",
       });
     }, guildDB.credits.workTimeout);
   } else {
     // Create embed object
     const embed = {
-      title: ':dollar: Credits - Work',
+      title: ":dollar: Credits - Work",
       description: `You have worked within the last ${
         guildDB.credits.workTimeout / 1000
       } seconds, you can not work now!`,

@@ -1,8 +1,8 @@
-import fs from 'fs'; // fs
-import { Client } from 'discord.js'; // discord.js
+import fs from "fs"; // fs
+import { Client } from "discord.js"; // discord.js
 
 export default async (client: Client) => {
-  const eventFiles = fs.readdirSync('./src/events');
+  const eventFiles = fs.readdirSync("./src/events");
 
   for (const file of eventFiles) {
     const event = require(`../events/${file}`);

@@ -1,5 +1,5 @@
-import sleep from './sleep';
-import logger from '../handlers/logger';
+import sleep from "./sleep";
+import logger from "../handlers/logger";
 
 export default async function saveUser(data: any, data2: any) {
   process.nextTick(
@@ -8,21 +8,21 @@ export default async function saveUser(data: any, data2: any) {
       data.save((_: any) =>
         _
           ? logger.error(
-              `ERROR Occurred while saving data (saveUser) \n${'='.repeat(
+              `ERROR Occurred while saving data (saveUser) \n${"=".repeat(
                 50
-              )}\n${`${_}\n${'='.repeat(50)}`}`
+              )}\n${`${_}\n${"=".repeat(50)}`}`
             )
-          : 'No Error'
+          : "No Error"
       );
       if (data2) {
         data2.save((_: any) =>
           _
             ? logger.error(
-                `ERROR Occurred while saving data (saveUser) \n${'='.repeat(
+                `ERROR Occurred while saving data (saveUser) \n${"=".repeat(
                   50
-                )}\n${`${_}\n${'='.repeat(50)}`}`
+                )}\n${`${_}\n${"=".repeat(50)}`}`
               )
-            : 'No Error'
+            : "No Error"
         );
       }
     },

@@ -1,7 +1,7 @@
-import counters from '../helpers/database/models/counterSchema';
-import { Message } from 'discord.js';
+import counters from "../helpers/database/models/counterSchema";
+import { Message } from "discord.js";
 export default {
-  name: 'messageUpdate',
+  name: "messageUpdate",
   async execute(oldMessage: Message, newMessage: Message) {
     // If message author is bot
     if (newMessage.author.bot) return;

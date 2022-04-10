@@ -1,12 +1,12 @@
-import { CommandInteraction } from 'discord.js';
-import config from '../../../../config.json';
-import logger from '../../../handlers/logger';
-import users from '../../../helpers/database/models/userSchema';
-import creditNoun from '../../../helpers/creditNoun';
+import { CommandInteraction } from "discord.js";
+import config from "../../../../config.json";
+import logger from "../../../handlers/logger";
+import users from "../../../helpers/database/models/userSchema";
+import creditNoun from "../../../helpers/creditNoun";
 
 export default async (interaction: CommandInteraction) => {
   // Get options
-  const user = await interaction.options.getUser('user');
+  const user = await interaction.options.getUser("user");
 
   // Get credit object
   const userDB = await users.findOne({
@@ -21,9 +21,9 @@ export default async (interaction: CommandInteraction) => {
   if (!userDB) {
     // Create embed object
     const embed = {
-      title: ':dollar: Credits - Balance',
+      title: ":dollar: Credits - Balance",
       description: `${
-        user ? `${user} is` : 'You are'
+        user ? `${user} is` : "You are"
       } not found in the database.`,
       color: config.colors.error as any,
       timestamp: new Date(),
@@ -38,8 +38,8 @@ export default async (interaction: CommandInteraction) => {
   if (!credits) {
     // Create embed object
     const embed = {
-      title: ':dollar: Credits - Balance',
-      description: `${user ? `${user} has` : 'You have'} no credits.`,
+      title: ":dollar: Credits - Balance",
+      description: `${user ? `${user} has` : "You have"} no credits.`,
       color: config.colors.success as any,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -53,8 +53,8 @@ export default async (interaction: CommandInteraction) => {
   if (credits) {
     // Create embed object
     const embed = {
-      title: ':dollar: Credits - Balance',
-      description: `${user ? `${user} has` : 'You have'} ${creditNoun(
+      title: ":dollar: Credits - Balance",
+      description: `${user ? `${user} has` : "You have"} ${creditNoun(
         credits
       )}.`,
       color: config.colors.success as any,

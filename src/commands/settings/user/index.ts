@@ -1,14 +1,14 @@
-import { Permissions, CommandInteraction } from 'discord.js';
-import config from '../../../../config.json';
-import logger from '../../../handlers/logger';
-import appearance from './addons/appearance';
+import { Permissions, CommandInteraction } from "discord.js";
+import config from "../../../../config.json";
+import logger from "../../../handlers/logger";
+import appearance from "./addons/appearance";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
   const { member } = interaction;
 
   // If subcommand is appearance
-  if (interaction.options.getSubcommand() === 'appearance') {
+  if (interaction.options.getSubcommand() === "appearance") {
     // Execute appearance addon
     await appearance(interaction);
   }

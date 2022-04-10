@@ -1,11 +1,11 @@
-import config from '../../config.json';
-import logger from '../handlers/logger';
-import guilds from '../helpers/database/models/guildSchema';
+import config from "../../config.json";
+import logger from "../handlers/logger";
+import guilds from "../helpers/database/models/guildSchema";
 
-import { Interaction, ColorResolvable } from 'discord.js';
+import { Interaction, ColorResolvable } from "discord.js";
 
 export default {
-  name: 'interactionCreate',
+  name: "interactionCreate",
   async execute(interaction: Interaction) {
     // Destructure member, client
     const { client, guild } = interaction;
@@ -41,10 +41,10 @@ export default {
               author: {
                 name: client?.user?.username,
                 icon_url: client?.user?.displayAvatarURL(),
-                url: 'https://bot.zyner.org/',
+                url: "https://bot.zyner.org/",
               },
-              title: 'Error',
-              description: 'There was an error while executing this command!',
+              title: "Error",
+              description: "There was an error while executing this command!",
               color: config.colors.error as ColorResolvable,
               timestamp: new Date(),
             },

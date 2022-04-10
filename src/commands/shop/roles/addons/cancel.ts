@@ -1,16 +1,16 @@
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
-import users from '../../../../helpers/database/models/userSchema';
-import shopRoles from '../../../../helpers/database/models/shopRolesSchema';
-import guilds from '../../../../helpers/database/models/guildSchema';
-import creditNoun from '../../../../helpers/creditNoun';
-import { CommandInteraction, GuildMemberRoleManager } from 'discord.js';
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
+import users from "../../../../helpers/database/models/userSchema";
+import shopRoles from "../../../../helpers/database/models/shopRolesSchema";
+import guilds from "../../../../helpers/database/models/guildSchema";
+import creditNoun from "../../../../helpers/creditNoun";
+import { CommandInteraction, GuildMemberRoleManager } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   const { member } = interaction;
 
-  const role = await interaction.options.getRole('role');
+  const role = await interaction.options.getRole("role");
 
   if (role === null) return;
 
@@ -45,11 +45,11 @@ export default async (interaction: CommandInteraction) => {
         });
 
         const embed = {
-          title: ':shopping_cart: Shop - Roles [Buy]',
+          title: ":shopping_cart: Shop - Roles [Buy]",
           description: `You have canceled ${role.name}.`,
           color: config.colors.success as any,
           fields: [
-            { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+            { name: "Your balance", value: `${creditNoun(userDB.credits)}` },
           ],
           timestamp: new Date(),
           footer: { iconURL: config.footer.icon, text: config.footer.text },

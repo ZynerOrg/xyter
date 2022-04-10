@@ -1,12 +1,12 @@
-import guilds from '../../helpers/database/models/guildSchema';
-import users from '../../helpers/database/models/userSchema';
-import points from './modules/points';
-import credits from './modules/credits';
-import counter from './modules/counter';
+import guilds from "../../helpers/database/models/guildSchema";
+import users from "../../helpers/database/models/userSchema";
+import points from "./modules/points";
+import credits from "./modules/credits";
+import counter from "./modules/counter";
 
-import { Message } from 'discord.js';
+import { Message } from "discord.js";
 export default {
-  name: 'messageCreate',
+  name: "messageCreate",
   async execute(message: Message) {
     const { guild, author } = message;
 

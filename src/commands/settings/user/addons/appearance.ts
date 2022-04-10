@@ -1,15 +1,15 @@
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
-import { CommandInteraction } from 'discord.js';
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
+import { CommandInteraction } from "discord.js";
 // Database models
-import users from '../../../../helpers/database/models/userSchema';
+import users from "../../../../helpers/database/models/userSchema";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
   const { member } = interaction;
 
   // Get options
-  const language = await interaction.options.getString('language');
+  const language = await interaction.options.getString("language");
 
   // Get user object
   const userDB = await users.findOne({
@@ -24,12 +24,12 @@ export default async (interaction: CommandInteraction) => {
   await userDB.save().then(async () => {
     // Create embed object
     const embed = {
-      title: ':hammer: Settings - User [Appearance]',
-      description: 'Following settings is set!',
+      title: ":hammer: Settings - User [Appearance]",
+      description: "Following settings is set!",
       color: config.colors.success as any,
       fields: [
         {
-          name: '🏳️‍🌈 Language',
+          name: "🏳️‍🌈 Language",
           value: `${userDB.language}`,
           inline: true,
         },

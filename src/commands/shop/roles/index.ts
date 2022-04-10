@@ -1,19 +1,19 @@
-import logger from '../../../handlers/logger';
-import buy from './addons/buy';
-import cancel from './addons/cancel';
-import { CommandInteraction } from 'discord.js';
+import logger from "../../../handlers/logger";
+import buy from "./addons/buy";
+import cancel from "./addons/cancel";
+import { CommandInteraction } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   // Destructure member
   const { member } = interaction;
 
   // If subcommand is buy
-  if (interaction.options.getSubcommand() === 'buy') {
+  if (interaction.options.getSubcommand() === "buy") {
     // Execute buy addon
     await buy(interaction);
   }
 
   // If subcommand is cancel
-  if (interaction.options.getSubcommand() === 'cancel') {
+  if (interaction.options.getSubcommand() === "cancel") {
     // Execute cancel addon
     await cancel(interaction);
   }

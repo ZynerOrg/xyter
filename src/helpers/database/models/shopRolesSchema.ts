@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const shopRoleSchema = new mongoose.Schema(
   {
@@ -36,4 +36,4 @@ const shopRoleSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model('shopRole', shopRoleSchema);
+export default mongoose.model("shopRole", shopRoleSchema);

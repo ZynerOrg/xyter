@@ -1,16 +1,16 @@
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
-import config from '../../../../config.json';
-import logger from '../../../handlers/logger';
-import apis from '../../../helpers/database/models/apiSchema';
-import users from '../../../helpers/database/models/userSchema';
-import creditNoun from '../../../helpers/creditNoun';
-import { CommandInteraction } from 'discord.js';
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import config from "../../../../config.json";
+import logger from "../../../handlers/logger";
+import apis from "../../../helpers/database/models/apiSchema";
+import users from "../../../helpers/database/models/userSchema";
+import creditNoun from "../../../helpers/creditNoun";
+import { CommandInteraction } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   const { member } = interaction;
 
   // Get options
-  const amount = await interaction.options.getInteger('amount');
+  const amount = await interaction.options.getInteger("amount");
 
   if (amount === null) return;
 
@@ -26,11 +26,11 @@ export default async (interaction: CommandInteraction) => {
   // Stop if amount or user credits is below 100
   if ((amount || userDB.credits) < 100) {
     const embed = {
-      title: ':shopping_cart: Shop - Pterodactyl',
+      title: ":shopping_cart: Shop - Pterodactyl",
       description: `You **can't** withdraw for __Pterodactyl__ below **100**.`,
       color: config.colors.error as any,
       fields: [
-        { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+        { name: "Your balance", value: `${creditNoun(userDB.credits)}` },
       ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -41,11 +41,11 @@ export default async (interaction: CommandInteraction) => {
   // Stop if amount or user credits is above 1.000.000
   if ((amount || userDB.credits) > 1000000) {
     const embed = {
-      title: ':shopping_cart: Shop - Pterodactyl',
+      title: ":shopping_cart: Shop - Pterodactyl",
       description: `You **can't** withdraw for __Pterodactyl__ above **1.000.000**.`,
       color: config.colors.error as any,
       fields: [
-        { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+        { name: "Your balance", value: `${creditNoun(userDB.credits)}` },
       ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -56,11 +56,11 @@ export default async (interaction: CommandInteraction) => {
   // Stop if user credits is below amount
   if (userDB.credits < amount) {
     const embed = {
-      title: ':shopping_cart: Shop - Pterodactyl',
+      title: ":shopping_cart: Shop - Pterodactyl",
       description: `You have **insufficient** credits.`,
       color: config.colors.error as any,
       fields: [
-        { name: 'Your balance', value: `${creditNoun(userDB.credits)}` },
+        { name: "Your balance", value: `${creditNoun(userDB.credits)}` },
       ],
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -83,13 +83,13 @@ export default async (interaction: CommandInteraction) => {
   });
 
   // Get shop URL
-  const shopUrl = apiCredentials.url.replace('/api', '/store');
+  const shopUrl = apiCredentials.url.replace("/api", "/store");
 
   // Make API request
   await api
 
     // Make a post request to the API
-    .post('vouchers', {
+    .post("vouchers", {
       uses: 1,
       code,
       credits: amount || userDB.credits,
@@ -100,12 +100,12 @@ export default async (interaction: CommandInteraction) => {
     .then(async () => {
       // Create DM embed object
       const dmEmbed = {
-        title: ':shopping_cart: Shop - Pterodactyl',
+        title: ":shopping_cart: Shop - Pterodactyl",
         description: `Redeem this voucher [here](${shopUrl})!`,
         fields: [
-          { name: 'Code', value: `${code}`, inline: true },
+          { name: "Code", value: `${code}`, inline: true },
           {
-            name: 'Credits',
+            name: "Credits",
             value: `${amount || userDB.credits}`,
             inline: true,
           },
@@ -117,8 +117,8 @@ export default async (interaction: CommandInteraction) => {
 
       // Create interaction embed object
       const interactionEmbed = {
-        title: ':shopping_cart: Shop - Pterodactyl',
-        description: 'I have sent you the code in DM!',
+        title: ":shopping_cart: Shop - Pterodactyl",
+        description: "I have sent you the code in DM!",
         color: config.colors.success as any,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -152,8 +152,8 @@ export default async (interaction: CommandInteraction) => {
         .catch(async (e: any) => {
           await logger.error(e);
           const embed = {
-            title: ':shopping_cart: Shop - Pterodactyl',
-            description: 'Something went wrong, please try again later.',
+            title: ":shopping_cart: Shop - Pterodactyl",
+            description: "Something went wrong, please try again later.",
             color: config.colors.error as any,
             timestamp: new Date(),
             footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -166,8 +166,8 @@ export default async (interaction: CommandInteraction) => {
     .catch(async (e) => {
       await logger.error(e);
       const embed = {
-        title: ':shopping_cart: Shop - Pterodactyl',
-        description: 'Something went wrong, please try again later.',
+        title: ":shopping_cart: Shop - Pterodactyl",
+        description: "Something went wrong, please try again later.",
         color: config.colors.error as any,
         timestamp: new Date(),
         footer: { iconURL: config.footer.icon, text: config.footer.text },

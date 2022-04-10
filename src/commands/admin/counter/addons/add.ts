@@ -1,9 +1,9 @@
-import { Permissions, CommandInteraction } from 'discord.js';
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
+import { Permissions, CommandInteraction } from "discord.js";
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
 
 // Database models
-import counters from '../../../../helpers/database/models/counterSchema';
+import counters from "../../../../helpers/database/models/counterSchema";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
@@ -13,9 +13,9 @@ export default async (interaction: CommandInteraction) => {
   if (!interaction?.memberPermissions?.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: 'Admin',
+      title: "Admin",
       color: config.colors.error as any,
-      description: 'You do not have permission to manage this!',
+      description: "You do not have permission to manage this!",
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
@@ -25,14 +25,14 @@ export default async (interaction: CommandInteraction) => {
   }
 
   // Get options
-  const channel = await interaction.options.getChannel('channel');
-  const word = await interaction.options.getString('word');
-  const start = await interaction.options.getNumber('start');
+  const channel = await interaction.options.getChannel("channel");
+  const word = await interaction.options.getString("word");
+  const start = await interaction.options.getNumber("start");
 
-  if (channel?.type !== 'GUILD_TEXT') {
+  if (channel?.type !== "GUILD_TEXT") {
     // Create embed object
     const embed = {
-      title: 'Admin - Counter',
+      title: "Admin - Counter",
       description: `That channel is not supported, it needs to be a text channel.`,
       timestamp: new Date(),
       color: config.colors.error as any,
@@ -58,7 +58,7 @@ export default async (interaction: CommandInteraction) => {
     });
     // Create embed object
     const embed = {
-      title: 'Admin - Counter',
+      title: "Admin - Counter",
       description: `${channel} is now counting when hearing word ${word} and it starts at number ${
         start || 0
       }.`,
@@ -77,7 +77,7 @@ export default async (interaction: CommandInteraction) => {
   }
   // Create embed object
   const embed = {
-    title: 'Admin - Counter',
+    title: "Admin - Counter",
     description: `${channel} is already a counting channel.`,
     timestamp: new Date(),
     color: config.colors.error as any,

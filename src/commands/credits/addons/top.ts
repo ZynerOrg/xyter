@@ -1,7 +1,7 @@
-import config from '../../../../config.json';
-import users from '../../../helpers/database/models/userSchema';
-import creditNoun from '../../../helpers/creditNoun';
-import { CommandInteraction } from 'discord.js';
+import config from "../../../../config.json";
+import users from "../../../helpers/database/models/userSchema";
+import creditNoun from "../../../helpers/creditNoun";
+import { CommandInteraction } from "discord.js";
 export default async (interaction: CommandInteraction) => {
   // Get all users in the guild
 
@@ -21,10 +21,10 @@ export default async (interaction: CommandInteraction) => {
 
   // Create embed object
   const embed = {
-    title: ':dollar: Credits - Top',
+    title: ":dollar: Credits - Top",
     description: `Below are the top ten.\n${topTen
       .map((x, index) => entry(x, index))
-      .join('\n')}`,
+      .join("\n")}`,
     color: config.colors.success as any,
     timestamp: new Date(),
     footer: { iconURL: config.footer.icon, text: config.footer.text },

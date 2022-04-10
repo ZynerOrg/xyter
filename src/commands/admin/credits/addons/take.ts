@@ -1,12 +1,12 @@
-import { Permissions, CommandInteraction } from 'discord.js';
-import config from '../../../../../config.json';
-import logger from '../../../../handlers/logger';
+import { Permissions, CommandInteraction } from "discord.js";
+import config from "../../../../../config.json";
+import logger from "../../../../handlers/logger";
 
 // Database models
 
-import users from '../../../../helpers/database/models/userSchema';
+import users from "../../../../helpers/database/models/userSchema";
 
-import creditNoun from '../../../../helpers/creditNoun';
+import creditNoun from "../../../../helpers/creditNoun";
 
 export default async (interaction: CommandInteraction) => {
   // Destructure member
@@ -16,9 +16,9 @@ export default async (interaction: CommandInteraction) => {
   if (!interaction?.memberPermissions?.has(Permissions.FLAGS.MANAGE_GUILD)) {
     // Create embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Take]',
+      title: ":toolbox: Admin - Credits [Take]",
       color: config.colors.error as any,
-      description: 'You do not have permission to manage this!',
+      description: "You do not have permission to manage this!",
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
     };
@@ -28,8 +28,8 @@ export default async (interaction: CommandInteraction) => {
   }
 
   // Get options
-  const userOption = await interaction.options.getUser('userOption');
-  const amount = await interaction.options.getInteger('amount');
+  const userOption = await interaction.options.getUser("userOption");
+  const amount = await interaction.options.getInteger("amount");
 
   if (amount === null) return;
 
@@ -37,7 +37,7 @@ export default async (interaction: CommandInteraction) => {
   if (amount <= 0) {
     // Give embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Take]',
+      title: ":toolbox: Admin - Credits [Take]",
       description: "You can't take zero or below.",
       color: config.colors.error as any,
       timestamp: new Date(),
@@ -58,9 +58,9 @@ export default async (interaction: CommandInteraction) => {
   if (!toUser) {
     // Create embed object
     const embed = {
-      title: ':toolbox: Admin - Credits [Take]',
+      title: ":toolbox: Admin - Credits [Take]",
       description:
-        'That userOption has no credits, I can not take credits from the userOption',
+        "That userOption has no credits, I can not take credits from the userOption",
       color: config.colors.error as any,
       timestamp: new Date(),
       footer: { iconURL: config.footer.icon, text: config.footer.text },
@@ -81,7 +81,7 @@ export default async (interaction: CommandInteraction) => {
     .then(async () => {
       // Create embed object
       const embed = {
-        title: ':toolbox: Admin - Credits [Take]',
+        title: ":toolbox: Admin - Credits [Take]",
         description: `You took ${creditNoun(amount)} to ${userOption}.`,
         color: 0x22bb33,
         timestamp: new Date(),
