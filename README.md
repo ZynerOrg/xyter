@@ -29,7 +29,7 @@
 
 Xyter is an open source, multi-purpose Discord bot that is develoepd by students. You can invite it to your Discord server using [this](https://bot.zyner.org) link! It comes packaged with a variety of commands and a multitude of settings that can be tailored to your server's specific needs.
 
-**To run this on Pterodactyl** please set startup command to `./node_modules/.bin/ts-node src/index.ts`!
+**To run this on Pterodactyl** please set startup command to `./node_modules/.bin/ts-node bot/src/index.ts`!
 
 If you liked this repository, feel free to leave a star ⭐ to help promote Xyter!
 
