@@ -1,3 +1,6 @@
 [submodule "docs"]
 	path = docs
 	url = https://github.com/ZynerOrg/xyter-docs
+[submodule "bot"]
+	path = bot
+	url = https://github.com/ZynerOrg/xyter-bot
