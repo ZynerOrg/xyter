@@ -1,10 +1,11 @@
 import logger from "@logger";
 import timeouts from "@schemas/timeout";
 
-import fetchUser from "@helpers/fetchUser";
-import fetchGuild from "@helpers/fetchGuild";
-
 import { Message } from "discord.js";
+
+import prisma from "@root/database/prisma";
+import getModuleData from "@root/helpers/getModule";
+
 export default {
   execute: async (message: Message) => {
     const { guild, author, content, channel } = message;
@@ -16,10 +17,13 @@ export default {
     const { id: guildId } = guild;
     const { id: userId } = author;
 
-    const guildData = await fetchGuild(guild);
-    const userData = await fetchUser(author, guild);
+    const module = await getModuleData(guild.id, "credits");
 
-    if (content.length < guildData.credits.minimumLength) return;
+    if (!module) return;
+
+    if (module.minimumLength == null) return;
+
+    if (content.length < module.minimumLength) return;
 
     const timeoutData = {
       guildId,
@@ -36,25 +40,19 @@ export default {
       return;
     }
 
-    userData.points += guildData.points.rate;
+    const guildMemberData = await prisma.guildMember.upsert({
+      where: {
+        guildId_userId: { guildId, userId },
+      },
+      update: { points: { increment: 1 } },
+      create: {
+        guildId,
+        userId,
+        points: 1,
+      },
+    });
 
-    await userData
-      .save()
-      .then(async () => {
-        logger.verbose(
-          `Successfully saved user ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`
-        );
-      })
-      .catch(async (err) => {
-        logger.error(
-          `Error saving points for user ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`,
-          err
-        );
-      });
-
-    logger.verbose(
-      `User ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id}) has ${userData.points} points`
-    );
+    logger.silly(guildMemberData);
 
     await timeouts
       .create(timeoutData)
@@ -84,6 +82,6 @@ export default {
             err
           );
         });
-    }, guildData.points.timeout);
+    }, module.timeout as number);
   },
 };

@@ -1,4 +1,5 @@
 # Custom Dictionary Words
+Balans
 Controlpanel
 cpgg
 dagen

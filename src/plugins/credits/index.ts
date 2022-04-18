@@ -1,14 +1,9 @@
-// Dependencies
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-
 import logger from "@logger";
-
-// Modules
-import modules from "@root/plugins/credits/modules";
+import modules from "@plugins/credits/modules";
 
 export default {
-  metadata: { author: "Zyner" },
   data: new SlashCommandBuilder()
     .setName("credits")
     .setDescription("Manage your credits.")
@@ -19,26 +14,21 @@ export default {
   async execute(interaction: CommandInteraction) {
     const { options } = interaction;
 
-    if (options?.getSubcommand() === "balance") {
-      logger?.verbose(`Executing balance subcommand`);
-      return modules.balance.execute(interaction);
+    switch (options.getSubcommand()) {
+      case "balance":
+        logger?.verbose(`Executing balance subcommand`);
+        return modules.balance.execute(interaction);
+      case "gift":
+        logger?.verbose(`Executing gift subcommand`);
+        return modules.gift.execute(interaction);
+      case "top":
+        logger?.verbose(`Executing top subcommand`);
+        return modules.top.execute(interaction);
+      case "work":
+        logger?.verbose(`Executing work subcommand`);
+        return modules.work.execute(interaction);
+      default:
+        logger?.verbose(`Unknown subcommand ${options?.getSubcommand()}`);
     }
-
-    if (options?.getSubcommand() === "gift") {
-      logger?.verbose(`Executing gift subcommand`);
-      return modules.gift.execute(interaction);
-    }
-
-    if (options?.getSubcommand() === "top") {
-      logger?.verbose(`Executing top command`);
-      return modules.top.execute(interaction);
-    }
-
-    if (options?.getSubcommand() === "work") {
-      logger?.verbose(`Executing work command`);
-      return modules.work.execute(interaction);
-    }
-
-    logger?.verbose(`Unknown subcommand ${options?.getSubcommand()}`);
   },
 };

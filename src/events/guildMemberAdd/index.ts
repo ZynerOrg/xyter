@@ -8,6 +8,8 @@ import logger from "@logger";
 import joinMessage from "../guildMemberAdd/joinMessage";
 import audits from "../guildMemberAdd/audits";
 
+import prisma from "@root/database/prisma";
+
 export default {
   name: "guildMemberAdd",
   async execute(member: GuildMember) {
@@ -19,6 +21,20 @@ export default {
 
     await audits.execute(member);
     await joinMessage.execute(member);
+
+    const guildMemberData = await prisma.guildMember.upsert({
+      where: {
+        guildId_userId: { guildId: guild.id, userId: user.id },
+      },
+      update: {},
+      create: {
+        guildId: member.guild.id,
+        userId: member.user.id,
+      },
+    });
+
+    logger.silly(guildMemberData);
+
     await fetchUser(user, guild);
     await updatePresence(client);
   },

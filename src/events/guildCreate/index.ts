@@ -3,8 +3,9 @@ import { Guild } from "discord.js";
 
 // Dependencies
 import updatePresence from "@helpers/updatePresence";
-import fetchGuild from "@helpers/fetchGuild";
 import logger from "@logger";
+
+import prisma from "@root/database/prisma";
 
 export default {
   name: "guildCreate",
@@ -13,7 +14,18 @@ export default {
 
     logger?.verbose(`Added to guild: ${guild.name} (${guild.id})`);
 
-    await fetchGuild(guild);
+    const guildData = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {},
+      create: {
+        id: guild.id,
+      },
+    });
+
+    logger.silly(guildData);
+
     await updatePresence(client);
   },
 };

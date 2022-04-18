@@ -1,15 +1,13 @@
-// Dependencies
-import { CommandInteraction } from "discord.js";
-
-// Configurations
-import { successColor, footerText, footerIcon } from "@config/embed";
-
-// Models
-import fetchUser from "@helpers/fetchUser";
-
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import {
+  successColor,
+  errorColor,
+  footerText,
+  footerIcon,
+} from "@config/embed";
 import logger from "@logger";
+import prisma from "@root/database/prisma";
 
-// Function
 export default async (interaction: CommandInteraction) => {
   // Destructure
   const { client, options, user, guild } = interaction;
@@ -27,7 +25,34 @@ export default async (interaction: CommandInteraction) => {
   }
 
   // User Information
-  const userObj = await fetchUser(discordUser, guild);
+  const guildMemberData = await prisma.guildMember.findUnique({
+    where: {
+      guildId_userId: {
+        guildId: guild?.id,
+        userId: discordUser?.id,
+      },
+    },
+  });
+
+  if (!guildMemberData) {
+    await interaction.editReply({
+      embeds: [
+        new MessageEmbed()
+          .setAuthor({
+            name: `${discordUser?.username}#${discordUser?.discriminator}`,
+            iconURL: discordUser?.displayAvatarURL(),
+          })
+          .setDescription(
+            `We can not find your requested to user in our database!`
+          )
+          .setTimestamp(new Date())
+          .setColor(errorColor)
+          .setFooter({ text: footerText, iconURL: footerIcon }),
+      ],
+    });
+
+    return;
+  }
 
   // Embed object
   const embed = {
@@ -39,27 +64,27 @@ export default async (interaction: CommandInteraction) => {
     fields: [
       {
         name: `:dollar: Credits`,
-        value: `${userObj?.credits || "Not found"}`,
+        value: `${guildMemberData?.credits || "Not found"}`,
         inline: true,
       },
       {
         name: `:squeeze_bottle: Level`,
-        value: `${userObj?.level || "Not found"}`,
+        value: `${guildMemberData?.level || "Not found"}`,
         inline: true,
       },
       {
         name: `:squeeze_bottle: Points`,
-        value: `${userObj?.points || "Not found"}`,
+        value: `${guildMemberData?.points || "Not found"}`,
         inline: true,
       },
       {
         name: `:loudspeaker: Reputation`,
-        value: `${userObj?.reputation || "Not found"}`,
+        value: `${guildMemberData?.reputation || "Not found"}`,
         inline: true,
       },
       {
         name: `:rainbow_flag: Language`,
-        value: `${userObj?.language || "Not found"}`,
+        value: `${guildMemberData?.locale || "Not found"}`,
         inline: true,
       },
     ],

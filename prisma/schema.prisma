@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id          String        @id
+  Module      Module[]
+  GuildMember GuildMember[]
+}
+
+model GuildMember {
+  userId  String
+  Guild   Guild? @relation(fields: [guildId], references: [id])
+  guildId String
+  // User    User?  @relation(fields: [userId], references: [id])
+  // userId  String
+
+  credits    Int?    @default(0)
+  points     Int?    @default(0)
+  locale     String? @default("en")
+  reputation Int?    @default(0)
+  level      Int?    @default(0)
+
+  @@id([guildId, userId])
+}
+
+// model User {
+//   id          String        @id
+//   locale      String        @default("en")
+//   reputation  Int           @default(0)
+//   GuildMember GuildMember[]
+// }
+
+model Module {
+  enabled Boolean @default(false)
+  name    String
+
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  guildId String
+
+  data Json?
+
+  @@id([guildId, name])
+}
+
+model Credential {
+  id String @id
+}
+
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   title     String   @db.VarChar(255)
+//   content   String?
+//   published Boolean  @default(false)
+//   author    User     @relation(fields: [authorId], references: [id])
+//   authorId  Int
+// }
+
+// model Profile {
+//   id     Int     @id @default(autoincrement())
+//   bio    String?
+//   user   User    @relation(fields: [userId], references: [id])
+//   userId Int     @unique
+// }
+
+// model User {
+//   id      Int      @id @default(autoincrement())
+//   email   String   @unique
+//   name    String?
+//   posts   Post[]
+//   profile Profile?
+// }

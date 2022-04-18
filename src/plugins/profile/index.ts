@@ -29,7 +29,6 @@ export default {
 
     if (options?.getSubcommand() === "view") {
       logger?.verbose(`Executing view subcommand`);
-
       return view(interaction);
     }
 

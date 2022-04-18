@@ -14,7 +14,9 @@ import {
 
 // Helpers
 import pluralize from "@helpers/pluralize";
-import fetchUser from "@helpers/fetchUser";
+
+import prisma from "@root/database/prisma";
+import i18next from "i18next";
 
 export default {
   data: (command: SlashCommandSubcommandBuilder) => {
@@ -42,7 +44,9 @@ export default {
       return interaction?.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Balance)")
+            .setTitle(
+              i18next.t("plugins:credits:modules:balance:general:title")
+            )
             .setDescription(`You can only use this command in a guild!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -51,15 +55,32 @@ export default {
       });
     }
 
-    const userObj = await fetchUser(discordUser || user, guild);
+    const targetUser = discordUser || user;
 
-    if (userObj === null) {
+    const guildMemberData = await prisma.guildMember.upsert({
+      where: {
+        guildId_userId: {
+          guildId: guild.id,
+          userId: targetUser.id,
+        },
+      },
+      update: {},
+      create: {
+        guildId: guild.id,
+        userId: targetUser.id,
+        credits: 0,
+      },
+    });
+
+    if (guildMemberData === null) {
       logger?.verbose(`User not found`);
 
       return interaction?.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Balance)")
+            .setTitle(
+              i18next.t("plugins:credits:modules:balance:general:title")
+            )
             .setDescription(`Could not find user ${discordUser || user}`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -68,13 +89,15 @@ export default {
       });
     }
 
-    if (userObj.credits === null) {
+    if (guildMemberData.credits === null) {
       logger?.verbose(`User has no credits`);
 
       return interaction?.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Balance)")
+            .setTitle(
+              i18next.t("plugins:credits:modules:balance:general:title")
+            )
             .setDescription(`${discordUser || user} has no credits!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -88,10 +111,10 @@ export default {
     return interaction?.editReply({
       embeds: [
         new MessageEmbed()
-          .setTitle("[:dollar:] Credits (Balance)")
+          .setTitle(i18next.t("plugins:credits:modules:balance:general:title"))
           .setDescription(
             `${discordUser || user} has  ${pluralize(
-              userObj.credits,
+              guildMemberData.credits,
               `credit`
             )}!`
           )

@@ -2,13 +2,16 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 
-import userSchema from "@schemas/user";
-
 // Configurations
 import { successColor, footerText, footerIcon } from "@config/embed";
 
 // Helpers
 import pluralize from "@helpers/pluralize";
+
+import prisma from "@root/database/prisma";
+
+import logger from "@logger";
+import i18next from "i18next";
 
 export default {
   data: (command: SlashCommandSubcommandBuilder) => {
@@ -17,28 +20,26 @@ export default {
   execute: async (interaction: CommandInteraction) => {
     // Get all users in the guild
 
-    const usersDB = await userSchema.find({ guildId: interaction?.guild?.id });
+    const guildMemberData = await prisma.guildMember.findMany({
+      where: { guildId: interaction?.guild?.id },
+      orderBy: { credits: "desc" },
+      select: { userId: true, credits: true },
+    });
 
-    const topTen = usersDB
-
-      // Sort them after credits amount (ascending)
-      .sort((a, b) => (a?.credits > b?.credits ? -1 : 1))
-
-      // Return the top 10
-      .slice(0, 10);
+    logger.silly(guildMemberData);
 
     // Create entry object
     const entry = (x: any, index: number) =>
-      `${index + 1}. <@${x?.userId}> - ${pluralize(x?.credits, "credit")}`;
+      `${index + 1}. <@${x.userId}> - ${pluralize(x.credits, "credit")}`;
 
     return interaction.editReply({
       embeds: [
         new MessageEmbed()
-          .setTitle("[:dollar:] Credits (Top)")
+          .setTitle(i18next.t("plugins:credits:modules:top:general:title"))
           .setDescription(
             `Top 10 users with the most credits.
 
-            ${topTen.map(entry).join("\n")}`
+            ${guildMemberData.map(entry).join("\n")}`
           )
           .setTimestamp(new Date())
           .setColor(successColor)

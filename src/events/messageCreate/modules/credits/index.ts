@@ -2,8 +2,9 @@ import logger from "@logger";
 import timeouts from "@schemas/timeout";
 import { Message } from "discord.js";
 
-import fetchUser from "@helpers/fetchUser";
-import fetchGuild from "@helpers/fetchGuild";
+import prisma from "@root/database/prisma";
+
+import getModuleData from "@root/helpers/getModule";
 
 export default {
   execute: async (message: Message) => {
@@ -16,10 +17,15 @@ export default {
     const { id: guildId } = guild;
     const { id: userId } = author;
 
-    const guildData = await fetchGuild(guild);
-    const userData = await fetchUser(author, guild);
+    const module = await getModuleData(guild.id, "credits");
 
-    if (content.length < guildData.credits.minimumLength) return;
+    if (!module) return;
+
+    if (module.minimumLength == null) return;
+    if (module.timeout == null) return;
+    if (module.rate == null) return;
+
+    if (content.length < module.minimumLength) return;
 
     const timeoutData = {
       guildId,
@@ -36,21 +42,19 @@ export default {
       return;
     }
 
-    userData.credits += guildData.credits.rate;
+    const guildMemberData = await prisma.guildMember.upsert({
+      where: {
+        guildId_userId: { guildId, userId },
+      },
+      update: { credits: { increment: module.rate as number } },
+      create: {
+        guildId,
+        userId,
+        credits: 1,
+      },
+    });
 
-    await userData
-      .save()
-      .then(async () => {
-        logger.verbose(
-          `User ${userId} in guild ${guildId} has ${userData.credits} credits`
-        );
-      })
-      .catch(async (err) => {
-        logger.error(
-          `Error saving credits for user ${userId} in guild ${guildId}`,
-          err
-        );
-      });
+    logger.silly(guildMemberData);
 
     await timeouts
       .create(timeoutData)
@@ -80,6 +84,6 @@ export default {
             err
           );
         });
-    }, guildData.credits.timeout);
+    }, module.timeout as number);
   },
 };

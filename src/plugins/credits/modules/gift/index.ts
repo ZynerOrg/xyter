@@ -12,12 +12,11 @@ import {
 // Handlers
 import logger from "@logger";
 
-// Helpers
-import saveUser from "@helpers/saveUser";
-
 // Models
-import fetchUser from "@helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+
+import prisma from "@root/database/prisma";
+import i18next from "i18next";
 
 // Function
 export default {
@@ -54,7 +53,7 @@ export default {
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(`We can not find your guild!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -69,7 +68,7 @@ export default {
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(`We can not find your requested user!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -78,19 +77,31 @@ export default {
       });
     }
 
-    // Get fromUserDB object
-    const fromUserDB = await fetchUser(user, guild);
+    const fromGuildMemberData = await prisma.guildMember.findUnique({
+      where: {
+        guildId_userId: {
+          guildId: guild.id,
+          userId: user.id,
+        },
+      },
+    });
 
-    // Get toUserDB object
-    const toUserDB = await fetchUser(optionUser, guild);
+    const toGuildMemberData = await prisma.guildMember.findUnique({
+      where: {
+        guildId_userId: {
+          guildId: guild.id,
+          userId: optionUser.id,
+        },
+      },
+    });
 
-    if (fromUserDB === null) {
+    if (fromGuildMemberData === null) {
       logger?.verbose(`User not found`);
 
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(
               `We can not find your requested from user in our database!`
             )
@@ -101,13 +112,13 @@ export default {
       });
     }
 
-    if (toUserDB === null) {
+    if (toGuildMemberData === null) {
       logger?.verbose(`User not found`);
 
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(
               `We can not find your requested to user in our database!`
             )
@@ -125,7 +136,7 @@ export default {
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(`You can not pay yourself!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -141,7 +152,7 @@ export default {
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(`We could not read your requested amount!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -157,7 +168,7 @@ export default {
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(`You can't gift zero or below!`)
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -166,16 +177,21 @@ export default {
       });
     }
 
+    if (fromGuildMemberData === null) return;
+    if (toGuildMemberData === null) return;
+    if (fromGuildMemberData.credits === null) return;
+    if (toGuildMemberData.credits === null) return;
+
     // If user has below gifting amount
-    if (fromUserDB?.credits < optionAmount) {
+    if (fromGuildMemberData.credits < optionAmount) {
       logger?.verbose(`User has below gifting amount`);
 
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(
-              `You have insufficient credits. Your balance is ${fromUserDB?.credits}!`
+              `You have insufficient credits. Your balance is ${fromGuildMemberData?.credits}!`
             )
             .setTimestamp(new Date())
             .setColor(errorColor)
@@ -184,14 +200,14 @@ export default {
       });
     }
 
-    // If toUserDB has no credits
-    if (toUserDB === null) {
+    // If toGuildMemberData has no credits
+    if (toGuildMemberData === null) {
       logger?.verbose(`User has no credits`);
 
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
+            .setTitle(i18next.t("plugins:credits:modules:gift:general:title"))
             .setDescription(
               `We can not find your requested to user in our database!`
             )
@@ -202,55 +218,85 @@ export default {
       });
     }
 
-    // Withdraw amount from fromUserDB
-    fromUserDB.credits -= optionAmount;
+    await prisma
+      .$transaction([
+        prisma.guildMember.update({
+          where: {
+            guildId_userId: {
+              guildId: guild.id,
+              userId: user.id,
+            },
+          },
+          data: {
+            credits: fromGuildMemberData.credits - optionAmount,
+          },
+        }),
 
-    // Deposit amount to toUserDB
-    toUserDB.credits += optionAmount;
+        prisma.guildMember.update({
+          where: {
+            guildId_userId: {
+              guildId: guild.id,
+              userId: optionUser.id,
+            },
+          },
+          data: {
+            credits: toGuildMemberData.credits + optionAmount,
+          },
+        }),
+      ])
+      .then(async () => {
+        // Get DM user object
+        const dmUser = client?.users?.cache?.get(optionUser?.id);
 
-    // Save users
-    await saveUser(fromUserDB, toUserDB)?.then(async () => {
-      // Get DM user object
-      const dmUser = client?.users?.cache?.get(optionUser?.id);
+        // Send DM to user
+        await dmUser
+          ?.send({
+            embeds: [
+              new MessageEmbed()
+                .setTitle(
+                  i18next.t("plugins:credits:modules:gift:general:title")
+                )
+                .setDescription(
+                  `You have received ${optionAmount} credits from ${
+                    user?.tag
+                  } with reason ${
+                    optionReason ? ` with reason: ${optionReason}` : ""
+                  }!`
+                )
+                .setTimestamp(new Date())
+                .setColor(successColor)
+                .setFooter({ text: footerText, iconURL: footerIcon }),
+            ],
+          })
+          .catch(async (error) =>
+            logger?.error(`[Gift] Error sending DM to user: ${error}`)
+          );
 
-      // Send DM to user
-      await dmUser
-        ?.send({
-          embeds: [
-            new MessageEmbed()
-              .setTitle("[:dollar:] Credits (Gift)")
-              .setDescription(
-                `You have received ${optionAmount} credits from ${
-                  user?.tag
-                } with reason ${
-                  optionReason ? ` with reason: ${optionReason}` : ""
-                }!`
-              )
-              .setTimestamp(new Date())
-              .setColor(successColor)
-              .setFooter({ text: footerText, iconURL: footerIcon }),
-          ],
-        })
-        .catch(async (error) =>
-          logger?.error(`[Gift] Error sending DM to user: ${error}`)
+        logger?.verbose(
+          `[Gift] Successfully gifted ${optionAmount} credits to ${optionUser?.tag}`
         );
 
-      logger?.verbose(
-        `[Gift] Successfully gifted ${optionAmount} credits to ${optionUser?.tag}`
-      );
-
-      return interaction.editReply({
-        embeds: [
-          new MessageEmbed()
-            .setTitle("[:dollar:] Credits (Gift)")
-            .setDescription(
-              `Successfully gifted ${optionAmount} credits to ${optionUser?.tag}!`
-            )
-            .setTimestamp(new Date())
-            .setColor(successColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
+        return interaction
+          .editReply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle(
+                  i18next.t("plugins:credits:modules:gift:general:title")
+                )
+                .setDescription(
+                  `Successfully gifted ${optionAmount} credits to ${optionUser?.tag}!`
+                )
+                .setTimestamp(new Date())
+                .setColor(successColor)
+                .setFooter({ text: footerText, iconURL: footerIcon }),
+            ],
+          })
+          .catch(async (error) => {
+            logger?.error(`[Gift] Error editing interaction: ${error}`);
+          });
+      })
+      .catch(async (error) => {
+        logger?.error(`[Gift] Error executing transaction: ${error}`);
       });
-    });
   },
 };
