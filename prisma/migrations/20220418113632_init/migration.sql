@@ -16,4 +16,3 @@ ALTER TABLE `guildmember`
 -- DropTable
 
 DROP TABLE `user`;
-

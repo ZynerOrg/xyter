@@ -8,4 +8,3 @@
 
 ALTER TABLE `module` DROP PRIMARY KEY, DROP COLUMN `id`,
     ADD PRIMARY KEY (`guildId`, `name`);
-

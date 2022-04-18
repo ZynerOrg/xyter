@@ -6,4 +6,3 @@
 -- AlterTable
 
 ALTER TABLE `module` DROP COLUMN `type`, MODIFY `enabled` BOOLEAN NOT NULL DEFAULT FALSE;
-
