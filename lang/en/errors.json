@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "guildOnly": "You can only use this command in a guild!",
+        "userNotFound": "Could not find user <@{{user}}>.",
+        "amountNotFound": "We could not read your requested amount!"
+    }
+}
