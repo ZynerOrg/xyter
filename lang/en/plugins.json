@@ -1,3 +1,115 @@
 {
-  "test":"test"
+  "credits": {
+    "modules": {
+      "balance": {
+        "general": {
+          "title": "[:dollar:] Credits (Balance)"
+        },
+        "user_has_amount_credits": "<@{{user}}> has {{amount}} credits",
+        "error01": {
+          "description": "<@{{user}}> has no credits!"
+        },
+        "success01": {
+          "description": "<@{{user}}> has {{amount}} credits!\n"
+        }
+      },
+      "gift": {
+        "general": {
+          "title": "[:dollar:] Credits (Gift)"
+        },
+        "error01": {
+          "description": "You can not pay yourself!"
+        },
+        "error02": {
+          "description": "You can't gift zero or below!"
+        },
+        "error03": {
+          "description": "You have insufficient credits. Your balance is {{amount}}!"
+        },
+        "success01": {
+          "description": "You have received {{amount}} credits from {{user}} with reason {{reason}}!"
+        },
+        "success02": {
+          "description": "Successfully gifted {{amount}} credits to <@{{user}}> with reason {{reason}}!"
+        }
+      },
+      "top": {
+        "entry": "{{index}}. <@{{user}}> - {{amount}}",
+        "success01": {
+          "description": "Top 10 users with the most credits."
+        },
+        "general": {
+          "title": "[:dollar:] Credits (Top)"
+        }
+      },
+      "work": {
+        "general": {
+          "title": "[:dollar:] Credits (Work)"
+        },
+        "error01": {
+          "description": "You can not work while on timeout, please wait {{time}} seconds."
+        },
+        "success01": {
+          "description": "You worked and earned {{amount}} credits"
+        }
+      }
+    }
+  },
+  "utility": {
+    "modules": {
+      "avatar": {
+        "general": {
+          "title": "[:hammer:] Utility (Avatar)"
+        },
+        "success01": {
+          "description": "Here you have <@{{user}}> avatar!"
+        }
+      }
+    }
+  },
+  "counters": {
+    "modules": {
+      "view": {
+        "general": {
+          "title": "[:1234:] Counters (View)"
+        },
+        "error01": {
+          "description": "No counter found for channel <#{{channel}}>!"
+        },
+        "success01": {
+          "description": "Viewing counter for channel <#{{channel}} with count {{amount}}."
+        }
+      }
+    }
+  },
+  "manage": {
+    "groups": {
+      "counters": {
+        "modules": {
+          "create": {
+            "general": {
+              "title": "[:toolbox:] Manage - Counters (Create)"
+            },
+            "success01": {
+              "description": "Created counter for <#{{channel}}>."
+            },
+            "error01": {
+              "description": "A counter already exists for this channel."
+            }
+          },
+          "delete": {
+            "general": {
+              "title": "[:toolbox:] Manage - Counters (Delete)"
+            },
+            "error01": {
+              "description": "The counter for this channel does not exist."
+            },
+            "success01": {
+              "description": "The counter for this channel has been deleted."
+            }
+          }
+        }
+      }
+    }
+  }
 }
