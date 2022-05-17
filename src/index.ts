@@ -26,7 +26,7 @@ const main = async () => {
     });
 
   // Start schedule manager
- await  schedules(client)
+  await schedules(client)
     .then(async () => {
       logger.silly("Schedules process started");
     })
@@ -53,7 +53,7 @@ const main = async () => {
     });
 
   // Authorize with Discord's API
- await client.login(token);
+  await client.login(token);
 };
 main()
   .then(async () => {
