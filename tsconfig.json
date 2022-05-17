@@ -14,54 +14,22 @@
     "outDir": "./build",
     "resolveJsonModule": true,
     "baseUrl": "./src",
-    "typeRoots": [
-      "/types/common",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["/types/common", "./node_modules/@types"],
     "paths": {
-      "@interface/*": [
-        "Interfaces/*"
-      ],
-      "@root/*": [
-        "*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@events/*": [
-        "events/*"
-      ],
-      "@logger": [
-        "logger"
-      ],
-      "@database": [
-        "database"
-      ],
-      "@schedules": [
-        "schedules"
-      ],
-      "@handlers/*": [
-        "handlers/*"
-      ],
-      "@helpers/*": [
-        "helpers/*"
-      ],
-      "@locale": [
-        "locale"
-      ],
-      "@plugins/*": [
-        "plugins/*"
-      ],
-      "@schemas/*": [
-        "database/schemas/*"
-      ]
+      "@interface/*": ["Interfaces/*"],
+      "@root/*": ["*"],
+      "@config/*": ["config/*"],
+      "@events/*": ["events/*"],
+      "@logger": ["logger"],
+      "@database": ["database"],
+      "@schedules": ["schedules"],
+      "@handlers/*": ["handlers/*"],
+      "@helpers/*": ["helpers/*"],
+      "@locale": ["locale"],
+      "@plugins/*": ["plugins/*"],
+      "@schemas/*": ["database/schemas/*"]
     }
   },
-  "include": [
-    "./src"
-  ],
-  "exclude": [
-    "./node_modules",
-    "./test"
-  ]
+  "include": ["./src"],
+  "exclude": ["./node_modules", "./test"]
 }
