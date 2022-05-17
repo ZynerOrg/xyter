@@ -24,7 +24,7 @@ const main = async () => {
     .catch(async (err) => {
       logger.error(err);
     });
-  
+
   // Start schedule manager
  await  schedules(client)
     .then(async () => {
