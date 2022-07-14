@@ -22,5 +22,8 @@
       "addWords": true,
       "scope": "workspace"
     }
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }

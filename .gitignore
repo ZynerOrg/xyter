@@ -140,3 +140,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# Docker
+database
+docker-compose.local.yml

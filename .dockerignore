@@ -1,0 +1,6 @@
+.vscode
+.husky
+.github
+.cspell
+.env
+node_modules
