@@ -21,6 +21,9 @@
     "url": "https://github.com/ZynerOrg/xyter.git"
   },
   "author": "Vermium Sifell <vermium@zyner.org> (https://zyner.org)",
+  "contributors": [
+    "Joshua Schmitt <me@jqshuv.xyz> (https://jqshuv.xyz)"
+  ],
   "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/ZynerOrg/xyter/issues",
@@ -36,6 +39,7 @@
     "crypto": "^1.0.1",
     "discord-api-types": "^0.36.0",
     "discord.js": "^13.6.0",
+    "dotenv": "^16.0.1",
     "i18n": "^0.15.0",
     "i18next": "^21.6.13",
     "i18next-async-backend": "^2.0.0",

@@ -1,13 +1,11 @@
 import winston from "winston";
 import "winston-daily-rotate-file";
 
-import { logLevel } from "../config/other";
-
 const { combine, timestamp, printf, errors, colorize, align, json } =
   winston.format;
 
 export default winston.createLogger({
-  level: logLevel || "info",
+  level: process.env.LOG_LEVEL || "info",
   transports: [
     new winston.transports.DailyRotateFile({
       filename: "logs/combined-%DATE%.log",

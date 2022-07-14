@@ -1,8 +1,5 @@
 // Dependencies
-import {
-  CommandInteraction,
-  Permissions,
-} from "discord.js";
+import { CommandInteraction, Permissions } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
