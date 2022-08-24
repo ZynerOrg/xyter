@@ -7,7 +7,7 @@ import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 // Models
 import fetchUser from "../../../../../helpers/fetchUser";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 
 // Function

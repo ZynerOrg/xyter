@@ -6,7 +6,7 @@ import { ChannelType } from "discord-api-types/v10";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Models
 import counterSchema from "../../../../../../../models/counter";

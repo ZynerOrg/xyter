@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 import counterSchema from "../../../../../models/counter";
 
 export default {

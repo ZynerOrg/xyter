@@ -2,7 +2,7 @@
 import { Client } from "discord.js";
 import listDir from "../../helpers/listDir";
 import { IEvent } from "../../interfaces/Event";
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 export const register = async (client: Client) => {
   const eventNames = await listDir("plugins/events");

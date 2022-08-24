@@ -3,7 +3,7 @@ import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 
 // Handlers
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 

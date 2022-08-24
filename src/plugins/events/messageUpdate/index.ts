@@ -1,6 +1,6 @@
 // Dependencies
 import { Message } from "discord.js";
-import logger from "../../../logger";
+import logger from "../../../middlewares/logger";
 
 // Modules
 import counter from "./modules/counter";

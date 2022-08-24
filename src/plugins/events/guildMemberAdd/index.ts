@@ -4,7 +4,7 @@ import { GuildMember } from "discord.js";
 // Dependencies
 import updatePresence from "../../../helpers/updatePresence";
 import fetchUser from "../../../helpers/fetchUser";
-import logger from "../../../logger";
+import logger from "../../../middlewares/logger";
 
 import joinMessage from "./joinMessage";
 import audits from "./audits";

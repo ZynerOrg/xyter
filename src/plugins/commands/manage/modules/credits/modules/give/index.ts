@@ -6,7 +6,7 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Helpers
 import pluralize from "../../../../../../../helpers/pluralize";

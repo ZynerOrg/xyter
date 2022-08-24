@@ -5,7 +5,7 @@ import { CommandInteraction, MessageEmbed, Permissions } from "discord.js";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Helpers
 

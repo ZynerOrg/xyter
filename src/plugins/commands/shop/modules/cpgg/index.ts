@@ -8,7 +8,7 @@ import axios from "axios";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 import encryption from "../../../../../handlers/encryption";
 
 import pluralize from "../../../../../helpers/pluralize";

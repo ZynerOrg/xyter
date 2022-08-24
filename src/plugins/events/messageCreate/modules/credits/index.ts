@@ -1,4 +1,4 @@
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 import { Message } from "discord.js";
 
 import fetchUser from "../../../../../helpers/fetchUser";

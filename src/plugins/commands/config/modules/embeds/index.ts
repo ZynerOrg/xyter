@@ -5,7 +5,7 @@ import {
   Permissions,
 } from "discord.js";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";

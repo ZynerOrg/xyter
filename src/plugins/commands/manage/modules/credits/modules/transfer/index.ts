@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Models
 import fetchUser from "../../../../../../../helpers/fetchUser";

@@ -1,4 +1,4 @@
-import logger from "../../../logger";
+import logger from "../../../middlewares/logger";
 import { GuildMember, MessageEmbed } from "discord.js";
 
 import guildSchema from "../../../models/guild";

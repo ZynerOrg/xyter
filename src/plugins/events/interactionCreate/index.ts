@@ -4,7 +4,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 // Dependencies
 import * as handlers from "./handlers";
 
-import logger from "../../../logger";
+import logger from "../../../middlewares/logger";
 import audits from "./audits";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import capitalizeFirstLetter from "../../../helpers/capitalizeFirstLetter";

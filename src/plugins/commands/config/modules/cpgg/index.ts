@@ -2,7 +2,7 @@ import { CommandInteraction, Permissions } from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 import apiSchema from "../../../../../models/api";
 import encryption from "../../../../../handlers/encryption";

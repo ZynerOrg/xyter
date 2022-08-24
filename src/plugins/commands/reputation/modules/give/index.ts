@@ -1,6 +1,6 @@
 import { CommandInteraction } from "discord.js";
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 import fetchUser from "../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import * as cooldown from "../../../../../helpers/cooldown";

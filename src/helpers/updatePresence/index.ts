@@ -1,6 +1,6 @@
 // Dependencies
 import { Client } from "discord.js";
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 // Function
 export default async (client: Client) => {

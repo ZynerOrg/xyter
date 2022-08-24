@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 
 // Models
 import counterSchema from "../../../../models/counter";
-import logger from "../../../../logger";
+import logger from "../../../../middlewares/logger";
 
 export default async (message: Message) => {
   const { guild, channel, author, content } = message;

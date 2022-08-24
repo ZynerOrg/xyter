@@ -1,7 +1,7 @@
 // Dependencies
 import { CommandInteraction, ButtonInteraction, Message } from "discord.js";
 
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 import timeoutSchema from "../../models/timeout";
 import addSeconds from "../../helpers/addSeconds";

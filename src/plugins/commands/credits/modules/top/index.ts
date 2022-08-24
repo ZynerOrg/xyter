@@ -2,7 +2,7 @@ import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 import userSchema, { IUser } from "../../../../../models/user";
 

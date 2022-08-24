@@ -12,7 +12,7 @@ import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 import shopRolesSchema from "../../../../../../../models/shopRole";
 import guildSchema from "../../../../../../../models/guild";
 
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Helpers
 import pluralize from "../../../../../../../helpers/pluralize";

@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 import { IShopRole } from "../../../../../interfaces/ShopRole";
 

@@ -7,7 +7,7 @@ import Chance from "chance";
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 // Models
 import * as cooldown from "../../../../../helpers/cooldown";

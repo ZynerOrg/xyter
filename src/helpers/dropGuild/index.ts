@@ -5,7 +5,7 @@ import counterSchema from "../../models/counter";
 import shopRoleSchema from "../../models/shopRole";
 import timeoutSchema from "../../models/timeout";
 
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 import { Guild } from "discord.js";
 

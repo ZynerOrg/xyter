@@ -7,7 +7,7 @@ import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 // Models
 import shopRolesSchema from "../../../../../../../models/shopRole";
 
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Helpers
 import pluralize from "../../../../../../../helpers/pluralize";

@@ -1,5 +1,5 @@
 /* eslint-disable no-loops/no-loops */
-import logger from "../../../logger";
+import logger from "../../../middlewares/logger";
 import { Message, MessageEmbed, TextChannel } from "discord.js";
 
 import guildSchema from "../../../models/guild";

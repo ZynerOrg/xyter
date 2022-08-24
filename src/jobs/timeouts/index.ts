@@ -1,4 +1,4 @@
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 import timeoutSchema from "../../models/timeout";
 

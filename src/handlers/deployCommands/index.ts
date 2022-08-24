@@ -1,4 +1,4 @@
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 import { Client } from "discord.js";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
