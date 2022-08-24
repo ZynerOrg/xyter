@@ -4,7 +4,6 @@
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.fontFamily": "Cascadia Code",
   "editor.fontLigatures": true,
   "editor.formatOnSave": true,
   "editor.guides.bracketPairs": "active",
