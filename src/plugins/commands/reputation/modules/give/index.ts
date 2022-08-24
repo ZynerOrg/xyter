@@ -1,6 +1,5 @@
 import { CommandInteraction } from "discord.js";
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-import { timeout } from "../../../../../config/reputation";
 import logger from "../../../../../logger";
 import fetchUser from "../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
@@ -53,7 +52,7 @@ export default {
     await noSelfReputation(optionTarget, user);
 
     // Check if user is on cooldown otherwise create one
-    await cooldown.command(interaction, timeout);
+    await cooldown.command(interaction, process.env.REPUTATION_TIMEOUT);
 
     switch (optionType) {
       case "positive":

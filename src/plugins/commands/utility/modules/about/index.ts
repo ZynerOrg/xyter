@@ -8,7 +8,6 @@ import {
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import { hosterName, hosterUrl } from "../../../../../config/other";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 
 // Function
@@ -45,10 +44,10 @@ export default {
         .setEmoji("💬")
         .setURL("https://discord.zyner.org"),
       new MessageButton()
-        .setLabel(`Hosted by ${hosterName}`)
+        .setLabel(`Hosted by ${process.env.BOT_HOSTER_NAME}`)
         .setStyle("LINK")
         .setEmoji("⚒️")
-        .setURL(`${hosterUrl}`)
+        .setURL(`${process.env.BOT_HOSTER_URL}`)
     );
 
     const interactionEmbed = {
