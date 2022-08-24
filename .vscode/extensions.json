@@ -45,7 +45,8 @@
     "sonarsource.sonarlint-vscode",
     "nicoespeon.hocus-pocus",
     "aaron-bond.better-comments",
-    "oouo-diogo-perdigao.docthis"
+    "oouo-diogo-perdigao.docthis",
+    "Vtrois.gitmoji-vscode"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []
