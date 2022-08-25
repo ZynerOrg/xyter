@@ -1,7 +1,7 @@
 import {
   CommandInteraction,
-  MessageActionRow,
-  MessageButton,
+  ActionRowBuilder,
+  ButtonBuilder,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -163,8 +163,8 @@ export default {
 
     const shopUrl = `${url}/store`;
 
-    const buttons = new MessageActionRow().addComponents(
-      new MessageButton()
+    const buttons = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
         .setLabel("Redeem it here")
         .setStyle("LINK")
         .setEmoji("🏦")

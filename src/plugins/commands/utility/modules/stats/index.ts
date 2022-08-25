@@ -1,7 +1,7 @@
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 export default {
   metadata: { guildOnly: false, ephemeral: false },
 
@@ -12,6 +12,7 @@ export default {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
+
     const { client } = interaction;
     if (client?.uptime === null) return;
     let totalSeconds = client?.uptime / 1000;
@@ -24,10 +25,12 @@ export default {
 
     const uptime = `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`;
 
-    const interactionEmbed = {
-      title: ":hammer: Utilities - Stats",
-      description: "Below you can see a list of statistics about the bot.",
-      fields: [
+    const interactionEmbed = new EmbedBuilder()
+      .setColor(successColor)
+      .setTitle("[:hammer:] Stats")
+      .setDescription("Below you can see a list of statistics about the bot.")
+      .setTimestamp()
+      .addFields(
         {
           name: "⏰ Latency",
           value: `${Date?.now() - interaction?.createdTimestamp} ms`,
@@ -55,15 +58,10 @@ export default {
             0
           )}`,
           inline: true,
-        },
-      ],
-      color: successColor,
-      timestamp: new Date(),
-      footer: {
-        iconURL: footerIcon,
-        text: footerText,
-      },
-    };
+        }
+      )
+      .setFooter({ text: footerText, iconURL: footerIcon });
+
     interaction?.editReply({ embeds: [interactionEmbed] });
   },
 };

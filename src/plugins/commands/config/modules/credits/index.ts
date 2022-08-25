@@ -1,4 +1,10 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  EmbedBuilder,
+  Permissions,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
@@ -11,7 +17,7 @@ export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -45,7 +51,7 @@ export default {
           .setDescription("Timeout between earning credits (seconds).")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
@@ -83,51 +89,50 @@ export default {
     await guildDB?.save()?.then(async () => {
       logger?.silly(`Guild saved`);
 
-      return interaction?.editReply({
-        embeds: [
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:tools:] Credits")
+        .setDescription("Credits settings updated")
+        .setColor(successColor)
+        .addFields(
           {
-            title: ":tools: Settings - Guild [Credits]",
-            description: `Credits settings updated.`,
-            color: successColor,
-            fields: [
-              {
-                name: "🤖 Status",
-                value: `${guildDB?.credits?.status}`,
-                inline: true,
-              },
-              {
-                name: "📈 Rate",
-                value: `${guildDB?.credits?.rate}`,
-                inline: true,
-              },
-              {
-                name: "📈 Work Rate",
-                value: `${guildDB?.credits?.workRate}`,
-                inline: true,
-              },
-              {
-                name: "🔨 Minimum Length",
-                value: `${guildDB?.credits?.minimumLength}`,
-                inline: true,
-              },
-              {
-                name: "⏰ Timeout",
-                value: `${guildDB?.credits?.timeout}`,
-                inline: true,
-              },
-              {
-                name: "⏰ Work Timeout",
-                value: `${guildDB?.credits?.workTimeout}`,
-                inline: true,
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Status",
+            value: `${guildDB?.credits?.status}`,
+            inline: true,
           },
-        ],
+          {
+            name: "📈 Rate",
+            value: `${guildDB?.credits?.rate}`,
+            inline: true,
+          },
+          {
+            name: "📈 Work Rate",
+            value: `${guildDB?.credits?.workRate}`,
+            inline: true,
+          },
+          {
+            name: "🔨 Minimum Length",
+            value: `${guildDB?.credits?.minimumLength}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Timeout",
+            value: `${guildDB?.credits?.timeout}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Work Timeout",
+            value: `${guildDB?.credits?.workTimeout}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction?.editReply({
+        embeds: [interactionEmbed],
       });
     });
   },

@@ -1,5 +1,5 @@
 // Dependencies
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
@@ -46,7 +46,7 @@ export default {
     const optionAmount = options.getInteger("amount");
     const optionReason = options.getString("reason");
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:dollar:] Gift")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

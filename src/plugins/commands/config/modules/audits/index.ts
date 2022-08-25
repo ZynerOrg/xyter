@@ -1,4 +1,8 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
@@ -12,7 +16,7 @@ export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -29,7 +33,7 @@ export default {
           .addChannelTypes(ChannelType.GuildText)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
@@ -54,31 +58,30 @@ export default {
     await guildDB?.save()?.then(async () => {
       logger?.silly(`Guild audits updated.`);
 
-      return interaction?.editReply({
-        embeds: [
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:hammer:] Audits")
+        .setDescription("Audit settings updated!")
+        .setColor(successColor)
+        .addFields(
           {
-            title: ":hammer: Settings - Guild [Audits]",
-            description: `Audits settings updated.`,
-            color: successColor,
-            fields: [
-              {
-                name: "🤖 Status",
-                value: `${guildDB?.audits?.status}`,
-                inline: true,
-              },
-              {
-                name: "🌊 Channel",
-                value: `${guildDB?.audits?.channelId}`,
-                inline: true,
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Status",
+            value: `${guildDB?.audits?.status}`,
+            inline: true,
           },
-        ],
+          {
+            name: "🌊 Channel",
+            value: `${guildDB?.audits?.channelId}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction?.editReply({
+        embeds: [interactionEmbed],
       });
     });
   },

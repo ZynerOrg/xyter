@@ -1,8 +1,10 @@
 // Dependencies
 import {
   CommandInteraction,
-  MessageActionRow,
-  MessageButton,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
 } from "discord.js";
 
 // Configurations
@@ -22,51 +24,50 @@ export default {
       interaction.guild
     );
 
-    const buttons = new MessageActionRow().addComponents(
-      new MessageButton()
+    const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
         .setLabel("Source Code")
-        .setStyle("LINK")
+        .setStyle(ButtonStyle.Link)
         .setEmoji("📄")
         .setURL("https://github.com/ZynerOrg/xyter"),
-      new MessageButton()
+      new ButtonBuilder()
         .setLabel("Documentation")
-        .setStyle("LINK")
+        .setStyle(ButtonStyle.Link)
         .setEmoji("📚")
         .setURL("https://xyter.zyner.org"),
-      new MessageButton()
+      new ButtonBuilder()
         .setLabel("Website")
-        .setStyle("LINK")
+        .setStyle(ButtonStyle.Link)
         .setEmoji("🌐")
         .setURL("https://zyner.org"),
-      new MessageButton()
+      new ButtonBuilder()
         .setLabel("Get Help")
-        .setStyle("LINK")
+        .setStyle(ButtonStyle.Link)
         .setEmoji("💬")
         .setURL("https://discord.zyner.org"),
-      new MessageButton()
+      new ButtonBuilder()
         .setLabel(`Hosted by ${process.env.BOT_HOSTER_NAME}`)
-        .setStyle("LINK")
+        .setStyle(ButtonStyle.Link)
         .setEmoji("⚒️")
         .setURL(`${process.env.BOT_HOSTER_URL}`)
     );
 
-    const interactionEmbed = {
-      title: "[:tools:] About",
-      description: `
-      **Xyter**'s goal is to provide a __privacy-friendly__ discord bot.
-      We created **Xyter** to **replace the mess** of having a dozen or so bots in __your__ community.
-      On top of this, you can also see our **source code** for **security** and **privacy** issues.
-      As well as making your own **fork** of the bot, you can also get **help** from our community.
+    const interactionEmbed = new EmbedBuilder()
+      .setColor(successColor)
+      .setTitle("[:tools:] About")
+      .setDescription(
+        `
+**Xyter**'s goal is to provide a __privacy-friendly__ discord bot.
+We created **Xyter** to **replace the mess** of having a dozen or so bots in __your__ community.
+On top of this, you can also see our **source code** for **security** and **privacy** issues.
+As well as making your own **fork** of the bot, you can also get **help** from our community.
 
-      Developed with ❤️ by **Zyner**, a non-profit project by teens.
-      `,
-      color: successColor,
-      timestamp: new Date(),
-      footer: {
-        iconURL: footerIcon,
-        text: footerText,
-      },
-    };
+Developed with ❤️ by **Zyner**, a non-profit project by teens.
+        `
+      )
+      .setTimestamp()
+      .setFooter({ text: footerText, iconURL: footerIcon });
+
     await interaction.editReply({
       embeds: [interactionEmbed],
       components: [buttons],

@@ -127,9 +127,7 @@ export const message = async (msg: Message, cooldown: number, id: string) => {
         (new Date(hasTimeout.createdAt).getTime() - new Date().getTime()) / 1000
       );
 
-      throw new Error(
-        `User: ${userId} on timeout-id: ${id} with cooldown: ${cooldown} secs with remaining: ${diff} secs.`
-      );
+      return `User: ${userId} on timeout-id: ${id} with cooldown: ${cooldown} secs with remaining: ${diff} secs.`;
     }
 
     // Delete timeout

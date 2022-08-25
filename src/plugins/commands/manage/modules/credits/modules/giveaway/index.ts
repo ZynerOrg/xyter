@@ -1,10 +1,12 @@
 // Dependencies
 import {
   CommandInteraction,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
   Permissions,
+  PermissionsBitField,
+  ChatInputCommandInteraction,
 } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { v4 as uuidv4 } from "uuid";
@@ -15,14 +17,14 @@ import encryption from "../../../../../../../handlers/encryption";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
-import { ChannelType } from "discord-api-types/v10";
+import { ButtonStyle, ChannelType } from "discord-api-types/v10";
 
 // Function
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -49,7 +51,7 @@ export default {
           .addChannelTypes(ChannelType.GuildText)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     ); // Destructure
@@ -63,7 +65,7 @@ export default {
     if (!creditAmount) throw new Error("Amount of credits is required.");
     if (!channel) throw new Error("Channel is required.");
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:toolbox:] Giveaway")
       .setFooter({ text: footerText, iconURL: footerIcon });
 
@@ -102,10 +104,10 @@ export default {
           ],
         });
 
-        const buttons = new MessageActionRow().addComponents(
-          new MessageButton()
+        const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
             .setLabel("Redeem it here")
-            .setStyle("LINK")
+            .setStyle(ButtonStyle.Link)
             .setEmoji("🏦")
             .setURL(`${shopUrl}?voucher=${code}`)
         );
@@ -114,11 +116,11 @@ export default {
 
         if (!discordChannel) return;
 
-        if (discordChannel.type !== "GUILD_TEXT") return;
+        if (discordChannel.type !== ChannelType.GuildText) return;
 
         discordChannel.send({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setTitle("[:parachute:] Credits!")
               .addFields([
                 {

@@ -1,5 +1,5 @@
 // Dependencies
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
 
@@ -28,7 +28,7 @@ export default {
     ); // Destructure member
     const { guild, user } = interaction;
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:dollar:] Work")
       .setTimestamp(new Date())
       .setFooter({

@@ -1,6 +1,6 @@
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 
 export default {
@@ -24,7 +24,7 @@ export default {
 
     const targetUser = userOption || interaction.user;
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:tools:] Avatar")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

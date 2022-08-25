@@ -1,6 +1,6 @@
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 
@@ -24,14 +24,18 @@ export default {
       );
   },
 
-  execute: async (interaction: CommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+  execute: async (interaction: ChatInputCommandInteraction) => {
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
     const { options, guild } = interaction;
 
-    const discordChannel = options?.getChannel("channel");
+    const discordChannel = options.getChannel("channel");
 
-    const embed = new MessageEmbed()
+    if (!guild) throw new Error(`Guild not found`);
+    if (!discordChannel) throw new Error(`Channel not found`);
+
+    const embed = new EmbedBuilder()
       .setTitle("[:1234:] Counters (View)")
       .setTimestamp(new Date())
       .setFooter({
@@ -39,22 +43,21 @@ export default {
         iconURL: footerIcon,
       });
 
-    const counter = await counterSchema?.findOne({
-      guildId: guild?.id,
-      channelId: discordChannel?.id,
+    const counter = await counterSchema.findOne({
+      guildId: guild.id,
+      channelId: discordChannel.id,
     });
 
-    if (counter === null) {
-      return interaction?.editReply({
-        embeds: [
-          embed
-            .setDescription(`No counter found for channel ${discordChannel}!`)
-            .setColor(errorColor),
-        ],
-      });
-    }
+    const counters = await counterSchema.find();
 
-    return interaction?.editReply({
+    console.log(counters, {
+      guildId: guild.id,
+      channelId: discordChannel.id,
+    });
+
+    if (!counter) throw new Error("No counter found for channel");
+
+    return interaction.editReply({
       embeds: [
         embed
           .setDescription(

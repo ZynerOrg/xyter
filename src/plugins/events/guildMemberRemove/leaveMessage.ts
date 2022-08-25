@@ -1,4 +1,4 @@
-import { GuildMember, MessageEmbed, TextChannel } from "discord.js";
+import { GuildMember, EmbedBuilder, TextChannel } from "discord.js";
 
 import guildSchema from "../../../models/guild";
 
@@ -27,7 +27,7 @@ export default {
 
     (channel as TextChannel).send({
       embeds: [
-        new MessageEmbed()
+        new EmbedBuilder()
           .setColor(errorColor)
           .setTitle(`${member.user.username} has left the server!`)
           .setThumbnail(member.user.displayAvatarURL())

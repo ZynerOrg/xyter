@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { Client } from "discord.js";
 
 import * as database from "./database";

@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { ChannelType, Message } from "discord.js";
 
 import logger from "../../../../../middlewares/logger";
 import counterSchema from "../../../../../models/counter";
@@ -9,7 +9,7 @@ export default {
 
     if (guild == null) return;
     if (author.bot) return;
-    if (channel?.type !== "GUILD_TEXT") return;
+    if (channel?.type !== ChannelType.GuildText) return;
 
     const messages = await message.channel.messages.fetch({ limit: 2 });
     const lastMessage = messages.last();

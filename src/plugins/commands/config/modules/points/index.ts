@@ -1,4 +1,9 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  Permissions,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
@@ -11,7 +16,7 @@ export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -35,7 +40,7 @@ export default {
           .setDescription("Timeout between earning credits (milliseconds).")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
@@ -65,41 +70,40 @@ export default {
     await guildDB?.save()?.then(async () => {
       logger?.silly(`Guild points updated.`);
 
-      return interaction?.editReply({
-        embeds: [
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:tools:] Points")
+        .setDescription("Points settings updated")
+        .setColor(successColor)
+        .addFields(
           {
-            title: ":hammer: Settings - Guild [Points]",
-            description: `Points settings updated.`,
-            color: successColor,
-            fields: [
-              {
-                name: "🤖 Status",
-                value: `${guildDB?.points?.status}`,
-                inline: true,
-              },
-              {
-                name: "📈 Rate",
-                value: `${guildDB?.points?.rate}`,
-                inline: true,
-              },
-              {
-                name: "🔨 Minimum Length",
-                value: `${guildDB?.points?.minimumLength}`,
-                inline: true,
-              },
-              {
-                name: "⏰ Timeout",
-                value: `${guildDB?.points?.timeout}`,
-                inline: true,
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Status",
+            value: `${guildDB?.points?.status}`,
+            inline: true,
           },
-        ],
+          {
+            name: "📈 Rate",
+            value: `${guildDB?.points?.rate}`,
+            inline: true,
+          },
+          {
+            name: "🔨 Minimum Length",
+            value: `${guildDB?.points?.minimumLength}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Timeout",
+            value: `${guildDB?.points?.timeout}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction?.editReply({
+        embeds: [interactionEmbed],
       });
     });
   },

@@ -1,5 +1,9 @@
 // Dependencies
-import { MessageEmbed, CommandInteraction, Permissions } from "discord.js";
+import {
+  EmbedBuilder,
+  ChatInputCommandInteraction,
+  PermissionsBitField,
+} from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 
@@ -16,7 +20,7 @@ export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -42,7 +46,7 @@ export default {
           .setDescription("The starting value of the counter.")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { options, guild } = interaction;
@@ -51,7 +55,7 @@ export default {
     const countingWord = options?.getString("word");
     const startValue = options?.getNumber("start");
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:toolbox:] Counters - Add")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

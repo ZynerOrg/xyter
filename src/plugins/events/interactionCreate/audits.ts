@@ -1,12 +1,12 @@
 import logger from "../../../middlewares/logger";
-import { Interaction, MessageEmbed, TextChannel } from "discord.js";
+import { BaseInteraction, EmbedBuilder, TextChannel } from "discord.js";
 
 import guildSchema from "../../../models/guild";
 
 import getEmbedConfig from "../../../helpers/getEmbedConfig";
 
 export default {
-  execute: async (interaction: Interaction) => {
+  execute: async (interaction: BaseInteraction) => {
     if (interaction === null) return;
 
     if (interaction.guild === null) return;
@@ -33,7 +33,7 @@ export default {
     (channel as TextChannel)
       .send({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setColor(successColor)
             .setDescription(
               `

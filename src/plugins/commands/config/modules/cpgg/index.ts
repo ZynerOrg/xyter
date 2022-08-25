@@ -1,4 +1,10 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  EmbedBuilder,
+  Permissions,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
@@ -12,7 +18,7 @@ export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -42,7 +48,7 @@ export default {
           .setRequired(true)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
@@ -63,23 +69,24 @@ export default {
       .then(async () => {
         logger?.silly(`Updated API credentials.`);
 
-        return interaction?.editReply({
-          embeds: [
-            {
-              title: "[:tools:] CPGG",
-              description: `The following configuration will be used.
+        const interactionEmbed = new EmbedBuilder()
+          .setTitle("[:tools:] CPGG")
+          .setDescription(
+            `The following configuration will be used.
 
-              **Scheme**: ${scheme}
-              **Domain**: ${domain}
-              **Token**: ends with ${tokenData?.slice(-4)}`,
-              color: successColor,
-              timestamp: new Date(),
-              footer: {
-                iconURL: footerIcon,
-                text: footerText,
-              },
-            },
-          ],
+**Scheme**: ${scheme}
+**Domain**: ${domain}
+**Token**: ends with ${tokenData?.slice(-4)}`
+          )
+          .setColor(successColor)
+          .setTimestamp()
+          .setFooter({
+            iconURL: footerIcon,
+            text: footerText,
+          });
+
+        return interaction?.editReply({
+          embeds: [interactionEmbed],
         });
       });
   },

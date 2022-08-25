@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
@@ -35,7 +35,7 @@ export default {
         if (response.data.status !== "success") {
           await interaction.editReply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle(embedTitle)
                 .setFooter({
                   text: footerText,
@@ -54,7 +54,7 @@ export default {
 
         await interaction.editReply({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setTitle(embedTitle)
               .setFooter({
                 text: footerText,

@@ -1,5 +1,10 @@
 // Dependencies
-import { CommandInteraction, MessageEmbed, Permissions } from "discord.js";
+import {
+  CommandInteraction,
+  EmbedBuilder,
+  Permissions,
+  PermissionsBitField,
+} from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
@@ -18,7 +23,7 @@ export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -38,7 +43,7 @@ export default {
           .setRequired(true)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { options, guild } = interaction;
@@ -52,7 +57,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Set)")
             .setDescription(`You must provide an amount.`)
             .setTimestamp(new Date())
@@ -67,7 +72,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Set)")
             .setDescription(`You must provide a user.`)
             .setTimestamp(new Date())
@@ -81,7 +86,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Set)")
             .setDescription(`You must provide a guild.`)
             .setTimestamp(new Date())
@@ -100,7 +105,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Set)")
             .setDescription(`The user you provided does not exist.`)
             .setTimestamp(new Date())
@@ -116,7 +121,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Set)")
             .setDescription(`The user you provided does not have any credits.`)
             .setTimestamp(new Date())
@@ -135,7 +140,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Set)")
             .setDescription(
               `Set **${discordUser}**'s credits to **${creditAmount}**.`

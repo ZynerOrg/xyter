@@ -5,25 +5,26 @@ import * as cooldown from "../../../../../helpers/cooldown";
 import fetchUser from "../../../../../helpers/fetchUser";
 import fetchGuild from "../../../../../helpers/fetchGuild";
 
-import { Message } from "discord.js";
+import { ChannelType, Message } from "discord.js";
 export default {
   execute: async (message: Message) => {
     const { guild, author, content, channel } = message;
 
     if (guild == null) return;
     if (author.bot) return;
-    if (channel?.type !== "GUILD_TEXT") return;
+    if (channel.type !== ChannelType.GuildText) return;
 
     const guildData = await fetchGuild(guild);
     const userData = await fetchUser(author, guild);
 
     if (content.length < guildData.credits.minimumLength) return;
 
-    await cooldown.message(
+    const isOnCooldown = await cooldown.message(
       message,
       guildData.credits.timeout,
       "messageCreate-points"
     );
+    if (isOnCooldown) return;
 
     userData.points += guildData.points.rate;
 

@@ -1,10 +1,10 @@
 // Dependencies
-import { Interaction } from "discord.js";
+import { BaseInteraction } from "discord.js";
 
 import deferReply from "../../../../../helpers/deferReply";
 import * as cooldown from "../../../../../helpers/cooldown";
 
-export default async (interaction: Interaction) => {
+export default async (interaction: BaseInteraction) => {
   if (!interaction.isButton()) return;
 
   const { guild, customId, memberPermissions } = interaction;
