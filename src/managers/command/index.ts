@@ -1,4 +1,4 @@
-import { Collection, Client } from "discord.js";
+import { Client } from "discord.js";
 import listDir from "../../helpers/listDir";
 import logger from "../../middlewares/logger";
 
