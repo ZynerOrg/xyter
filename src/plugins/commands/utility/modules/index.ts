@@ -1,7 +1,7 @@
-import avatar from "./avatar";
 import about from "./about";
-import stats from "./stats";
+import avatar from "./avatar";
 import ping from "./ping";
+import stats from "./stats";
 
 export default {
   avatar,

@@ -1,5 +1,5 @@
 // Dependencies
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
@@ -7,8 +7,8 @@ import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 // Models
 import fetchUser from "../../../../../helpers/fetchUser";
 
-import logger from "../../../../../middlewares/logger";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import logger from "../../../../../middlewares/logger";
 
 // Function
 export default {
@@ -24,7 +24,7 @@ export default {
   },
 
   execute: async (interaction: CommandInteraction) => {
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+    const { errorColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     ); // Destructure
     const { client, options, user, guild } = interaction;
@@ -44,14 +44,12 @@ export default {
     // User Information
     const userObj = await fetchUser(discordUser, guild);
 
-    // Embed object
-    const embed = {
-      author: {
+    const embed = new EmbedBuilder()
+      .setAuthor({
         name: `${discordUser?.username}#${discordUser?.discriminator}`,
-        icon_url: discordUser?.displayAvatarURL(),
-      },
-      color: successColor,
-      fields: [
+        iconURL: discordUser?.displayAvatarURL(),
+      })
+      .addFields(
         {
           name: `:dollar: Credits`,
           value: `${userObj?.credits || "Not found"}`,
@@ -76,14 +74,11 @@ export default {
           name: `:rainbow_flag: Language`,
           value: `${userObj?.language || "Not found"}`,
           inline: true,
-        },
-      ],
-      timestamp: new Date(),
-      footer: {
-        iconURL: footerIcon,
-        text: footerText,
-      },
-    };
+        }
+      )
+      .setTimestamp()
+      .setColor(errorColor)
+      .setFooter({ text: footerText, iconURL: footerIcon });
 
     // Return interaction reply
     return interaction?.editReply({ embeds: [embed] });

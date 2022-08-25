@@ -1,18 +1,16 @@
 // Dependencies
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import axios from "axios";
 import {
-  CommandInteraction,
   ActionRowBuilder,
   ButtonBuilder,
-  EmbedBuilder,
-  Permissions,
-  PermissionsBitField,
   ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
 } from "discord.js";
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import apiSchema from "../../../../../../../models/api";
 import encryption from "../../../../../../../handlers/encryption";
+import apiSchema from "../../../../../../../models/api";
 
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";

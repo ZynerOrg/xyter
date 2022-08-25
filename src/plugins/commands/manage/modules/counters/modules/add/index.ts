@@ -1,11 +1,11 @@
 // Dependencies
-import {
-  EmbedBuilder,
-  ChatInputCommandInteraction,
-  PermissionsBitField,
-} from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";

@@ -1,5 +1,5 @@
-import "dotenv/config";
 import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
+import "dotenv/config";
 
 import * as managers from "./managers";
 

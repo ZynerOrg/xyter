@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
 import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction } from "discord.js";
 
 import modules from "./modules";
 
@@ -16,7 +16,7 @@ export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
     .addSubcommand(modules.giveaway.builder);
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "give":
       return modules.give.execute(interaction);

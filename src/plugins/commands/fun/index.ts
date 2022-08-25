@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import logger from "../../../middlewares/logger";
 
 import modules from "../../commands/fun/modules";
@@ -12,7 +12,7 @@ export const builder = new SlashCommandBuilder()
 
 export const moduleData = modules;
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
   if (options.getSubcommand() === "meme") {

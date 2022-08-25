@@ -1,6 +1,6 @@
 // Dependencies
 import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
-import { ChatInputCommandInteraction, CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 import logger from "../../../../../middlewares/logger";
 

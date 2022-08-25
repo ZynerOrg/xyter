@@ -1,9 +1,9 @@
-import { CommandInteraction } from "discord.js";
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import * as cooldown from "../../../../../helpers/cooldown";
+import fetchUser from "../../../../../helpers/fetchUser";
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 import logger from "../../../../../middlewares/logger";
-import fetchUser from "../../../../../helpers/fetchUser";
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import * as cooldown from "../../../../../helpers/cooldown";
 import noSelfReputation from "./components/noSelfReputation";
 
 export default {
@@ -33,7 +33,7 @@ export default {
           )
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { options, user, guild } = interaction;
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
@@ -68,19 +68,17 @@ export default {
     await userObj.save().then(async () => {
       logger.silly(`User reputation has been updated`);
 
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:loudspeaker:] Give")
+        .setDescription(
+          `You have given a ${optionType} repute to ${optionTarget}`
+        )
+        .setTimestamp()
+        .setColor(successColor)
+        .setFooter({ text: footerText, iconURL: footerIcon });
+
       await interaction.editReply({
-        embeds: [
-          {
-            title: "[:loudspeaker:] Give",
-            description: `You have given a ${optionType} repute to ${optionTarget}`,
-            timestamp: new Date(),
-            color: successColor,
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
-          },
-        ],
+        embeds: [interactionEmbed],
       });
     });
   },

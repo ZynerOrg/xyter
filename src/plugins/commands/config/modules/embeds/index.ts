@@ -1,16 +1,11 @@
 import {
-  ColorResolvable,
   ChatInputCommandInteraction,
   EmbedBuilder,
-  Permissions,
   PermissionsBitField,
 } from "discord.js";
 
-import logger from "../../../../../middlewares/logger";
-
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
+import guildSchema from "../../../../../models/guild";
 import getValues from "./components/getValues";
 
 export default {

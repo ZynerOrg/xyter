@@ -1,6 +1,6 @@
 //Dependencies
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 // Groups
 import modules from "../../commands/manage/modules";
@@ -14,7 +14,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommandGroup(modules.counters.builder)
   .addSubcommandGroup(modules.credits.builder);
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   // Destructure
   const { options } = interaction;
 

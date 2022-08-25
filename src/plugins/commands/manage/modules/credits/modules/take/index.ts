@@ -1,9 +1,7 @@
 // Dependencies
 import {
   ChatInputCommandInteraction,
-  CommandInteraction,
   EmbedBuilder,
-  Permissions,
   PermissionsBitField,
 } from "discord.js";
 
@@ -17,8 +15,8 @@ import logger from "../../../../../../../middlewares/logger";
 import pluralize from "../../../../../../../helpers/pluralize";
 
 // Models
-import fetchUser from "../../../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import fetchUser from "../../../../../../../helpers/fetchUser";
 
 // Function
 export default {

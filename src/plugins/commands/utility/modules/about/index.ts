@@ -1,9 +1,9 @@
 // Dependencies
 import {
-  CommandInteraction,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  CommandInteraction,
   EmbedBuilder,
 } from "discord.js";
 

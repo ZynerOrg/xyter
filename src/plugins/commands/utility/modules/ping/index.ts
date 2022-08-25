@@ -1,5 +1,5 @@
 // Dependencies
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
@@ -18,9 +18,9 @@ export default {
       interaction.guild
     );
 
-    const interactionEmbed = {
-      title: "[:tools:] Ping",
-      fields: [
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:tools:] Ping")
+      .addFields(
         {
           name: "📦 Deliver Latency",
           value: `${Math.abs(Date.now() - interaction.createdTimestamp)} ms`,
@@ -30,15 +30,12 @@ export default {
           name: "🤖 API Latency",
           value: `${Math.round(interaction.client.ws.ping)} ms`,
           inline: true,
-        },
-      ],
-      color: successColor,
-      timestamp: new Date(),
-      footer: {
-        iconURL: footerIcon,
-        text: footerText,
-      },
-    };
+        }
+      )
+      .setTimestamp()
+      .setColor(successColor)
+      .setFooter({ text: footerText, iconURL: footerIcon });
+
     await interaction.editReply({
       embeds: [interactionEmbed],
     });

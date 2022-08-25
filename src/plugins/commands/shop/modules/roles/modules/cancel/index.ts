@@ -1,5 +1,9 @@
 // Dependencies
-import { CommandInteraction, GuildMemberRoleManager } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  GuildMemberRoleManager,
+} from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
@@ -10,9 +14,9 @@ import shopRolesSchema from "../../../../../../../models/shopRole";
 import logger from "../../../../../../../middlewares/logger";
 
 // Helpers
-import pluralize from "../../../../../../../helpers/pluralize";
-import fetchUser from "../../../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import fetchUser from "../../../../../../../helpers/fetchUser";
+import pluralize from "../../../../../../../helpers/pluralize";
 
 // Function
 export default {
@@ -29,31 +33,16 @@ export default {
           .setRequired(true)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+  execute: async (interaction: ChatInputCommandInteraction) => {
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
     const { options, guild, user, member } = interaction;
 
     const optionRole = options.getRole("role");
 
-    if (optionRole === null) {
-      logger?.silly(`Role is null.`);
-
-      return interaction?.editReply({
-        embeds: [
-          {
-            title: ":dollar: Shop - Roles [Cancel]",
-            description: "We could not read your requested role.",
-            color: errorColor,
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
-          },
-        ],
-      });
-    }
+    if (optionRole === null)
+      throw new Error("We could not read your requested role.");
 
     const roleExist = await shopRolesSchema?.findOne({
       guildId: guild?.id,
@@ -80,28 +69,22 @@ export default {
           guildId: guild?.id,
         });
 
+        const interactionEmbed = new EmbedBuilder()
+          .setTitle("[:shopping_cart:] Cancel")
+          .setDescription(`You have canceled ${optionRole.name}.`)
+          .setTimestamp()
+          .setColor(successColor)
+          .addFields({
+            name: "Your balance",
+            value: `${pluralize(userDB?.credits, "credit")}`,
+          })
+          .setFooter({ text: footerText, iconURL: footerIcon });
+
         return interaction?.editReply({
-          embeds: [
-            {
-              title: ":shopping_cart: Shop - Roles [Cancel]",
-              description: `You have canceled ${optionRole.name}.`,
-              color: successColor,
-              fields: [
-                {
-                  name: "Your balance",
-                  value: `${pluralize(userDB?.credits, "credit")}`,
-                },
-              ],
-              timestamp: new Date(),
-              footer: {
-                iconURL: footerIcon,
-                text: footerText,
-              },
-            },
-          ],
+          embeds: [interactionEmbed],
         });
       })
-      .catch(async (error) => {
+      .catch(async (error: Error) => {
         return logger?.silly(`Role could not be deleted. ${error}`);
       });
   },

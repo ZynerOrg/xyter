@@ -1,7 +1,7 @@
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import logger from "../../../../../middlewares/logger";
 
 import fetchUser from "../../../../../helpers/fetchUser";

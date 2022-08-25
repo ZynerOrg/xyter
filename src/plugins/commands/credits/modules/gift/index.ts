@@ -1,5 +1,5 @@
 // Dependencies
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
@@ -10,8 +10,8 @@ import logger from "../../../../../middlewares/logger";
 import mongoose from "mongoose";
 
 // Models
-import fetchUser from "../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import fetchUser from "../../../../../helpers/fetchUser";
 
 // Function
 export default {
@@ -37,7 +37,7 @@ export default {
         option.setName("reason").setDescription("Your reason.")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { options, user, guild, client } = interaction;

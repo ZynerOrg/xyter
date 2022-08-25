@@ -1,7 +1,6 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  Permissions,
   PermissionsBitField,
 } from "discord.js";
 
@@ -9,8 +8,8 @@ import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 import logger from "../../../../../middlewares/logger";
 
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import guildSchema from "../../../../../models/guild";
 
 export default {
   metadata: {

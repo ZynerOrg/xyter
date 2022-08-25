@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { ChatInputCommandInteraction } from "discord.js";
 
 import modules from "../../commands/counters/modules";
 
@@ -11,7 +11,7 @@ export const builder = new SlashCommandBuilder()
 
 export const moduleData = modules;
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.options.getSubcommand() === "view") {
     await modules.view.execute(interaction);
   }

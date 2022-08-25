@@ -2,9 +2,7 @@
 import {
   ChannelType,
   ChatInputCommandInteraction,
-  CommandInteraction,
   EmbedBuilder,
-  Permissions,
   PermissionsBitField,
 } from "discord.js";
 
@@ -36,8 +34,9 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+    const { errorColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
 
     const count = interaction.options.getInteger("count");
     if (count == null) return;

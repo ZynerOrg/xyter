@@ -1,7 +1,7 @@
 // Dependencies
-import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
@@ -13,8 +13,8 @@ import logger from "../../../../../middlewares/logger";
 import * as cooldown from "../../../../../helpers/cooldown";
 
 // Helpers
-import fetchUser from "../../../../../helpers/fetchUser";
 import fetchGuild from "../../../../../helpers/fetchGuild";
+import fetchUser from "../../../../../helpers/fetchUser";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },
