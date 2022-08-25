@@ -1,5 +1,5 @@
 // Dependencies
-import { Client } from "discord.js";
+import { ActivityType, Client } from "discord.js";
 import logger from "../../middlewares/logger";
 
 // Function
@@ -12,7 +12,7 @@ export default async (client: Client) => {
 
   const status = `${memberCount} users in ${guildCount} guilds.`;
   client.user.setPresence({
-    activities: [{ type: "LISTENING", name: status }],
+    activities: [{ type: ActivityType.Watching, name: status }],
     status: "online",
   });
 
