@@ -55,7 +55,7 @@ export default {
     );
     const { guild, options } = interaction;
 
-    if (guild == null) return;
+    if (!guild) return;
 
     const status = options?.getBoolean("status");
     const rate = options?.getNumber("rate");

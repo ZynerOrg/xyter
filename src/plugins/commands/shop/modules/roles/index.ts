@@ -21,7 +21,7 @@ export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  if (interaction.guild == null) return;
+  if (!interaction.guild) return;
   const { options, guild } = interaction;
 
   const guildDB = await guildSchema?.findOne({

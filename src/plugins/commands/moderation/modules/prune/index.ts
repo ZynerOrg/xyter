@@ -39,7 +39,7 @@ export default {
     );
 
     const count = interaction.options.getInteger("count");
-    if (count == null) return;
+    if (count === null) return;
     const bots = interaction.options.getBoolean("bots");
 
     if (count < 1 || count > 100) {

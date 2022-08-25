@@ -7,7 +7,7 @@ export default {
   execute: async (message: Message) => {
     const { guild, author, content, channel } = message;
 
-    if (guild == null) return;
+    if (!guild) return;
     if (author.bot) return;
     if (channel?.type !== ChannelType.GuildText) return;
 
