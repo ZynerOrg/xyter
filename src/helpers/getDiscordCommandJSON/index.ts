@@ -1,13 +1,9 @@
 /* eslint-disable no-loops/no-loops */
-import path from "path";
 
-import listDir from "../listDir";
-import getPlugins from "../getPlugins";
-import getPluginCommands from "../getPluginCommands";
-import getPluginMetadata from "../getPluginMetadata";
-import getPluginCommandBuilder from "../getPluginCommandBuilder";
 import { SlashCommandBuilder } from "discord.js";
 import logger from "../../middlewares/logger";
+import getPluginCommands from "../getPluginCommands";
+import getPlugins from "../getPlugins";
 
 export default async () => {
   logger.debug("Processing complete builder for plugins");

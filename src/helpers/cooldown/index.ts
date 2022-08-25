@@ -1,10 +1,10 @@
 // Dependencies
-import { CommandInteraction, ButtonInteraction, Message } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Message } from "discord.js";
 
 import logger from "../../middlewares/logger";
 
-import timeoutSchema from "../../models/timeout";
 import addSeconds from "../../helpers/addSeconds";
+import timeoutSchema from "../../models/timeout";
 
 export const command = async (i: CommandInteraction, cooldown: number) => {
   const { guild, user, commandId } = i;

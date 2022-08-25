@@ -1,5 +1,4 @@
 import logger from "../../middlewares/logger";
-import listDir from "../listDir";
 
 export default async (plugin: string, command: string) => {
   logger.debug(`Processing builder for command: ${command}`);

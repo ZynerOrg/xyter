@@ -1,8 +1,8 @@
-import { Routes } from "discord.js";
 import { REST } from "@discordjs/rest";
+import { Routes, SlashCommandBuilder } from "discord.js";
 import logger from "../../middlewares/logger";
 
-export default async (builder: any) => {
+export default async (builder: SlashCommandBuilder) => {
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
   await rest.put(
