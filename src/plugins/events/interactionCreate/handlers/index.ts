@@ -1,14 +1,18 @@
-import { BaseInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
-import getEmbedConfig from "../../../../helpers/getEmbedConfig";
+import {
+  BaseInteraction,
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  EmbedBuilder,
+} from "discord.js";
 import capitalizeFirstLetter from "../../../../helpers/capitalizeFirstLetter";
-import logger from "../../../../middlewares/logger";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 
 import button from "./button";
 import command from "./command";
 
 export const execute = async (interaction: BaseInteraction) => {
   await button(interaction);
-  await command(interaction);
+  await command(<ChatInputCommandInteraction>interaction);
 };
 
 export const handleCommandInteraction = async (
@@ -18,7 +22,7 @@ export const handleCommandInteraction = async (
     interaction.guild
   );
 
-  await command(interaction).catch(async (err) => {
+  await command(<ChatInputCommandInteraction>interaction).catch(async (err) => {
     return interaction.editReply({
       embeds: [
         new EmbedBuilder()

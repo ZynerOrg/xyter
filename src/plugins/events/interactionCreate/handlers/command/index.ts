@@ -1,11 +1,11 @@
 // Dependencies
-import { BaseInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
+import * as cooldown from "../../../../../helpers/cooldown";
 import deferReply from "../../../../../helpers/deferReply";
 import getCommandMetadata from "../../../../../helpers/getCommandMetadata";
-import * as cooldown from "../../../../../helpers/cooldown";
 
-export default async (interaction: BaseInteraction) => {
+export default async (interaction: ChatInputCommandInteraction) => {
   if (!interaction.isCommand()) return;
   const { client, commandName } = interaction;
 

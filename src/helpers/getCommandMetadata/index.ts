@@ -1,8 +1,8 @@
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { ICommand } from "../../interfaces/Command";
 
 export default async (
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
   currentCommand: ICommand
 ) => {
   const subcommand = interaction.options.getSubcommand();

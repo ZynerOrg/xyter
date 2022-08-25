@@ -1,13 +1,12 @@
 /* eslint-disable no-loops/no-loops */
-import path from "path";
 
-import listDir from "../listDir";
-import getPlugins from "../getPlugins";
+import { Client } from "discord.js";
+import logger from "../../middlewares/logger";
 import getPluginCommands from "../getPluginCommands";
 import getPluginMetadata from "../getPluginMetadata";
-import logger from "../../middlewares/logger";
+import getPlugins from "../getPlugins";
 
-export default async (client, dir: string) => {
+export default async (client: Client, dir: string) => {
   const plugins = await getPlugins(dir);
   const pluginStructure = [];
 
