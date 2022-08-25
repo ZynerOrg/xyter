@@ -1,5 +1,5 @@
-import logger from "../../../middlewares/logger";
 import { BaseInteraction, EmbedBuilder, TextChannel } from "discord.js";
+import logger from "../../../middlewares/logger";
 
 import guildSchema from "../../../models/guild";
 

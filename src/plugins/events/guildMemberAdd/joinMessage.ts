@@ -1,4 +1,4 @@
-import { GuildMember, EmbedBuilder, TextChannel } from "discord.js";
+import { EmbedBuilder, GuildMember, TextChannel } from "discord.js";
 
 import guildSchema from "../../../models/guild";
 

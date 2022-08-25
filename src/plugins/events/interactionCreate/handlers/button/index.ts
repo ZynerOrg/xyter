@@ -1,8 +1,8 @@
 // Dependencies
 import { BaseInteraction } from "discord.js";
 
-import deferReply from "../../../../../helpers/deferReply";
 import * as cooldown from "../../../../../helpers/cooldown";
+import deferReply from "../../../../../helpers/deferReply";
 
 export default async (interaction: BaseInteraction) => {
   if (!interaction.isButton()) return;

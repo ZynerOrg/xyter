@@ -1,5 +1,5 @@
+import { ChannelType, EmbedBuilder, GuildMember } from "discord.js";
 import logger from "../../../middlewares/logger";
-import { GuildMember, EmbedBuilder, ChannelType } from "discord.js";
 
 import guildSchema from "../../../models/guild";
 

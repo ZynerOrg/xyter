@@ -2,8 +2,8 @@ import logger from "../../../../../middlewares/logger";
 
 import * as cooldown from "../../../../../helpers/cooldown";
 
-import fetchUser from "../../../../../helpers/fetchUser";
 import fetchGuild from "../../../../../helpers/fetchGuild";
+import fetchUser from "../../../../../helpers/fetchUser";
 
 import { ChannelType, Message } from "discord.js";
 export default {

@@ -2,18 +2,15 @@
 import {
   BaseInteraction,
   CommandInteraction,
-  EmbedBuilder,
   InteractionType,
 } from "discord.js";
 
 // Dependencies
 import * as handlers from "./handlers";
 
+import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";
 import audits from "./audits";
-import { IEventOptions } from "../../../interfaces/EventOptions";
-import capitalizeFirstLetter from "../../../helpers/capitalizeFirstLetter";
-import getEmbedConfig from "../../../helpers/getEmbedConfig";
 
 export const options: IEventOptions = {
   type: "on",
