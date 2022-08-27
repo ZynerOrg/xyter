@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
 import { Snowflake } from "discord.js";
+import { model, Schema } from "mongoose";
 
 export interface ICounter {
   guildId: Snowflake;

@@ -3,8 +3,8 @@ import logger from "../../../../../middlewares/logger";
 
 import { IShopRole } from "../../../../../interfaces/ShopRole";
 import guildSchema from "../../../../../models/guild";
-import userSchema from "../../../../../models/user";
 import shopRoleSchema from "../../../../../models/shopRole";
+import userSchema from "../../../../../models/user";
 
 export const execute = async (client: Client, role: IShopRole) => {
   const { guildId, userId, roleId } = role;

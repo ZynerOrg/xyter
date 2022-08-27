@@ -1,5 +1,5 @@
 import { ColorResolvable } from "discord.js";
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
 
 interface IGuild {
   guildId: string;

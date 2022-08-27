@@ -3,8 +3,8 @@ import { Client } from "discord.js";
 import { IShopRole } from "../../../../interfaces/ShopRole";
 import shopRoleSchema from "../../../../models/shopRole";
 
-import * as overDueForPayment from "./components/overDueForPayment";
 import * as dueForPayment from "./components/dueForPayment";
+import * as overDueForPayment from "./components/overDueForPayment";
 
 export const execute = async (client: Client) => {
   const roles = await shopRoleSchema.find();

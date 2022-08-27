@@ -1,5 +1,5 @@
 import { Snowflake } from "discord.js";
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
 
 export interface IShopRole {
   roleId: Snowflake;
