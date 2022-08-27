@@ -1,8 +1,8 @@
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import { CommandInteraction, MessageEmbed } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import logger from "../../../../../logger";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
+import logger from "../../../../../middlewares/logger";
 
 import userSchema, { IUser } from "../../../../../models/user";
 
@@ -17,7 +17,7 @@ export default {
       await getEmbedConfig(interaction.guild);
     const { guild } = interaction;
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:dollar:] Top")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

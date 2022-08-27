@@ -1,18 +1,22 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
+import guildSchema from "../../../../../models/guild";
 
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -47,7 +51,7 @@ export default {
           .setDescription("Message for join messages.")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
@@ -86,46 +90,92 @@ export default {
     await guildDB?.save()?.then(async () => {
       logger?.silly(`Guild welcome updated.`);
 
+      const interactionEmbedDisabled = new EmbedBuilder()
+        .setTitle("[:tools:] Welcome")
+        .setDescription(
+          "This module is currently disabled, please enable it to continue."
+        )
+        .setColor(successColor)
+        .addFields(
+          {
+            name: "🤖 Status",
+            value: `${guildDB?.points?.status}`,
+            inline: true,
+          },
+          {
+            name: "📈 Rate",
+            value: `${guildDB?.points?.rate}`,
+            inline: true,
+          },
+          {
+            name: "🔨 Minimum Length",
+            value: `${guildDB?.points?.minimumLength}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Timeout",
+            value: `${guildDB?.points?.timeout}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
       if (!guildDB?.welcome?.status) {
         return interaction?.editReply({
-          embeds: [
-            {
-              title: "[:tools:] Welcome",
-              description: `This module is currently disabled, please enable it to continue.`,
-              color: successColor,
-              timestamp: new Date(),
-              footer: {
-                iconURL: footerIcon,
-                text: footerText,
-              },
-            },
-          ],
+          embeds: [interactionEmbedDisabled],
         });
       }
 
-      return interaction?.editReply({
-        embeds: [
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:tools:] Welcome")
+        .setDescription(
+          `The following configuration will be used.
+
+        [👋] **Welcome**
+
+        ㅤ**Channel**: <#${guildDB?.welcome?.joinChannel}>
+        ㅤ**Message**: ${guildDB?.welcome?.joinChannelMessage}
+
+        [🚪] **Leave**
+
+        ㅤ**Channel**: <#${guildDB?.welcome?.leaveChannel}>
+        ㅤ**Message**: ${guildDB?.welcome?.leaveChannelMessage}`
+        )
+        .setColor(successColor)
+        .addFields(
           {
-            title: "[:tools:] Welcome",
-            description: `The following configuration will be used.
-
-            [👋] **Welcome**
-
-            ㅤ**Channel**: <#${guildDB?.welcome?.joinChannel}>
-            ㅤ**Message**: ${guildDB?.welcome?.joinChannelMessage}
-
-            [🚪] **Leave**
-
-            ㅤ**Channel**: <#${guildDB?.welcome?.leaveChannel}>
-            ㅤ**Message**: ${guildDB?.welcome?.leaveChannelMessage}`,
-            color: successColor,
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Status",
+            value: `${guildDB?.points?.status}`,
+            inline: true,
           },
-        ],
+          {
+            name: "📈 Rate",
+            value: `${guildDB?.points?.rate}`,
+            inline: true,
+          },
+          {
+            name: "🔨 Minimum Length",
+            value: `${guildDB?.points?.minimumLength}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Timeout",
+            value: `${guildDB?.points?.timeout}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction?.editReply({
+        embeds: [interactionEmbed],
       });
     });
   },

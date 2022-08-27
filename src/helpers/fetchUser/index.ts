@@ -5,7 +5,7 @@ import { Guild, User } from "discord.js";
 import userSchema from "../../models/user";
 
 // Handlers
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 // Function
 export default async (user: User, guild: Guild) => {

@@ -1,17 +1,21 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import guildSchema from "../../../../../models/guild";
 
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -45,13 +49,13 @@ export default {
           .setDescription("Timeout between earning credits (seconds).")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
     const { guild, options } = interaction;
 
-    if (guild == null) return;
+    if (!guild) return;
 
     const status = options?.getBoolean("status");
     const rate = options?.getNumber("rate");
@@ -83,51 +87,50 @@ export default {
     await guildDB?.save()?.then(async () => {
       logger?.silly(`Guild saved`);
 
-      return interaction?.editReply({
-        embeds: [
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:tools:] Credits")
+        .setDescription("Credits settings updated")
+        .setColor(successColor)
+        .addFields(
           {
-            title: ":tools: Settings - Guild [Credits]",
-            description: `Credits settings updated.`,
-            color: successColor,
-            fields: [
-              {
-                name: "🤖 Status",
-                value: `${guildDB?.credits?.status}`,
-                inline: true,
-              },
-              {
-                name: "📈 Rate",
-                value: `${guildDB?.credits?.rate}`,
-                inline: true,
-              },
-              {
-                name: "📈 Work Rate",
-                value: `${guildDB?.credits?.workRate}`,
-                inline: true,
-              },
-              {
-                name: "🔨 Minimum Length",
-                value: `${guildDB?.credits?.minimumLength}`,
-                inline: true,
-              },
-              {
-                name: "⏰ Timeout",
-                value: `${guildDB?.credits?.timeout}`,
-                inline: true,
-              },
-              {
-                name: "⏰ Work Timeout",
-                value: `${guildDB?.credits?.workTimeout}`,
-                inline: true,
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Status",
+            value: `${guildDB?.credits?.status}`,
+            inline: true,
           },
-        ],
+          {
+            name: "📈 Rate",
+            value: `${guildDB?.credits?.rate}`,
+            inline: true,
+          },
+          {
+            name: "📈 Work Rate",
+            value: `${guildDB?.credits?.workRate}`,
+            inline: true,
+          },
+          {
+            name: "🔨 Minimum Length",
+            value: `${guildDB?.credits?.minimumLength}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Timeout",
+            value: `${guildDB?.credits?.timeout}`,
+            inline: true,
+          },
+          {
+            name: "⏰ Work Timeout",
+            value: `${guildDB?.credits?.workTimeout}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction?.editReply({
+        embeds: [interactionEmbed],
       });
     });
   },

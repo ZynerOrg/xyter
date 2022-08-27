@@ -1,7 +1,7 @@
-import { Interaction, MessageEmbed } from "discord.js";
+import { BaseInteraction, EmbedBuilder } from "discord.js";
 import getEmbedConfig from "../../helpers/getEmbedConfig";
 
-export default async (interaction: Interaction, ephemeral: boolean) => {
+export default async (interaction: BaseInteraction, ephemeral: boolean) => {
   if (!interaction.isRepliable())
     throw new Error(`Cannot reply to an interaction that is not repliable`);
 
@@ -13,7 +13,7 @@ export default async (interaction: Interaction, ephemeral: boolean) => {
 
   await interaction.editReply({
     embeds: [
-      new MessageEmbed()
+      new EmbedBuilder()
         .setFooter({
           text: embedConfig.footerText,
           iconURL: embedConfig.footerIcon,

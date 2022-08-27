@@ -18,6 +18,7 @@ export default async (guild?: Guild | null) => {
     footerText: EMBED_FOOTER_TEXT,
     footerIcon: EMBED_FOOTER_ICON,
   };
+
   if (!guild) {
     return defaultEmbedConfig;
   }
@@ -26,5 +27,6 @@ export default async (guild?: Guild | null) => {
   if (!guildConfig) {
     return defaultEmbedConfig;
   }
+
   return guildConfig.embeds;
 };

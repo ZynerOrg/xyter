@@ -1,17 +1,17 @@
 // Dependencies
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 import mongoose from "mongoose";
 
 // Models
-import fetchUser from "../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import fetchUser from "../../../../../helpers/fetchUser";
 
 // Function
 export default {
@@ -37,7 +37,7 @@ export default {
         option.setName("reason").setDescription("Your reason.")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { options, user, guild, client } = interaction;
@@ -46,7 +46,7 @@ export default {
     const optionAmount = options.getInteger("amount");
     const optionReason = options.getString("reason");
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:dollar:] Gift")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

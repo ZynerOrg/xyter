@@ -1,8 +1,8 @@
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import { CommandInteraction, MessageEmbed } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import logger from "../../../../../logger";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
+import logger from "../../../../../middlewares/logger";
 
 import fetchUser from "../../../../../helpers/fetchUser";
 
@@ -25,7 +25,7 @@ export default {
 
     const discordUser = options.getUser("user");
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:dollar:] Balance")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

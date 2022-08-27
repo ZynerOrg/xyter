@@ -1,12 +1,12 @@
 // Dependencies
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 // Modules
 import modules from "../../commands/profile/modules";
 
 // Handlers
-import logger from "../../../logger";
+import logger from "../../../middlewares/logger";
 
 export const moduleData = modules;
 
@@ -16,7 +16,7 @@ export const builder = new SlashCommandBuilder()
   .setDescription("Check a profile.")
   .addSubcommand(modules.view.builder);
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
   if (options?.getSubcommand() === "view") {

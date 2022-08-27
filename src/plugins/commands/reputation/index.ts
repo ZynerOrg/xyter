@@ -1,6 +1,6 @@
 // Dependencies
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 // Modules
 import modules from "./modules";
@@ -15,7 +15,7 @@ export const builder = new SlashCommandBuilder()
   .setDescription("Manage reputation.")
   .addSubcommand(modules.give.builder);
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.options.getSubcommand() === "give") {
     await modules.give.execute(interaction);
   }

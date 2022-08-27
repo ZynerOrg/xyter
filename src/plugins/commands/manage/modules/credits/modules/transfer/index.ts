@@ -1,5 +1,9 @@
 // Dependencies
-import { CommandInteraction, MessageEmbed, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 import mongoose from "mongoose";
 
@@ -7,18 +11,18 @@ import mongoose from "mongoose";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Models
-import fetchUser from "../../../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import fetchUser from "../../../../../../../helpers/fetchUser";
 
 // Function
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -44,7 +48,7 @@ export default {
           .setRequired(true)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild); // Destructure member
     const { guild, options } = interaction;
@@ -60,7 +64,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(`You must provide an amount.`)
             .setTimestamp(new Date())
@@ -75,7 +79,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(`You must be in a guild.`)
             .setTimestamp(new Date())
@@ -89,7 +93,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(`You must provide a user to transfer from.`)
             .setTimestamp(new Date())
@@ -103,7 +107,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(`You must provide a user to transfer to.`)
             .setTimestamp(new Date())
@@ -125,7 +129,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(
               `The user you provided to transfer from does not exist.`
@@ -143,7 +147,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(
               `The user you provided to transfer from does not have credits.`
@@ -161,7 +165,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(
               `The user you provided to transfer to does not exist.`
@@ -179,7 +183,7 @@ export default {
 
       return interaction?.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(
               `The user you provided to transfer to does not have credits.`
@@ -214,7 +218,7 @@ export default {
 
       return interaction.editReply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Transfer)")
             .setDescription(
               "An error occurred while trying to gift credits. Please try again."
@@ -232,7 +236,7 @@ export default {
 
     return interaction?.editReply({
       embeds: [
-        new MessageEmbed()
+        new EmbedBuilder()
           .setTitle("[:toolbox:] Manage - Credits (Transfer)")
           .setDescription(`Transferred ${optionAmount} credits.`)
           .addFields(

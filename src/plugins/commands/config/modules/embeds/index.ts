@@ -1,22 +1,18 @@
 import {
-  ColorResolvable,
-  CommandInteraction,
-  MessageEmbed,
-  Permissions,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
 } from "discord.js";
 
-import logger from "../../../../../logger";
-
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
+import guildSchema from "../../../../../models/guild";
 import getValues from "./components/getValues";
 
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -41,14 +37,14 @@ export default {
         option.setName("footer-text").setDescription("No provided description")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { guild } = interaction;
     if (!guild) throw new Error("Guild not found");
 
     const { successColor, waitColor, errorColor, footerText, footerIcon } =
       await getValues(interaction);
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:tools:] Embeds")
       .setFooter({ text: footerText, iconURL: footerIcon })
       .setTimestamp(new Date());

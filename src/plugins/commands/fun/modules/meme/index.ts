@@ -1,8 +1,7 @@
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
-import axios from "axios";
-import { CommandInteraction, MessageEmbed } from "discord.js";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import axios from "axios";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
+import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 export default {
   metadata: { guildOnly: false, ephemeral: false, cooldown: 15 },
@@ -22,7 +21,7 @@ export default {
         const response = res.data[0].data.children;
         const content = response[0].data;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setAuthor({
             name: content.title,
             iconURL:

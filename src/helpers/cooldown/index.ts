@@ -1,10 +1,10 @@
 // Dependencies
-import { CommandInteraction, ButtonInteraction, Message } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Message } from "discord.js";
 
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
-import timeoutSchema from "../../models/timeout";
 import addSeconds from "../../helpers/addSeconds";
+import timeoutSchema from "../../models/timeout";
 
 export const command = async (i: CommandInteraction, cooldown: number) => {
   const { guild, user, commandId } = i;
@@ -127,9 +127,7 @@ export const message = async (msg: Message, cooldown: number, id: string) => {
         (new Date(hasTimeout.createdAt).getTime() - new Date().getTime()) / 1000
       );
 
-      throw new Error(
-        `User: ${userId} on timeout-id: ${id} with cooldown: ${cooldown} secs with remaining: ${diff} secs.`
-      );
+      return `User: ${userId} on timeout-id: ${id} with cooldown: ${cooldown} secs with remaining: ${diff} secs.`;
     }
 
     // Delete timeout

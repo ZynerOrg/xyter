@@ -1,11 +1,11 @@
 // Dependencies
-import { Interaction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
+import * as cooldown from "../../../../../helpers/cooldown";
 import deferReply from "../../../../../helpers/deferReply";
 import getCommandMetadata from "../../../../../helpers/getCommandMetadata";
-import * as cooldown from "../../../../../helpers/cooldown";
 
-export default async (interaction: Interaction) => {
+export default async (interaction: ChatInputCommandInteraction) => {
   if (!interaction.isCommand()) return;
   const { client, commandName } = interaction;
 
@@ -28,7 +28,8 @@ export default async (interaction: Interaction) => {
   if (metadata.dmOnly && interaction.guild)
     throw new Error("This command is only available in DM");
 
-  if (metadata.cooldown) await cooldown.command(interaction, metadata.cooldown);
-
+  if (metadata.cooldown) {
+    await cooldown.command(interaction, metadata.cooldown);
+  }
   await currentCommand.execute(interaction);
 };

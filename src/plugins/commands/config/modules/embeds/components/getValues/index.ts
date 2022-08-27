@@ -1,8 +1,8 @@
-import { ColorResolvable, CommandInteraction } from "discord.js";
-import guildSchema from "../../../../../../../models/guild";
+import { ChatInputCommandInteraction, ColorResolvable } from "discord.js";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
+import guildSchema from "../../../../../../../models/guild";
 
-export default async (interaction: CommandInteraction) => {
+export default async (interaction: ChatInputCommandInteraction) => {
   const { options, guild } = interaction;
 
   if (!guild) throw new Error("Guild not found");

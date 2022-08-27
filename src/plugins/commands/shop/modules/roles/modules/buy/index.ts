@@ -1,7 +1,8 @@
 // Dependencies
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   ColorResolvable,
+  EmbedBuilder,
   GuildMemberRoleManager,
 } from "discord.js";
 
@@ -9,15 +10,15 @@ import {
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
 // Models
-import shopRolesSchema from "../../../../../../../models/shopRole";
 import guildSchema from "../../../../../../../models/guild";
+import shopRolesSchema from "../../../../../../../models/shopRole";
 
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Helpers
-import pluralize from "../../../../../../../helpers/pluralize";
-import fetchUser from "../../../../../../../helpers/fetchUser";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import fetchUser from "../../../../../../../helpers/fetchUser";
+import pluralize from "../../../../../../../helpers/pluralize";
 
 // Function
 export default {
@@ -40,33 +41,18 @@ export default {
           .setRequired(true)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+  execute: async (interaction: ChatInputCommandInteraction) => {
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
     const { options, guild, user, member } = interaction;
 
     const optionName = options?.getString("name");
     const optionColor = options?.getString("color");
 
     // If amount is null
-    if (optionName === null) {
-      logger?.silly(`Name is null.`);
-
-      return interaction?.editReply({
-        embeds: [
-          {
-            title: ":dollar: Shop - Roles [Buy]",
-            description: "We could not read your requested name.",
-            color: errorColor,
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
-          },
-        ],
-      });
-    }
+    if (optionName === null)
+      throw new Error("We could not read your requested name");
 
     await guild?.roles
       .create({
@@ -112,28 +98,20 @@ export default {
 
         logger?.silly(`Role ${role?.name} was bought by ${user?.tag}`);
 
+        const interactionEmbed = new EmbedBuilder()
+          .setTitle("[:shopping_cart:] Buy")
+          .setDescription(
+            `You bought **${optionName}** for **${pluralize(
+              pricePerHour,
+              "credit"
+            )}**.`
+          )
+          .setTimestamp()
+          .setColor(successColor)
+          .setFooter({ text: footerText, iconURL: footerIcon });
+
         return interaction?.editReply({
-          embeds: [
-            {
-              title: ":shopping_cart: Shop - Roles [Buy]",
-              description: `You bought **${optionName}** for **${pluralize(
-                pricePerHour,
-                "credit"
-              )}**.`,
-              color: successColor,
-              fields: [
-                {
-                  name: "Your balance",
-                  value: `${pluralize(userDB?.credits, "credit")}`,
-                },
-              ],
-              timestamp: new Date(),
-              footer: {
-                iconURL: footerIcon,
-                text: footerText,
-              },
-            },
-          ],
+          embeds: [interactionEmbed],
         });
       })
       .catch(async (error) => {

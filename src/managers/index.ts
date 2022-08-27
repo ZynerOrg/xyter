@@ -1,10 +1,9 @@
-import "dotenv/config";
 import { Client } from "discord.js";
 
-import * as database from "./database";
-import * as schedule from "./schedule";
-import * as event from "./event";
 import * as command from "./command";
+import * as database from "./database";
+import * as event from "./event";
+import * as schedule from "./schedule";
 
 export const start = async (client: Client) => {
   await database.connect();

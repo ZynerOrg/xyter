@@ -30,16 +30,15 @@
     "email": "vermium@zyner.org"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.0.0",
     "@discordjs/rest": "^1.0.0",
     "@types/i18next-fs-backend": "^1.1.2",
     "axios": "^0.27.2",
     "chance": "^1.1.8",
     "common": "^0.2.5",
     "crypto": "^1.0.1",
-    "dotenv": "^16.0.1",
     "discord-api-types": "^0.37.0",
     "discord.js": "^14.0.0",
+    "dotenv": "^16.0.1",
     "i18n": "^0.15.0",
     "i18next": "^21.6.13",
     "i18next-async-backend": "^2.0.0",

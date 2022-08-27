@@ -1,11 +1,8 @@
 // Dependencies
 import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 // Handlers
-import logger from "../../../../../logger";
-
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
 // Modules
 import modules from "./modules";
@@ -23,11 +20,8 @@ export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
     .addSubcommand(modules.cancel.builder);
 };
 
-export const execute = async (interaction: CommandInteraction) => {
-  if (interaction.guild == null) return;
-  const { errorColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  );
+export const execute = async (interaction: ChatInputCommandInteraction) => {
+  if (!interaction.guild) return;
   const { options, guild } = interaction;
 
   const guildDB = await guildSchema?.findOne({
@@ -36,24 +30,8 @@ export const execute = async (interaction: CommandInteraction) => {
 
   if (guildDB === null) return;
 
-  if (!guildDB.shop.roles.status) {
-    logger.silly(`Shop roles disabled.`);
-
-    return interaction?.editReply({
-      embeds: [
-        {
-          title: ":dollar: Shop - Roles",
-          description: "This server has disabled shop roles.",
-          color: errorColor,
-          timestamp: new Date(),
-          footer: {
-            iconURL: footerIcon,
-            text: footerText,
-          },
-        },
-      ],
-    });
-  }
+  if (!guildDB.shop.roles.status)
+    throw new Error("This server has disabled shop roles.");
 
   if (options?.getSubcommand() === "buy") {
     await modules.buy.execute(interaction);

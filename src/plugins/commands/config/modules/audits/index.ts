@@ -1,18 +1,22 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
+import guildSchema from "../../../../../models/guild";
 
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -29,56 +33,56 @@ export default {
           .addChannelTypes(ChannelType.GuildText)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
-      interaction.guild
-    );
-
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { guild, options } = interaction;
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      guild
+    );
+    const status = options.getBoolean("status");
+    const channel = options.getChannel("channel");
 
-    const status = options?.getBoolean("status");
-    const channel = options?.getChannel("channel");
-
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    if (!guild) throw new Error("Guild not found.");
+    const guildDB = await guildSchema.findOne({
+      guildId: guild.id,
     });
+    if (!guildDB) throw new Error("Guild configuration not found.");
 
-    if (guildDB === null) {
-      return logger?.silly(`Guild not found in database.`);
-    }
+    guildDB.audits.status = status !== null ? status : guildDB.audits.status;
+    guildDB.audits.channelId = channel ? channel.id : guildDB.audits.channelId;
 
-    guildDB.audits.status = status !== null ? status : guildDB?.audits?.status;
-    guildDB.audits.channelId =
-      channel !== null ? channel.id : guildDB?.audits?.channelId;
+    await guildDB.save().then(async () => {
+      logger.verbose(
+        `Guild ${guild.name} updated their configuration for audits.`
+      );
 
-    await guildDB?.save()?.then(async () => {
-      logger?.silly(`Guild audits updated.`);
-
-      return interaction?.editReply({
-        embeds: [
+      const embedSuccess = new EmbedBuilder()
+        .setTitle("[:hammer:] Audits")
+        .setDescription("Guild configuration updated successfully.")
+        .setColor(successColor)
+        .addFields(
           {
-            title: ":hammer: Settings - Guild [Audits]",
-            description: `Audits settings updated.`,
-            color: successColor,
-            fields: [
-              {
-                name: "🤖 Status",
-                value: `${guildDB?.audits?.status}`,
-                inline: true,
-              },
-              {
-                name: "🌊 Channel",
-                value: `${guildDB?.audits?.channelId}`,
-                inline: true,
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Status",
+            value: `${
+              guildDB.audits.status
+                ? ":white_check_mark: Enabled"
+                : ":x: Disabled"
+            }`,
+            inline: true,
           },
-        ],
+          {
+            name: "🌊 Channel",
+            value: `<#${guildDB.audits.channelId}>`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction.editReply({
+        embeds: [embedSuccess],
       });
     });
   },

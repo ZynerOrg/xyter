@@ -1,48 +1,36 @@
 // 3rd party dependencies
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import {
+  BaseInteraction,
+  CommandInteraction,
+  InteractionType,
+} from "discord.js";
 
 // Dependencies
 import * as handlers from "./handlers";
 
-import logger from "../../../logger";
-import audits from "./audits";
 import { IEventOptions } from "../../../interfaces/EventOptions";
-import capitalizeFirstLetter from "../../../helpers/capitalizeFirstLetter";
-import getEmbedConfig from "../../../helpers/getEmbedConfig";
+import logger from "../../../middlewares/logger";
+import audits from "./audits";
 
 export const options: IEventOptions = {
   type: "on",
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: BaseInteraction) => {
   const { guild, id } = interaction;
 
   logger?.silly(
     `New interaction: ${id} in guild: ${guild?.name} (${guild?.id})`
   );
 
-  const { errorColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  );
-
   await audits.execute(interaction);
 
-  await handlers.execute(interaction).catch(async (err) => {
-    logger.debug(`${err}`);
+  switch (interaction.type) {
+    case InteractionType.ApplicationCommand:
+      await handlers.handleCommandInteraction(<CommandInteraction>interaction);
+      break;
 
-    return interaction.editReply({
-      embeds: [
-        new MessageEmbed()
-          .setTitle(
-            `[:x:] ${capitalizeFirstLetter(
-              interaction.options.getSubcommand()
-            )}`
-          )
-          .setDescription(`${"``"}${err}${"``"}`)
-          .setColor(errorColor)
-          .setTimestamp(new Date())
-          .setFooter({ text: footerText, iconURL: footerIcon }),
-      ],
-    });
-  });
+    default:
+      logger?.error(`Unknown interaction type: ${interaction.type}`);
+  }
 };

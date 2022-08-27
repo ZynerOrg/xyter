@@ -1,5 +1,5 @@
-import logger from "../../../logger";
-import { Message, MessageEmbed, TextChannel } from "discord.js";
+import { EmbedBuilder, Message, TextChannel } from "discord.js";
+import logger from "../../../middlewares/logger";
 
 import guildSchema from "../../../models/guild";
 
@@ -33,7 +33,7 @@ export default {
     (channel as TextChannel)
       .send({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setColor(successColor)
             .setAuthor({
               name: message.author.username,

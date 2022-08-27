@@ -1,17 +1,21 @@
-import { CommandInteraction, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
-import guildSchema from "../../../../../models/guild";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import guildSchema from "../../../../../models/guild";
 
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -29,7 +33,7 @@ export default {
           .setDescription("Price per hour for roles.")
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
@@ -56,31 +60,30 @@ export default {
     await guildDB?.save()?.then(async () => {
       logger?.silly(`Guild shop updated.`);
 
-      return interaction?.editReply({
-        embeds: [
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle("[:tools:] Shop")
+        .setDescription("Shop settings updated")
+        .setColor(successColor)
+        .addFields(
           {
-            title: ":hammer: Settings - Guild [Shop]",
-            description: `Shop settings updated.`,
-            color: successColor,
-            fields: [
-              {
-                name: "🤖 Roles Status",
-                value: `${guildDB?.shop?.roles.status}`,
-                inline: true,
-              },
-              {
-                name: "🌊 Roles Price Per Hour",
-                value: `${guildDB?.shop?.roles.pricePerHour}`,
-                inline: true,
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              iconURL: footerIcon,
-              text: footerText,
-            },
+            name: "🤖 Roles Status",
+            value: `${guildDB?.shop?.roles.status}`,
+            inline: true,
           },
-        ],
+          {
+            name: "🌊 Roles Price Per Hour",
+            value: `${guildDB?.shop?.roles.pricePerHour}`,
+            inline: true,
+          }
+        )
+        .setTimestamp()
+        .setFooter({
+          iconURL: footerIcon,
+          text: footerText,
+        });
+
+      return interaction?.editReply({
+        embeds: [interactionEmbed],
       });
     });
   },

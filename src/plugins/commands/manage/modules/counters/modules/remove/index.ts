@@ -1,23 +1,27 @@
 // Dependencies
-import { CommandInteraction, MessageEmbed, Permissions } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+} from "discord.js";
 
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
 
 // Handlers
-import logger from "../../../../../../../logger";
+import logger from "../../../../../../../middlewares/logger";
 
 // Models
-import counterSchema from "../../../../../../../models/counter";
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
+import counterSchema from "../../../../../../../models/counter";
 
 // Function
 export default {
   metadata: {
     guildOnly: true,
     ephemeral: true,
-    permissions: [Permissions.FLAGS.MANAGE_GUILD],
+    permissions: [PermissionsBitField.Flags.ManageGuild],
   },
 
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -32,14 +36,14 @@ export default {
           .addChannelTypes(ChannelType.GuildText)
       );
   },
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { options, guild } = interaction;
 
     const discordChannel = options?.getChannel("channel");
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle("[:toolbox:] Counters - Remove")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });

@@ -1,4 +1,5 @@
-import { Client, Collection } from "discord.js"; // discord.js
+import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
+import "dotenv/config";
 
 import * as managers from "./managers";
 
@@ -6,7 +7,12 @@ import * as managers from "./managers";
 const main = async () => {
   // Initiate client object
   const client = new Client({
-    intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"],
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.MessageContent,
+    ],
   });
 
   // Create command collection

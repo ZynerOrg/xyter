@@ -1,8 +1,8 @@
-import logger from "../../../../../logger";
-import { Message } from "discord.js";
+import { ChannelType, Message } from "discord.js";
+import logger from "../../../../../middlewares/logger";
 
-import fetchUser from "../../../../../helpers/fetchUser";
 import fetchGuild from "../../../../../helpers/fetchGuild";
+import fetchUser from "../../../../../helpers/fetchUser";
 
 import * as cooldown from "../../../../../helpers/cooldown";
 
@@ -10,9 +10,9 @@ export default {
   execute: async (message: Message) => {
     const { guild, author, content, channel } = message;
 
-    if (guild == null) return;
+    if (!guild) return;
     if (author.bot) return;
-    if (channel?.type !== "GUILD_TEXT") return;
+    if (channel.type !== ChannelType.GuildText) return;
 
     const { id: guildId } = guild;
     const { id: userId } = author;
@@ -22,11 +22,12 @@ export default {
 
     if (content.length < guildData.credits.minimumLength) return;
 
-    await cooldown.message(
+    const isOnCooldown = await cooldown.message(
       message,
       guildData.credits.timeout,
       "messageCreate-credits"
     );
+    if (isOnCooldown) return;
 
     userData.credits += guildData.credits.rate;
 

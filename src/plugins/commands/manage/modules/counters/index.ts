@@ -1,8 +1,8 @@
 // Dependencies
 import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
-import logger from "../../../../../logger";
+import logger from "../../../../../middlewares/logger";
 
 // Modules
 import modules from "./modules";
@@ -18,7 +18,7 @@ export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
     .addSubcommand(modules.remove.builder);
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
   if (options?.getSubcommand() === "add") {

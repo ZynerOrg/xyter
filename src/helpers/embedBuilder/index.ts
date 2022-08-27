@@ -1,6 +1,6 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 
-export default new MessageEmbed()
+export default new EmbedBuilder()
   .setFooter({
     text: process.env.EMBED_FOOTER_TEXT,
     iconURL: process.env.EMBED_FOOTER_ICON,

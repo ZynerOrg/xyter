@@ -1,4 +1,4 @@
-import { Snowflake, ColorResolvable } from "discord.js";
+import { ColorResolvable, Snowflake } from "discord.js";
 
 declare global {
   namespace NodeJS {

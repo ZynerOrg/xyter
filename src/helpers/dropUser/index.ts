@@ -1,6 +1,6 @@
 import userSchema from "../../models/user";
 
-import logger from "../../logger";
+import logger from "../../middlewares/logger";
 
 import { Guild, User } from "discord.js";
 

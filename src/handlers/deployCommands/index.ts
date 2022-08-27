@@ -1,9 +1,7 @@
-import logger from "../../logger";
-import { Client } from "discord.js";
-import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
 import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
+import { Client } from "discord.js";
 import { ICommand } from "../../interfaces/Command";
+import logger from "../../middlewares/logger";
 
 export default async (client: Client) => {
   const commandList: Array<RESTPostAPIApplicationCommandsJSONBody> = [];
@@ -28,12 +26,8 @@ export default async (client: Client) => {
       throw new Error(`Could not gather command list: ${error}`);
     });
 
-  const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_TOKEN);
-
-  await rest
-    .put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
-      body: commandList,
-    })
+  await client.application?.commands
+    .set(commandList, process.env.DISCORD_GUILD_ID)
     .then(async () => {
       logger.info(`Finished updating command list.`);
     })
@@ -42,16 +36,8 @@ export default async (client: Client) => {
     });
 
   if (process.env.NODE_ENV !== "production") {
-    await rest
-      .put(
-        Routes.applicationGuildCommands(
-          process.env.DISCORD_CLIENT_ID,
-          process.env.DISCORD_GUILD_ID
-        ),
-        {
-          body: commandList,
-        }
-      )
+    await client.application?.commands
+      .set(commandList)
       .then(async () => logger.info(`Finished updating guild command list.`))
       .catch(async (error) => {
         logger.error(`${error}`);
