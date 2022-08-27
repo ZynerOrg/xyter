@@ -34,43 +34,44 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
-      interaction.guild
-    );
-
     const { guild, options } = interaction;
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      guild
+    );
+    const status = options.getBoolean("status");
+    const channel = options.getChannel("channel");
 
-    const status = options?.getBoolean("status");
-    const channel = options?.getChannel("channel");
-
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    if (!guild) throw new Error("Guild not found.");
+    const guildDB = await guildSchema.findOne({
+      guildId: guild.id,
     });
+    if (!guildDB) throw new Error("Guild configuration not found.");
 
-    if (guildDB === null) {
-      return logger?.silly(`Guild not found in database.`);
-    }
+    guildDB.audits.status = status !== null ? status : guildDB.audits.status;
+    guildDB.audits.channelId = channel ? channel.id : guildDB.audits.channelId;
 
-    guildDB.audits.status = status !== null ? status : guildDB?.audits?.status;
-    guildDB.audits.channelId =
-      channel !== null ? channel.id : guildDB?.audits?.channelId;
+    await guildDB.save().then(async () => {
+      logger.verbose(
+        `Guild ${guild.name} updated their configuration for audits.`
+      );
 
-    await guildDB?.save()?.then(async () => {
-      logger?.silly(`Guild audits updated.`);
-
-      const interactionEmbed = new EmbedBuilder()
+      const embedSuccess = new EmbedBuilder()
         .setTitle("[:hammer:] Audits")
-        .setDescription("Audit settings updated!")
+        .setDescription("Guild configuration updated successfully.")
         .setColor(successColor)
         .addFields(
           {
             name: "🤖 Status",
-            value: `${guildDB?.audits?.status}`,
+            value: `${
+              guildDB.audits.status
+                ? ":white_check_mark: Enabled"
+                : ":x: Disabled"
+            }`,
             inline: true,
           },
           {
             name: "🌊 Channel",
-            value: `${guildDB?.audits?.channelId}`,
+            value: `<#${guildDB.audits.channelId}>`,
             inline: true,
           }
         )
@@ -80,8 +81,8 @@ export default {
           text: footerText,
         });
 
-      return interaction?.editReply({
-        embeds: [interactionEmbed],
+      return interaction.editReply({
+        embeds: [embedSuccess],
       });
     });
   },
