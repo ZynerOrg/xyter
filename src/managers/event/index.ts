@@ -4,6 +4,7 @@ import listDir from "../../helpers/checkDirectory";
 import { IEvent } from "../../interfaces/Event";
 import logger from "../../middlewares/logger";
 
+// Registers all available events
 export const register = async (client: Client) => {
   const eventNames = await listDir("plugins/events");
   if (!eventNames) throw new Error("📦 No events available");
