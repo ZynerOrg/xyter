@@ -207,24 +207,13 @@ export default {
       await toUser.save();
 
       await session.commitTransaction();
-    } catch (error) {
+    } catch (error: unknown) {
       await session.abortTransaction();
       session.endSession();
-      logger.error(`${error}`);
 
-      return interaction.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Transfer)")
-            .setDescription(
-              "An error occurred while trying to gift credits. Please try again."
-            )
-            .setColor(errorColor)
-            .setTimestamp(new Date())
-            .setColor(successColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error(
+        "An error occurred while trying to gift credits. Please try again later."
+      );
     } finally {
       // ending the session
       session.endSession();

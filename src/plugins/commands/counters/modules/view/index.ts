@@ -46,13 +46,6 @@ export default {
       channelId: discordChannel.id,
     });
 
-    const counters = await counterSchema.find();
-
-    console.log(counters, {
-      guildId: guild.id,
-      channelId: discordChannel.id,
-    });
-
     if (!counter) throw new Error("No counter found for channel");
 
     return interaction.editReply({

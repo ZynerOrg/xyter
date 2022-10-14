@@ -23,10 +23,6 @@ export const register = async (client: Client) => {
       throw new Error(
         `📦 No command builder found while importing "${commandName}"`
       );
-    if (!command.execute)
-      throw new Error(
-        `📦 No command execute found while importing "${commandName}"`
-      );
     if (!command.moduleData)
       throw new Error(
         `📦 No command moduleData found while importing "${commandName}"`

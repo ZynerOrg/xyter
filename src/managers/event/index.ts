@@ -44,6 +44,8 @@ export const register = async (client: Client) => {
       case "on":
         client.on(eventName, eventExecutor);
         break;
+      default:
+        logger.error(`${eventName} does not have a valid type`);
     }
     importedEventAmount += 1;
   };
