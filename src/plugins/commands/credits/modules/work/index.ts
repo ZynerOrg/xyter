@@ -6,16 +6,11 @@ import { CommandInteraction, EmbedBuilder } from "discord.js";
 import * as cooldown from "../../../../../helpers/cooldown";
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
+// Helpers
+import fetchGuild from "../../../../../helpers/guildData";
 import fetchUser from "../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../middlewares/logger";
-// Helpers
-import fetchGuild from../../../../../ helpers / userDatald;
-
-
-
-
-";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },
