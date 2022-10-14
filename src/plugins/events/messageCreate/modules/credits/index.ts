@@ -31,15 +31,13 @@ export default {
 
     await userData
       .save()
-      .then(async () => {
+      .then(() => {
         logger.silly(
           `User ${userId} in guild ${guildId} has ${userData.credits} credits`
         );
       })
-      .catch(async (err) => {
-        logger.error(
-          `Error saving credits for user ${userId} in guild ${guildId} - ${err}`
-        );
+      .catch(() => {
+        throw new Error(`Error saving credits to database.`);
       });
   },
 };

@@ -28,16 +28,13 @@ export default {
 
     await userData
       .save()
-      .then(async () => {
+      .then(() => {
         logger.silly(
           `Successfully saved user ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`
         );
       })
-      .catch(async (err) => {
-        logger.error(
-          `Error saving points for user ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`,
-          err
-        );
+      .catch(() => {
+        throw new Error("Error saving points to database.");
       });
 
     logger.silly(
