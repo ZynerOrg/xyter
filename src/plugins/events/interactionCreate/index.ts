@@ -14,6 +14,7 @@ export const options: IEventOptions = {
   type: "on",
 };
 
+// Execute the event
 export const execute = async (interaction: BaseInteraction) => {
   const { guild, id } = interaction;
 
