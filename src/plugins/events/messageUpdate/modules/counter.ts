@@ -1,6 +1,5 @@
 // Dependencies
 import { Message } from "discord.js";
-
 // Models
 import logger from "../../../../middlewares/logger";
 import counterSchema from "../../../../models/counter";
@@ -24,12 +23,12 @@ export default async (message: Message) => {
     );
 
   await message
-    ?.delete()
-    ?.then(async () => {
+    .delete()
+    .then(async () => {
       await channel?.send(`${author} said **${word}**.`);
       logger?.silly(`${author} said ${word} in ${channel}`);
     })
-    ?.catch(async (error) => {
-      logger?.error(error);
+    .catch((error) => {
+      logger.error(error);
     });
 };
