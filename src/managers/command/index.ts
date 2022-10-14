@@ -1,8 +1,7 @@
 import { Client } from "discord.js";
-import listDir from "../../helpers/listDir";
-import logger from "../../middlewares/logger";
-
+import listDir from "../../helpers/checkDirectory";
 import { ICommand } from "../../interfaces/Command";
+import logger from "../../middlewares/logger";
 
 export const register = async (client: Client) => {
   // Get name of directories containing commands

@@ -1,19 +1,16 @@
 // Dependencies
+// Models
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { ChannelType } from "discord-api-types/v10";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
-
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 // Handlers
 import logger from "../../../../../../../middlewares/logger";
-
-// Models
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { ChannelType } from "discord-api-types/v10";
 import counterSchema from "../../../../../../../models/counter";
 
 // Function

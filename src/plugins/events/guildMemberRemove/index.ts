@@ -1,8 +1,7 @@
 // 3rd party dependencies
 import { GuildMember } from "discord.js";
-
 // Dependencies
-import dropUser from "../../../helpers/dropUser";
+import dropUser from "../../../helpers/deleteUserData";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";

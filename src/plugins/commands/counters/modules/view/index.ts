@@ -1,9 +1,7 @@
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import counterSchema from "../../../../../models/counter";
 
 export default {

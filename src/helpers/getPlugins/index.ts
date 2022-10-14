@@ -1,5 +1,5 @@
 import logger from "../../middlewares/logger";
-import listDir from "../listDir";
+import listDir from "../checkDirectory";
 
 export default async (dir: string) => {
   logger.debug("Processing list of plugins...");

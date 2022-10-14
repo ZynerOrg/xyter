@@ -1,12 +1,11 @@
 // Dependencies
 import { Client } from "discord.js";
-import logger from "../../../middlewares/logger";
-
 // Helpers
-import deployCommands from "../../../handlers/deployCommands";
-import devMode from "../../../handlers/devMode";
+import deployCommands from "../../../helpers/deployCommands";
+import devMode from "../../../helpers/devMode";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
+import logger from "../../../middlewares/logger";
 
 export const options: IEventOptions = {
   type: "once",

@@ -1,7 +1,7 @@
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
+
 export default {
   metadata: { guildOnly: false, ephemeral: false },
 

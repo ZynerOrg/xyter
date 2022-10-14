@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, ColorResolvable } from "discord.js";
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 import guildSchema from "../../../../../../../models/guild";
 
 export default async (interaction: ChatInputCommandInteraction) => {

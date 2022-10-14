@@ -1,24 +1,20 @@
 // Dependencies
+// Helpers
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   ColorResolvable,
   EmbedBuilder,
   GuildMemberRoleManager,
 } from "discord.js";
-
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
-
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
+import pluralize from "../../../../../../../helpers/pluralize";
+import fetchUser from "../../../../../../../helpers/userData";
+import logger from "../../../../../../../middlewares/logger";
 // Models
 import guildSchema from "../../../../../../../models/guild";
 import shopRolesSchema from "../../../../../../../models/shopRole";
-
-import logger from "../../../../../../../middlewares/logger";
-
-// Helpers
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import fetchUser from "../../../../../../../helpers/fetchUser";
-import pluralize from "../../../../../../../helpers/pluralize";
 
 // Function
 export default {

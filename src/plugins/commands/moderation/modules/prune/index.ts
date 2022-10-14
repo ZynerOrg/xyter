@@ -1,15 +1,13 @@
 // Dependencies
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
 // Configurations
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
 
 // Function
 export default {

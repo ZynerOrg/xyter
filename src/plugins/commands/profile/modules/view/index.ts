@@ -1,13 +1,10 @@
 // Dependencies
-import { CommandInteraction, EmbedBuilder } from "discord.js";
-
-// Configurations
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
-// Models
-import fetchUser from "../../../../../helpers/fetchUser";
-
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
+// Configurations
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
+// Models
+import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
 
 // Function
