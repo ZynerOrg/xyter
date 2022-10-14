@@ -4,13 +4,11 @@ import {
   CommandInteraction,
   InteractionType,
 } from "discord.js";
-
-// Dependencies
-import * as handlers from "./handlers";
-
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";
 import audits from "./audits";
+// Dependencies
+import { handleCommandInteraction as HandlersHandleCommandInteraction } from "./handlers";
 
 export const options: IEventOptions = {
   type: "on",
@@ -27,7 +25,7 @@ export const execute = async (interaction: BaseInteraction) => {
 
   switch (interaction.type) {
     case InteractionType.ApplicationCommand:
-      await handlers.handleCommandInteraction(<CommandInteraction>interaction);
+      await HandlersHandleCommandInteraction(<CommandInteraction>interaction);
       break;
 
     default:
