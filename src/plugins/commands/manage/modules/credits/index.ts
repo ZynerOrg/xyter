@@ -1,6 +1,5 @@
 import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
-
 import modules from "./modules";
 
 export const moduleData = modules;
@@ -19,14 +18,21 @@ export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "give":
-      return modules.give.execute(interaction);
+      await modules.give.execute(interaction);
+      break;
     case "set":
-      return modules.set.execute(interaction);
+      await modules.set.execute(interaction);
+      break;
     case "take":
-      return modules.take.execute(interaction);
+      await modules.take.execute(interaction);
+      break;
     case "transfer":
-      return modules.transfer.execute(interaction);
+      await modules.transfer.execute(interaction);
+      break;
     case "giveaway":
-      return modules.giveaway.execute(interaction);
+      await modules.giveaway.execute(interaction);
+      break;
+    default:
+      throw new Error("No module found for that specific command");
   }
 };
