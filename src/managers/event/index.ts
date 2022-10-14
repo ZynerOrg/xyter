@@ -29,7 +29,7 @@ export const register = async (client: Client) => {
 
     // Register event
     const eventExecutor = async (...args: Promise<void>[]) => {
-      await event.execute(...args).catch(async (err) => {
+      await event.execute(...args).catch((err) => {
         logger.error(`${err}`);
       });
     };
@@ -52,7 +52,7 @@ export const register = async (client: Client) => {
   };
 
   // Send log message when it's done loading events
-  const doneImporting = async () => {
+  const doneImporting = () => {
     if (importedEventAmount !== amountOfEvents) {
       return logger.warn(
         `📦 Failed importing ${
@@ -65,7 +65,7 @@ export const register = async (client: Client) => {
   };
 
   eventNames.forEach(async (eventName: string, index: number) => {
-    await importEvent(eventName).then(async () => {
+    await importEvent(eventName).then(() => {
       logger.debug(`📦 Imported the "${eventName}" event`);
     });
 

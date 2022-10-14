@@ -34,7 +34,7 @@ export const register = async (client: Client) => {
   };
 
   // Send log message when it's done loading commands
-  const doneImporting = async () => {
+  const doneImporting = () => {
     if (importedCommandAmount !== amountOfCommands) {
       return logger.warn(
         `📦 Failed importing ${
@@ -48,13 +48,9 @@ export const register = async (client: Client) => {
 
   // Start importing commands
   commandNames.forEach(async (commandName: string, index: number) => {
-    await importCommand(commandName)
-      .then(async () => {
-        logger.debug(`📦 Imported the "${commandName}" command`);
-      })
-      .catch(async (err) => {
-        logger.error(err);
-      });
+    await importCommand(commandName).then(() => {
+      logger.debug(`📦 Imported the "${commandName}" command`);
+    });
 
     // If done importing
     if (index + 1 === amountOfCommands) {
