@@ -3,7 +3,7 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandBuilder
 } from "discord.js";
 import mongoose from "mongoose";
 // Configurations
@@ -200,17 +200,8 @@ export default {
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
-      logger.error(`${error}`);
 
-      return interaction.editReply({
-        embeds: [
-          embed
-            .setDescription(
-              "An error occurred while trying to gift credits. Please try again."
-            )
-            .setColor(errorColor),
-        ],
-      });
+      thorw new Error("An error occurred while trying to gift credits. Please try again later.")
     } finally {
       // ending the session
       session.endSession();

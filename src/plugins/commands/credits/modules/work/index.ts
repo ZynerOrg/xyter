@@ -56,7 +56,7 @@ export default {
 
     userDB.credits += creditsEarned;
 
-    await userDB?.save()?.then(async () => {
+    await userDB?.save()?.then(() => {
       logger?.silly(
         `User ${userDB?.userId} worked and earned ${creditsEarned} credits`
       );
