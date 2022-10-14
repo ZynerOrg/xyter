@@ -5,18 +5,14 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
-
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
+// Helpers../../../../../../../helpers/userData
+import pluralize from "../../../../../../../helpers/pluralize";
+// Models
+import fetchUser from "../../../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../../../middlewares/logger";
-
-// Helpers
-import pluralize from "../../../../../../../helpers/pluralize";
-
-// Models
-import fetchUser from "../../../../../../../helpers/fetchUser";
 
 // Function
 export default {

@@ -1,6 +1,6 @@
 /* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
-import listDir from "../../helpers/listDir";
+import listDir from "../../helpers/checkDirectory";
 import { IEvent } from "../../interfaces/Event";
 import logger from "../../middlewares/logger";
 

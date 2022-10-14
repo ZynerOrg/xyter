@@ -1,6 +1,7 @@
 // Dependencies
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
+import { ButtonStyle, ChannelType } from "discord-api-types/v10";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -9,13 +10,10 @@ import {
   PermissionsBitField,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
-import encryption from "../../../../../../../handlers/encryption";
-import apiSchema from "../../../../../../../models/api";
-
+import encryption from "../../../../../../../helpers/encryption";
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
-
-import { ButtonStyle, ChannelType } from "discord-api-types/v10";
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
+import apiSchema from "../../../../../../../models/api";
 
 // Function
 export default {

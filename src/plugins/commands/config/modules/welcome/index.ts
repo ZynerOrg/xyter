@@ -1,15 +1,12 @@
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { ChannelType } from "discord-api-types/v10";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import logger from "../../../../../middlewares/logger";
-
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { ChannelType } from "discord-api-types/v10";
 import guildSchema from "../../../../../models/guild";
 
 export default {

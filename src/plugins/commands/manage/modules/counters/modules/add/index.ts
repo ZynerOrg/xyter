@@ -6,12 +6,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
-
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 import logger from "../../../../../../../middlewares/logger";
-
 // Models
 import counterSchema from "../../../../../../../models/counter";
 

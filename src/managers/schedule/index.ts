@@ -1,11 +1,8 @@
 import { Client } from "discord.js";
-import logger from "../../middlewares/logger";
-
-import { IJob } from "../../interfaces/Job";
-
-import listDir from "../../helpers/listDir";
-
 import schedule from "node-schedule";
+import listDir from "../../helpers/checkDirectory";
+import { IJob } from "../../interfaces/Job";
+import logger from "../../middlewares/logger";
 
 export const start = async (client: Client) => {
   logger.info("⏰ Started job management");

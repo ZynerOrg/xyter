@@ -1,9 +1,7 @@
 import { BaseInteraction, EmbedBuilder, TextChannel } from "discord.js";
+import getEmbedConfig from "../../../helpers/getEmbedData";
 import logger from "../../../middlewares/logger";
-
 import guildSchema from "../../../models/guild";
-
-import getEmbedConfig from "../../../helpers/getEmbedConfig";
 
 export default {
   execute: async (interaction: BaseInteraction) => {

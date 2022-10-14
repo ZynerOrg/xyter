@@ -1,15 +1,12 @@
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
+import encryption from "../../../../../helpers/encryption";
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import logger from "../../../../../middlewares/logger";
-
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import encryption from "../../../../../handlers/encryption";
 import apiSchema from "../../../../../models/api";
 
 export default {

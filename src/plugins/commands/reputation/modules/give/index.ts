@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import * as cooldown from "../../../../../helpers/cooldown";
-import fetchUser from "../../../../../helpers/fetchUser";
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
+import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";
 

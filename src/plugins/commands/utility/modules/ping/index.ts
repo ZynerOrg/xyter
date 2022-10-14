@@ -1,10 +1,8 @@
 // Dependencies
-import { CommandInteraction, EmbedBuilder } from "discord.js";
-
-// Configurations
-import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
-
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
+// Configurations
+import getEmbedConfig from "../../../../../helpers/getEmbedData";
 
 // Function
 export default {

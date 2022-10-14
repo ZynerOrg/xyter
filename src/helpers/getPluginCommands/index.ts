@@ -1,8 +1,8 @@
 /* eslint-disable no-loops/no-loops */
 import logger from "../../middlewares/logger";
+import listDir from "../checkDirectory";
 import getPluginCommandBuilder from "../getPluginCommandBuilder";
 import getPluginCommandOptions from "../getPluginCommandOptions";
-import listDir from "../listDir";
 
 export default async (plugin: string) => {
   logger.debug(`Processing commands for plugin: ${plugin}`);

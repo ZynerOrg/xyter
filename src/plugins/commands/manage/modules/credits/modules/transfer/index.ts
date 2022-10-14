@@ -1,21 +1,17 @@
 // Dependencies
+// Models
+import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-
 import mongoose from "mongoose";
-
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedConfig";
-
-// Handlers
+import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
+import fetchUser from "../../../../../../../helpers/userData";
+// Handlers../../../../../../../helpers/userData
 import logger from "../../../../../../../middlewares/logger";
-
-// Models
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import fetchUser from "../../../../../../../helpers/fetchUser";
 
 // Function
 export default {

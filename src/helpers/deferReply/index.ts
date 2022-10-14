@@ -1,5 +1,5 @@
 import { BaseInteraction, EmbedBuilder } from "discord.js";
-import getEmbedConfig from "../../helpers/getEmbedConfig";
+import getEmbedConfig from "../getEmbedData";
 
 export default async (interaction: BaseInteraction, ephemeral: boolean) => {
   if (!interaction.isRepliable())

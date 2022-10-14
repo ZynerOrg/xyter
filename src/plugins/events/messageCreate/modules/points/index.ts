@@ -1,11 +1,9 @@
+import { ChannelType, Message } from "discord.js";
+import * as cooldown from "../../../../../helpers/cooldown";
+import fetchGuild from "../../../../../helpers/fetchGuild";
+import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
 
-import * as cooldown from "../../../../../helpers/cooldown";
-
-import fetchGuild from "../../../../../helpers/fetchGuild";
-import fetchUser from "../../../../../helpers/fetchUser";
-
-import { ChannelType, Message } from "discord.js";
 export default {
   execute: async (message: Message) => {
     const { guild, author, content, channel } = message;
