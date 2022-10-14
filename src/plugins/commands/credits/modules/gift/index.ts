@@ -1,18 +1,16 @@
 // Dependencies
-import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+// Models
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandSubcommandBuilder
+} from "discord.js";
 import mongoose from "mongoose";
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import fetchUser from "../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../middlewares/logger";
-// Models
-import { SlashCommandSu } from /../../../../ helpers / userDatajs / builders;
-
-
-
-
-";
 
 // Function
 export default {
@@ -202,17 +200,8 @@ export default {
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
-      logger.error(`${error}`);
 
-      return interaction.editReply({
-        embeds: [
-          embed
-            .setDescription(
-              "An error occurred while trying to gift credits. Please try again."
-            )
-            .setColor(errorColor),
-        ],
-      });
+      thorw new Error("An error occurred while trying to gift credits. Please try again later.")
     } finally {
       // ending the session
       session.endSession();
