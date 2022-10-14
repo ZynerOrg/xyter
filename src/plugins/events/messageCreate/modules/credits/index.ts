@@ -1,5 +1,5 @@
 import { ChannelType, Message } from "discord.js";
-import * as cooldown from "../../../../../helpers/cooldown";
+import { message as CooldownMessage } from "../../../../../helpers/cooldown";
 import fetchGuild from "../../../../../helpers/guildData";
 import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
@@ -20,7 +20,7 @@ export default {
 
     if (content.length < guildData.credits.minimumLength) return;
 
-    const isOnCooldown = await cooldown.message(
+    const isOnCooldown = await CooldownMessage(
       message,
       guildData.credits.timeout,
       "messageCreate-credits"
