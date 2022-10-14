@@ -8,6 +8,7 @@ export const options: IEventOptions = {
   type: "on",
 };
 
+// Function to execute the event
 export const execute = (client: Client) => {
   logger.warn(`Discord's API client (${client?.user?.tag}) is rate-limited!`);
 };
