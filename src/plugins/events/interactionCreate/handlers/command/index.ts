@@ -1,7 +1,6 @@
 // Dependencies
 import { ChatInputCommandInteraction } from "discord.js";
-
-import * as cooldown from "../../../../../helpers/cooldown";
+import { command as CooldownCommand } from "../../../../../helpers/cooldown";
 import deferReply from "../../../../../helpers/deferReply";
 import getCommandMetadata from "../../../../../helpers/getCommandMetadata";
 
@@ -29,7 +28,7 @@ export default async (interaction: ChatInputCommandInteraction) => {
     throw new Error("This command is only available in DM");
 
   if (metadata.cooldown) {
-    await cooldown.command(interaction, metadata.cooldown);
+    await CooldownCommand(interaction, metadata.cooldown);
   }
   await currentCommand.execute(interaction);
 };

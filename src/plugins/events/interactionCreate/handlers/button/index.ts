@@ -1,7 +1,6 @@
 // Dependencies
 import { BaseInteraction } from "discord.js";
-
-import * as cooldown from "../../../../../helpers/cooldown";
+import { button as CooldownButton } from "../../../../../helpers/cooldown";
 import deferReply from "../../../../../helpers/deferReply";
 
 export default async (interaction: BaseInteraction) => {
@@ -30,7 +29,7 @@ export default async (interaction: BaseInteraction) => {
   if (metadata.dmOnly && guild)
     throw new Error("This command is only available in DM");
 
-  if (metadata.cooldown) await cooldown.button(interaction, metadata.cooldown);
+  if (metadata.cooldown) await CooldownButton(interaction, metadata.cooldown);
 
   await currentButton.execute(interaction);
 };
