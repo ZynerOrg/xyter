@@ -1,6 +1,6 @@
 import { ChannelType, Message } from "discord.js";
-import * as cooldown from "../../../../../helpers/cooldown";
-import fetchGuild from "../../../../../helpers/fetchGuild";
+import { message as CooldownMessage } from "../../../../../helpers/cooldown";
+import fetchGuild from "../../../../../helpers/guildData";
 import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
 
@@ -17,7 +17,7 @@ export default {
 
     if (content.length < guildData.credits.minimumLength) return;
 
-    const isOnCooldown = await cooldown.message(
+    const isOnCooldown = await CooldownMessage(
       message,
       guildData.credits.timeout,
       "messageCreate-points"
@@ -28,16 +28,13 @@ export default {
 
     await userData
       .save()
-      .then(async () => {
+      .then(() => {
         logger.silly(
           `Successfully saved user ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`
         );
       })
-      .catch(async (err) => {
-        logger.error(
-          `Error saving points for user ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`,
-          err
-        );
+      .catch(() => {
+        throw new Error("Error saving points to database.");
       });
 
     logger.silly(
