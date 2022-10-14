@@ -1,5 +1,6 @@
 import {
   BaseInteraction,
+  ButtonInteraction,
   ChatInputCommandInteraction,
   CommandInteraction,
   EmbedBuilder,
@@ -10,7 +11,7 @@ import button from "./button";
 import command from "./command";
 
 export const execute = async (interaction: BaseInteraction) => {
-  await button(interaction);
+  await button(<ButtonInteraction>interaction);
   await command(<ChatInputCommandInteraction>interaction);
 };
 
@@ -21,7 +22,7 @@ export const handleCommandInteraction = async (
     interaction.guild
   );
 
-  await command(<ChatInputCommandInteraction>interaction).catch(async (err) => {
+  await command(<ChatInputCommandInteraction>interaction).catch((err) => {
     return interaction.editReply({
       embeds: [
         new EmbedBuilder()
