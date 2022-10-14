@@ -1,7 +1,7 @@
 import { ChannelType, Message } from "discord.js";
-
 import logger from "../../../../../middlewares/logger";
 import counterSchema from "../../../../../models/counter";
+import logger from "../../../../../middlewares/logger";
 
 export default {
   execute: async (message: Message) => {
@@ -52,16 +52,13 @@ export default {
     counter.counter += 1;
     await counter
       .save()
-      .then(async () => {
+      .then(() => {
         logger.silly(
           `Counter for guild ${guildId} and channel ${channelId} is now ${counter.counter}`
         );
       })
-      .catch(async (err) => {
-        logger.error(
-          `Error saving counter for guild ${guildId} and channel ${channelId}`,
-          err
-        );
+      .catch((err) => {
+        throw new Error(`Error saving counter to database.`);
       });
 
     logger.silly(
