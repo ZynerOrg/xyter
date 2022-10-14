@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
-
 import modules from "./modules";
 
 export const builder = new SlashCommandBuilder()
@@ -20,18 +19,27 @@ export const moduleData = modules;
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options?.getSubcommand()) {
     case "cpgg":
-      return modules.cpgg.execute(interaction);
+      await modules.cpgg.execute(interaction);
+      break;
     case "credits":
-      return modules.credits.execute(interaction);
+      await modules.credits.execute(interaction);
+      break;
     case "points":
-      return modules.points.execute(interaction);
+      await modules.points.execute(interaction);
+      break;
     case "welcome":
-      return modules.welcome.execute(interaction);
+      await modules.welcome.execute(interaction);
+      break;
     case "audits":
-      return modules.audits.execute(interaction);
+      await modules.audits.execute(interaction);
+      break;
     case "shop":
-      return modules.shop.execute(interaction);
+      await modules.shop.execute(interaction);
+      break;
     case "embeds":
-      return modules.embeds.execute(interaction);
+      await modules.embeds.execute(interaction);
+      break;
+    default:
+      throw new Error("No module found for that specific command.");
   }
 };
