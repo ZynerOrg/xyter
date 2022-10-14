@@ -79,9 +79,6 @@ export default {
         return interaction?.editReply({
           embeds: [interactionEmbed],
         });
-      })
-      .catch(async (error: Error) => {
-        return logger?.silly(`Role could not be deleted. ${error}`);
       });
   },
 };
