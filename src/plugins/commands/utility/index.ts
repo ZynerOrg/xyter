@@ -13,6 +13,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(modules.avatar.builder)
   .addSubcommand(modules.ping.builder);
 
+// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "about":

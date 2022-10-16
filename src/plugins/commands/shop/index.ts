@@ -16,6 +16,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(modules.cpgg.builder)
   .addSubcommandGroup(modules.roles.builder);
 
+// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 

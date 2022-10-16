@@ -15,6 +15,7 @@ export const builder = new SlashCommandBuilder()
   .setDescription("Check a profile.")
   .addSubcommand(modules.view.builder);
 
+// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
