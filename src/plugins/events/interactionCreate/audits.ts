@@ -1,4 +1,4 @@
-import { BaseInteraction, EmbedBuilder, TextChannel } from "discord.js";
+import { BaseInteraction, ChannelType, EmbedBuilder } from "discord.js";
 import getEmbedConfig from "../../../helpers/getEmbedData";
 import logger from "../../../middlewares/logger";
 import guildSchema from "../../../models/guild";
@@ -26,9 +26,10 @@ export default {
 
     const channel = client.channels.cache.get(`${guildData.audits.channelId}`);
 
-    if (channel === null) return;
+    if (!channel) return;
+    if (channel.type !== ChannelType.GuildText) return;
 
-    (channel as TextChannel)
+    channel
       .send({
         embeds: [
           new EmbedBuilder()
@@ -49,15 +50,13 @@ export default {
             }),
         ],
       })
-      .then(async () => {
+      .then(() => {
         logger.debug(
           `Audit log sent for event interactionCreate in guild ${interaction?.guild?.name} (${interaction?.guild?.id})`
         );
       })
-      .catch(async () => {
-        logger.error(
-          `Audit log failed to send for event interactionCreate in guild ${interaction?.guild?.name} (${interaction?.guild?.id})`
-        );
+      .catch(() => {
+        logger.silly("Failed to send audit log for event interactionCreate");
       });
   },
 };
