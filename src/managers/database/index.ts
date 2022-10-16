@@ -4,18 +4,18 @@ import logger from "../../middlewares/logger";
 export const connect = async () => {
   await mongoose
     .connect(process.env.MONGO_URL)
-    .then(async (connection) => {
+    .then((connection) => {
       logger.info(`💾 Connected to database: ${connection.connection.name}`);
     })
-    .catch(async (e) => {
-      logger.error("💾 Could not connect to database", e);
+    .catch(() => {
+      throw new Error("Error connecting to database.");
     });
 
-  mongoose.connection.on("error", async (error) => {
-    logger.error(`💾 ${error}`);
+  mongoose.connection.on("error", () => {
+    throw new Error("Failed to connect to database.");
   });
 
-  mongoose.connection.on("warn", async (warning) => {
+  mongoose.connection.on("warn", (warning) => {
     logger.warn(`💾 ${warning}`);
   });
 };
