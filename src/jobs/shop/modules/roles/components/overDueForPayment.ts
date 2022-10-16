@@ -6,6 +6,7 @@ import guildSchema from "../../../../../models/guild";
 import shopRoleSchema from "../../../../../models/shopRole";
 import userSchema from "../../../../../models/user";
 
+// Execute the component
 export const execute = async (client: Client, role: IShopRole) => {
   const { guildId, userId, roleId } = role;
   if (!userId) throw new Error("User ID not found for shop role.");

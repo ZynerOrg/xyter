@@ -8,6 +8,7 @@ export const options = {
   schedule: "*/30 * * * *", // https://crontab.guru/
 };
 
+// Execute the job
 export const execute = async () => {
   const timeouts = await timeoutSchema.find();
   await Promise.all(
