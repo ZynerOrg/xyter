@@ -200,41 +200,20 @@ export default {
                   .setColor(successColor)
                   .setFooter({ text: footerText, iconURL: footerIcon });
 
-                return interaction?.editReply({
+                await interaction?.editReply({
                   embeds: [interactionEmbed],
                 });
+                return;
               });
           })
 
-          .catch(async (error) => {
-            logger?.silly(`Error saving new credits. - ${error}`);
-
-            const interactionEmbed = new EmbedBuilder()
-              .setTitle("[:shopping_cart:] CPGG")
-              .setDescription(`Something went wrong.`)
-              .setTimestamp()
-              .setColor(errorColor)
-              .setFooter({ text: footerText, iconURL: footerIcon });
-
-            return interaction?.editReply({
-              embeds: [interactionEmbed],
-            });
+          .catch(() => {
+            throw new Error("Failed to update credits for user.");
           });
       })
 
-      .catch(async (error) => {
-        logger?.silly(`Error creating voucher. - ${error}`);
-
-        const interactionEmbed = new EmbedBuilder()
-          .setTitle("[:shopping_cart:] CPGG")
-          .setDescription(`Something went wrong.`)
-          .setTimestamp()
-          .setColor(errorColor)
-          .setFooter({ text: footerText, iconURL: footerIcon });
-
-        return interaction?.editReply({
-          embeds: [interactionEmbed],
-        });
+      .catch(() => {
+        throw new Error("Failed generating an voucher.");
       });
   },
 };

@@ -5,7 +5,7 @@ import {
   ChatInputCommandInteraction,
   ColorResolvable,
   EmbedBuilder,
-  GuildMemberRoleManager,
+  GuildMemberRoleManager
 } from "discord.js";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
@@ -110,8 +110,8 @@ export default {
           embeds: [interactionEmbed],
         });
       })
-      .catch(async (error) => {
-        return logger?.silly(`Role could not be created. ${error}`);
+      .catch(() => {
+        throw new Error("Failed creating role.")
       });
   },
 };
