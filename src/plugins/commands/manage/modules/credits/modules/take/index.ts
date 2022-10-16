@@ -151,9 +151,7 @@ export default {
 
     // Save toUser
     await toUser?.save()?.then(async () => {
-      logger?.silly(`Saved toUser`);
-
-      return interaction?.editReply({
+      await interaction?.editReply({
         embeds: [
           new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Take)")
@@ -165,6 +163,7 @@ export default {
             .setFooter({ text: footerText, iconURL: footerIcon }),
         ],
       });
+      return;
     });
   },
 };

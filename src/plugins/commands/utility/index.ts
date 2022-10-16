@@ -13,16 +13,21 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(modules.avatar.builder)
   .addSubcommand(modules.ping.builder);
 
+// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "about":
-      return modules.about.execute(interaction);
+      await modules.about.execute(interaction);
+      break;
     case "stats":
-      return modules.stats.execute(interaction);
+      await modules.stats.execute(interaction);
+      break;
     case "avatar":
-      return modules.avatar.execute(interaction);
+      await modules.avatar.execute(interaction);
+      break;
     case "ping":
-      return modules.ping.execute(interaction);
+      await modules.ping.execute(interaction);
+      break;
     default:
       throw new Error(
         `Unknown subcommand: ${interaction.options.getSubcommand()}`
