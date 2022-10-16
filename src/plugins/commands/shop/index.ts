@@ -6,7 +6,6 @@ import { ChatInputCommandInteraction } from "discord.js";
 import modules from "./modules";
 
 // Handlers
-import logger from "../../../middlewares/logger";
 
 export const moduleData = modules;
 
@@ -20,17 +19,23 @@ export const builder = new SlashCommandBuilder()
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
-  if (options?.getSubcommand() === "cpgg") {
-    logger.silly(`Executing cpgg subcommand`);
-
-    return modules.cpgg.execute(interaction);
+  switch (options.getSubcommand()) {
+    case "cpgg": {
+      await modules.cpgg.execute(interaction);
+      break;
+    }
+    default: {
+      throw new Error("Could not find module for that command.");
+    }
   }
 
-  if (options?.getSubcommandGroup() === "roles") {
-    logger?.silly(`Subcommand group is roles`);
-
-    return modules.roles.execute(interaction);
+  switch (options.getSubcommandGroup()) {
+    case "roles": {
+      await modules.roles.execute(interaction);
+      break;
+    }
+    default: {
+      throw new Error("Could not find module for that command.");
+    }
   }
-
-  logger?.silly(`No subcommand found.`);
 };

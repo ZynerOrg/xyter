@@ -48,12 +48,10 @@ export default {
             ]),
         ],
       })
-      .then(async () => {
-        logger.debug(
-          `Audit log sent for event guildMemberRemove in guild ${member.guild.name} (${member.guild.id})`
-        );
+      .then(() => {
+        logger.debug(`Audit log sent for event guildMemberRemove.`);
       })
-      .catch(async () => {
+      .catch(() => {
         throw new Error("Audit log failed to send");
       });
   },
