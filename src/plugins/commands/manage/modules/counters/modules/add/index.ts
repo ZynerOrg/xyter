@@ -8,7 +8,6 @@ import {
 } from "discord.js";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import logger from "../../../../../../../middlewares/logger";
 // Models
 import counterSchema from "../../../../../../../models/counter";
 
@@ -80,9 +79,7 @@ export default {
         counter: startValue || 0,
       })
       .then(async () => {
-        logger?.silly(`Created counter`);
-
-        return interaction?.editReply({
+        await interaction?.editReply({
           embeds: [
             embed
               .setDescription(
@@ -91,6 +88,7 @@ export default {
               .setColor(successColor),
           ],
         });
+        return;
       });
   },
 };

@@ -49,7 +49,8 @@ export default {
           })
           .setColor(embedConfig.successColor);
 
-        return interaction.editReply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed] });
+        return;
       })
       .catch((error) => {
         throw new Error(error.message);
