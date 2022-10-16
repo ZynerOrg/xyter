@@ -13,7 +13,8 @@ export const builder = new SlashCommandBuilder()
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "lookup":
-      return modules.lookup.execute(interaction);
+      await modules.lookup.execute(interaction);
+      break;
     default:
       throw new Error(
         `Unknown subcommand: ${interaction.options.getSubcommand()}`

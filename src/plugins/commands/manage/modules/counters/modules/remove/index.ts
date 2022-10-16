@@ -34,8 +34,9 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
     const { options, guild } = interaction;
 
     const discordChannel = options?.getChannel("channel");
@@ -51,17 +52,9 @@ export default {
     });
 
     if (counter === null) {
-      logger?.silly(`Counter is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          embed
-            .setDescription(
-              ":x: There is no counter in this channel. Please add a counter first."
-            )
-            .setColor(errorColor),
-        ],
-      });
+      throw new Error(
+        "There is no counters in this channel, please add one first."
+      );
     }
 
     await counterSchema
@@ -72,7 +65,7 @@ export default {
       ?.then(async () => {
         logger?.silly(`Counter deleted`);
 
-        return interaction?.editReply({
+        await interaction?.editReply({
           embeds: [
             embed
               .setDescription(
@@ -81,9 +74,10 @@ export default {
               .setColor(successColor),
           ],
         });
+        return;
       })
-      .catch(async (error) => {
-        logger?.error(`Error deleting counter: ${error}`);
+      .catch(() => {
+        throw new Error("Failed deleting counter from database.");
       });
   },
 };

@@ -12,7 +12,6 @@ import pluralize from "../../../../../../../helpers/pluralize";
 // Models
 import fetchUser from "../../../../../../../helpers/userData";
 // Handlers
-import logger from "../../../../../../../middlewares/logger";
 
 // Function
 export default {
@@ -40,8 +39,9 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild); // Destructure
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    ); // Destructure
     const { guild, options } = interaction;
 
     const discordReceiver = options?.getUser("user");
@@ -49,93 +49,29 @@ export default {
 
     // If amount option is null
     if (creditAmount === null) {
-      logger?.silly(`Amount is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(`You must provide an amount.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error("You need to provide a credit amount.");
     }
 
     // If amount is zero or below
     if (creditAmount <= 0) {
-      logger?.silly(`Amount is zero or below`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(`You must provide an amount greater than zero.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error("You must provide a credit amount greater than zero");
     }
 
     if (discordReceiver === null) {
-      logger?.silly(`Discord receiver is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(`You must provide a user.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error("We could not get the receiving user from Discord");
     }
     if (guild === null) {
-      logger?.silly(`Guild is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(`You must be in a guild.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error("We could not get the current guild from discord.");
     }
 
     const toUser = await fetchUser(discordReceiver, guild);
 
     if (toUser === null) {
-      logger?.silly(`To user is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(`The user you provided could not be found.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error("The receiving user is not found.");
     }
 
     if (toUser?.credits === null) {
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(`The user you provided does not have any credits.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+      throw new Error("The receiving user's credits value could not found.");
     }
 
     // Deposit amount to toUser
@@ -143,9 +79,7 @@ export default {
 
     // Save toUser
     await toUser?.save()?.then(async () => {
-      logger?.silly(`Saved toUser`);
-
-      return interaction?.editReply({
+      await interaction?.editReply({
         embeds: [
           new EmbedBuilder()
             .setTitle("[:toolbox:] Manage - Credits (Give)")
@@ -157,6 +91,7 @@ export default {
             .setFooter({ text: footerText, iconURL: footerIcon }),
         ],
       });
+      return;
     });
   },
 };
