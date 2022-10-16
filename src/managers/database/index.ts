@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import logger from "../../middlewares/logger";
 
+// Function to connect to MongoDB server
 export const connect = async () => {
   await mongoose
     .connect(process.env.MONGO_URL)
