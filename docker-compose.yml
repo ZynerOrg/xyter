@@ -2,10 +2,13 @@ version: "3"
 
 services:
   app:
-    depends_on:
-      - mongodb
     image: zyner/xyter:latest
     restart: unless-stopped
+    #    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./logs:/app/logs
     environment:
       - DISCORD_TOKEN=DISCORD_TOKEN
       - DISCORD_CLIENT_ID=DISCORD_CLIENT_ID
@@ -23,10 +26,9 @@ services:
       - BOT_HOSTER_NAME=BOT_HOSTER_NAME
       - BOT_HOSTER_URL=BOT_HOSTER_URL
       - NODE_ENV=production
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./logs:/app/logs
+    depends_on:
+      - mongodb
+
   mongodb:
     image: mongo:latest
     restart: unless-stopped
