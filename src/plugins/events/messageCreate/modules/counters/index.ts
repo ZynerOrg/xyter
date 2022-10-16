@@ -1,7 +1,6 @@
 import { ChannelType, Message } from "discord.js";
 import logger from "../../../../../middlewares/logger";
 import counterSchema from "../../../../../models/counter";
-import logger from "../../../../../middlewares/logger";
 
 export default {
   execute: async (message: Message) => {
@@ -23,10 +22,7 @@ export default {
     });
 
     if (counter === null) {
-      logger.silly(
-        `No counter found for guild ${guildId} and channel ${channelId}`
-      );
-      return;
+      throw new Error("No counter found in database.");
     }
 
     if (
@@ -57,7 +53,7 @@ export default {
           `Counter for guild ${guildId} and channel ${channelId} is now ${counter.counter}`
         );
       })
-      .catch((err) => {
+      .catch(() => {
         throw new Error(`Error saving counter to database.`);
       });
 

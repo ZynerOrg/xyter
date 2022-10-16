@@ -6,7 +6,7 @@ import {
   ButtonStyle,
   ChatInputCommandInteraction,
   EmbedBuilder,
-  Message,
+  Message
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import encryption from "../../../../../helpers/encryption";
@@ -206,35 +206,13 @@ export default {
               });
           })
 
-          .catch(async (error) => {
-            logger?.silly(`Error saving new credits. - ${error}`);
-
-            const interactionEmbed = new EmbedBuilder()
-              .setTitle("[:shopping_cart:] CPGG")
-              .setDescription(`Something went wrong.`)
-              .setTimestamp()
-              .setColor(errorColor)
-              .setFooter({ text: footerText, iconURL: footerIcon });
-
-            return interaction?.editReply({
-              embeds: [interactionEmbed],
-            });
+          .catch(() => {
+            throw new Error("Failed to update credits for user.")
           });
       })
 
-      .catch(async (error) => {
-        logger?.silly(`Error creating voucher. - ${error}`);
-
-        const interactionEmbed = new EmbedBuilder()
-          .setTitle("[:shopping_cart:] CPGG")
-          .setDescription(`Something went wrong.`)
-          .setTimestamp()
-          .setColor(errorColor)
-          .setFooter({ text: footerText, iconURL: footerIcon });
-
-        return interaction?.editReply({
-          embeds: [interactionEmbed],
-        });
+      .catch(() => {
+        throw new Error("Failed generating an voucher.")
       });
   },
 };
