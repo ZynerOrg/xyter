@@ -1,6 +1,6 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import * as cooldown from "../../../../../helpers/cooldown";
+import { command as CooldownCommand } from "../../../../../helpers/cooldown";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
@@ -52,7 +52,7 @@ export default {
     noSelfReputation(optionTarget, user);
 
     // Check if user is on cooldown otherwise create one
-    await cooldown.command(interaction, process.env.REPUTATION_TIMEOUT);
+    await CooldownCommand(interaction, process.env.REPUTATION_TIMEOUT);
 
     switch (optionType) {
       case "positive":
