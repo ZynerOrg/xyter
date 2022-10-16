@@ -79,9 +79,10 @@ export default {
           text: footerText,
         });
 
-      return interaction?.editReply({
+      await interaction?.editReply({
         embeds: [interactionEmbed],
       });
+      return;
     });
   },
 };

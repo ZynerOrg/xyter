@@ -86,9 +86,10 @@ export default {
           },
         ]);
 
-      return interaction.editReply({
+      await interaction.editReply({
         embeds: [embed],
       });
+      return;
     });
   },
 };

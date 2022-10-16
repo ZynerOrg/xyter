@@ -49,7 +49,7 @@ export default {
     if (!userObj) throw new Error("User is undefined");
 
     // Pre-checks
-    await noSelfReputation(optionTarget, user);
+    noSelfReputation(optionTarget, user);
 
     // Check if user is on cooldown otherwise create one
     await cooldown.command(interaction, process.env.REPUTATION_TIMEOUT);

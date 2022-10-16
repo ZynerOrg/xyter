@@ -24,7 +24,7 @@ export const execute = async () => {
             timeoutId,
             cooldown,
           })
-          .then(async () => {
+          .then(() => {
             logger.debug(
               `Timeout document ${timeoutId} has been deleted from user ${userId}.`
             );

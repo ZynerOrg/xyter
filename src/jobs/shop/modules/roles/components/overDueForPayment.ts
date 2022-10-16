@@ -51,11 +51,8 @@ export const execute = async (client: Client, role: IShopRole) => {
             );
           });
       })
-      .catch(async (err) => {
-        throw new Error(
-          `Error removing role ${roleId} from user ${userId}.`,
-          err
-        );
+      .catch(() => {
+        throw new Error(`Failed removing role from user.`);
       });
 
     throw new Error("User does not have enough credits.");
@@ -70,16 +67,16 @@ export const execute = async (client: Client, role: IShopRole) => {
       role.lastPayed = new Date();
       await role
         .save()
-        .then(async () => {
+        .then(() => {
           logger.silly(`Shop role ${roleId} has been updated.`);
         })
-        .catch(async (err) => {
-          throw new Error(`Error updating shop role ${roleId}.`, err);
+        .catch(() => {
+          throw new Error("Failed updating shop role.");
         });
 
       logger.debug(`Shop role ${roleId} has been paid.`);
     })
-    .catch(async (err) => {
-      throw new Error(`Error updating user ${userId}.`, err);
+    .catch(() => {
+      throw new Error("Failed updating user.");
     });
 };
