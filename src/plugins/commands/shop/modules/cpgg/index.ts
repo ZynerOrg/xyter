@@ -6,7 +6,7 @@ import {
   ButtonStyle,
   ChatInputCommandInteraction,
   EmbedBuilder,
-  Message
+  Message,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import encryption from "../../../../../helpers/encryption";
@@ -200,19 +200,20 @@ export default {
                   .setColor(successColor)
                   .setFooter({ text: footerText, iconURL: footerIcon });
 
-                return interaction?.editReply({
+                await interaction?.editReply({
                   embeds: [interactionEmbed],
                 });
+                return;
               });
           })
 
           .catch(() => {
-            throw new Error("Failed to update credits for user.")
+            throw new Error("Failed to update credits for user.");
           });
       })
 
       .catch(() => {
-        throw new Error("Failed generating an voucher.")
+        throw new Error("Failed generating an voucher.");
       });
   },
 };
