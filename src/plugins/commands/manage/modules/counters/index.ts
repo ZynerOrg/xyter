@@ -8,6 +8,7 @@ import modules from "./modules";
 // Function
 export const moduleData = modules;
 
+// Create a discord builder
 export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
   return group
     .setName("counters")
@@ -16,6 +17,7 @@ export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
     .addSubcommand(modules.remove.builder);
 };
 
+// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
