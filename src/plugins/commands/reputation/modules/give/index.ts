@@ -1,6 +1,6 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import * as cooldown from "../../../../../helpers/cooldown";
+import { command as CooldownCommand } from "../../../../../helpers/cooldown";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
@@ -49,10 +49,10 @@ export default {
     if (!userObj) throw new Error("User is undefined");
 
     // Pre-checks
-    await noSelfReputation(optionTarget, user);
+    noSelfReputation(optionTarget, user);
 
     // Check if user is on cooldown otherwise create one
-    await cooldown.command(interaction, process.env.REPUTATION_TIMEOUT);
+    await CooldownCommand(interaction, process.env.REPUTATION_TIMEOUT);
 
     switch (optionType) {
       case "positive":

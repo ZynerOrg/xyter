@@ -8,6 +8,7 @@ export const options = {
   schedule: "*/30 * * * *", // https://crontab.guru/
 };
 
+// Execute the job
 export const execute = async () => {
   const timeouts = await timeoutSchema.find();
   await Promise.all(
@@ -24,7 +25,7 @@ export const execute = async () => {
             timeoutId,
             cooldown,
           })
-          .then(async () => {
+          .then(() => {
             logger.debug(
               `Timeout document ${timeoutId} has been deleted from user ${userId}.`
             );

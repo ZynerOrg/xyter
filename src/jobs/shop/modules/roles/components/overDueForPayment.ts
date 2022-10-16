@@ -6,6 +6,7 @@ import guildSchema from "../../../../../models/guild";
 import shopRoleSchema from "../../../../../models/shopRole";
 import userSchema from "../../../../../models/user";
 
+// Execute the component
 export const execute = async (client: Client, role: IShopRole) => {
   const { guildId, userId, roleId } = role;
   if (!userId) throw new Error("User ID not found for shop role.");
@@ -39,23 +40,17 @@ export const execute = async (client: Client, role: IShopRole) => {
             roleId,
             guildId,
           })
-          .then(async () => {
+          .then(() => {
             logger.silly(
               `Shop role document ${roleId} has been deleted from user ${userId}.`
             );
           })
-          .catch(async (err) => {
-            throw new Error(
-              `Error deleting shop role document ${roleId} from user ${userId}.`,
-              err
-            );
+          .catch(() => {
+            throw new Error("Failed deleting shop role from user.");
           });
       })
-      .catch(async (err) => {
-        throw new Error(
-          `Error removing role ${roleId} from user ${userId}.`,
-          err
-        );
+      .catch(() => {
+        throw new Error(`Failed removing role from user.`);
       });
 
     throw new Error("User does not have enough credits.");
@@ -70,16 +65,16 @@ export const execute = async (client: Client, role: IShopRole) => {
       role.lastPayed = new Date();
       await role
         .save()
-        .then(async () => {
+        .then(() => {
           logger.silly(`Shop role ${roleId} has been updated.`);
         })
-        .catch(async (err) => {
-          throw new Error(`Error updating shop role ${roleId}.`, err);
+        .catch(() => {
+          throw new Error("Failed updating shop role.");
         });
 
       logger.debug(`Shop role ${roleId} has been paid.`);
     })
-    .catch(async (err) => {
-      throw new Error(`Error updating user ${userId}.`, err);
+    .catch(() => {
+      throw new Error("Failed updating user.");
     });
 };
