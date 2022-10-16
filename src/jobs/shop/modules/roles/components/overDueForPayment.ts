@@ -39,16 +39,13 @@ export const execute = async (client: Client, role: IShopRole) => {
             roleId,
             guildId,
           })
-          .then(async () => {
+          .then(() => {
             logger.silly(
               `Shop role document ${roleId} has been deleted from user ${userId}.`
             );
           })
-          .catch(async (err) => {
-            throw new Error(
-              `Error deleting shop role document ${roleId} from user ${userId}.`,
-              err
-            );
+          .catch(() => {
+            throw new Error("Failed deleting shop role from user.");
           });
       })
       .catch(() => {
