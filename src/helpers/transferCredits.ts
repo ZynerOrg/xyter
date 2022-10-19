@@ -41,16 +41,23 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
       },
     });
 
+    // 2. Verify that the sender actually is created.
     if (!sender) throw new Error("No sender available");
 
+    // 3. Verify that the sender's balance exists.
     if (!sender.creditsEarned) throw new Error("No credits available");
 
-    // 2. Verify that the sender's balance didn't go below zero.
+    // 4. Verify that the sender's balance didn't go below zero.
     if (sender.creditsEarned < 0) {
       throw new Error(`${from} doesn't have enough to send ${amount}`);
     }
 
-    // 3. Increment the recipient's balance by amount
+    // 5. Verify that the sender is not trying to send less that one credits.
+    if (amount <= 0) {
+      throw new Error("You can't give negative amounts.");
+    }
+
+    // 6. Increment the recipient's balance by amount
     const recipient = await tx.guildMember.upsert({
       update: {
         creditsEarned: {
