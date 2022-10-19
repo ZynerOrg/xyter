@@ -1,7 +1,6 @@
 import { Message } from "discord.js";
-import modules from "../../events/messageCreate/modules";
-
 import { IEventOptions } from "../../../interfaces/EventOptions";
+import modules from "../../events/messageCreate/modules";
 
 export const options: IEventOptions = {
   type: "on",

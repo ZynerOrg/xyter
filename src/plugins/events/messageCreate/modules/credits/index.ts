@@ -1,8 +1,7 @@
 import { ChannelType, Message } from "discord.js";
 import { message as CooldownMessage } from "../../../../../helpers/cooldown";
-import fetchGuild from "../../../../../helpers/guildData";
-import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
+import prisma from "../../../../../prisma";
 
 export default {
   execute: async (message: Message) => {
@@ -12,32 +11,70 @@ export default {
     if (author.bot) return;
     if (channel.type !== ChannelType.GuildText) return;
 
-    const { id: guildId } = guild;
-    const { id: userId } = author;
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: author.id,
+          guildId: guild.id,
+        },
+      },
+      update: {},
+      create: {
+        user: {
+          connectOrCreate: {
+            create: {
+              id: author.id,
+            },
+            where: {
+              id: author.id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+      include: {
+        user: true,
+        guild: true,
+      },
+    });
 
-    const guildData = await fetchGuild(guild);
-    const userData = await fetchUser(author, guild);
+    logger.silly(createGuildMember);
 
-    if (content.length < guildData.credits.minimumLength) return;
+    if (content.length < createGuildMember.guild.creditsMinimumLength) return;
 
     const isOnCooldown = await CooldownMessage(
       message,
-      guildData.credits.timeout,
+      createGuildMember.guild.creditsTimeout,
       "messageCreate-credits"
     );
     if (isOnCooldown) return;
 
-    userData.credits += guildData.credits.rate;
+    const updateGuildMember = await prisma.guildMember.update({
+      where: {
+        userId_guildId: {
+          userId: author.id,
+          guildId: guild.id,
+        },
+      },
+      data: {
+        creditsEarned: {
+          increment: createGuildMember.guild.creditsRate,
+        },
+      },
+    });
 
-    await userData
-      .save()
-      .then(() => {
-        logger.silly(
-          `User ${userId} in guild ${guildId} has ${userData.credits} credits`
-        );
-      })
-      .catch(() => {
-        throw new Error(`Error saving credits to database.`);
-      });
+    logger.silly(updateGuildMember);
+
+    if (!updateGuildMember)
+      throw new Error("Failed to update guildMember object");
   },
 };
