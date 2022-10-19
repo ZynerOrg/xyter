@@ -51,7 +51,7 @@ export default {
 
     if (!guild) throw new Error("Guild not found");
     if (!optionUser) throw new Error("No receiver found");
-    if (!optionAmount) throw new Error("Amount not found");
+    if (optionAmount === null) throw new Error("Amount not found");
 
     await transferCredits(guild, user, optionUser, optionAmount);
 
