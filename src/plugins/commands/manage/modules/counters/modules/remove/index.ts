@@ -9,9 +9,7 @@ import {
 } from "discord.js";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-// Handlers
-import logger from "../../../../../../../middlewares/logger";
-import counterSchema from "../../../../../../../models/counter";
+import prisma from "../../../../../../../prisma";
 
 // Function
 export default {
@@ -41,43 +39,44 @@ export default {
 
     const discordChannel = options?.getChannel("channel");
 
+    if (!guild) throw new Error("We could not find a guild");
+    if (!discordChannel) throw new Error("We could not find a channel");
+
     const embed = new EmbedBuilder()
       .setTitle("[:toolbox:] Counters - Remove")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });
 
-    const counter = await counterSchema?.findOne({
-      guildId: guild?.id,
-      channelId: discordChannel?.id,
+    const channelCounter = await prisma.guildCounter.findUnique({
+      where: {
+        guildId_channelId: {
+          guildId: guild.id,
+          channelId: discordChannel.id,
+        },
+      },
     });
 
-    if (counter === null) {
+    if (!channelCounter)
       throw new Error(
-        "There is no counters in this channel, please add one first."
+        "There is no counter sin this channel, please add one first."
       );
-    }
 
-    await counterSchema
-      ?.deleteOne({
-        guildId: guild?.id,
-        channelId: discordChannel?.id,
-      })
-      ?.then(async () => {
-        logger?.silly(`Counter deleted`);
+    const deleteGuildCounter = await prisma.guildCounter.deleteMany({
+      where: {
+        guildId: guild.id,
+        channelId: discordChannel.id,
+      },
+    });
 
-        await interaction?.editReply({
-          embeds: [
-            embed
-              .setDescription(
-                ":white_check_mark: Counter deleted successfully."
-              )
-              .setColor(successColor),
-          ],
-        });
-        return;
-      })
-      .catch(() => {
-        throw new Error("Failed deleting counter from database.");
-      });
+    if (!deleteGuildCounter)
+      throw new Error("We could not find a counter for this guild");
+
+    await interaction?.editReply({
+      embeds: [
+        embed
+          .setDescription(":white_check_mark: Counter deleted successfully.")
+          .setColor(successColor),
+      ],
+    });
   },
 };
