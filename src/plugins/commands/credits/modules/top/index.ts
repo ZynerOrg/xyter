@@ -1,8 +1,9 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import { GuildMember } from "@prisma/client";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import logger from "../../../../../middlewares/logger";
-import userSchema, { IUser } from "../../../../../models/user";
+import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: false },
@@ -34,19 +35,25 @@ export default {
       });
     }
 
-    const usersDB = await userSchema.find({ guildId: guild.id });
+    // const usersDB = await userSchema.find({ guildId: guild.id });
 
-    const topTen = usersDB
+    const topTen = await prisma.guildMember.findMany({
+      where: {
+        guildId: guild.id,
+      },
+      orderBy: {
+        creditsEarned: "desc",
+      },
+      take: 10,
+    });
 
-      // Sort them after credits amount (ascending)
-      .sort((a, b) => (a.credits > b.credits ? -1 : 1))
-
-      // Return the top 10
-      .slice(0, 10);
+    logger.silly(topTen);
 
     // Create entry object
-    const entry = (x: IUser, index: number) =>
-      `${index + 1}. <@${x.userId}> - ${x.credits} credits`;
+    const entry = (guildMember: GuildMember, index: number) =>
+      `${index + 1}. <@${guildMember.userId}> - ${
+        guildMember.creditsEarned
+      } credits`;
 
     return interaction.editReply({
       embeds: [
@@ -54,8 +61,7 @@ export default {
           .setDescription(
             `Below are the top ten members in this guild.
 
-            ${topTen.map(entry).join("\n")}
-         `
+            ${topTen.map(entry).join("\n")}`
           )
           .setColor(successColor),
       ],

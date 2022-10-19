@@ -7,10 +7,9 @@ import * as cooldown from "../../../../../helpers/cooldown";
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 // Helpers
-import fetchGuild from "../../../../../helpers/guildData";
-import fetchUser from "../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../middlewares/logger";
+import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },
@@ -39,35 +38,70 @@ export default {
       return logger?.silly(`Guild is null`);
     }
 
-    const guildDB = await fetchGuild(guild);
+    const createGuild = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {},
+      create: {
+        id: guild.id,
+      },
+    });
 
-    await cooldown.command(interaction, guildDB?.credits?.workTimeout);
+    logger.silly(createGuild);
+
+    await cooldown.command(interaction, createGuild.creditsWorkTimeout);
 
     const creditsEarned = chance.integer({
       min: 0,
-      max: guildDB?.credits?.workRate,
+      max: createGuild.creditsWorkRate,
     });
 
-    const userDB = await fetchUser(user, guild);
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: user.id,
+          guildId: guild.id,
+        },
+      },
+      update: { creditsEarned: { increment: creditsEarned } },
+      create: {
+        creditsEarned,
+        user: {
+          connectOrCreate: {
+            create: {
+              id: user.id,
+            },
+            where: {
+              id: user.id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+      include: {
+        user: true,
+        guild: true,
+      },
+    });
 
-    if (userDB === null) {
-      return logger?.silly(`User not found`);
-    }
+    logger.silly(createGuildMember);
 
-    userDB.credits += creditsEarned;
-
-    await userDB?.save()?.then(() => {
-      logger?.silly(
-        `User ${userDB?.userId} worked and earned ${creditsEarned} credits`
-      );
-
-      return interaction.editReply({
-        embeds: [
-          embed
-            .setDescription(`You worked and earned ${creditsEarned} credits.`)
-            .setColor(successColor),
-        ],
-      });
+    return interaction.editReply({
+      embeds: [
+        embed
+          .setDescription(`You worked and earned ${creditsEarned} credits.`)
+          .setColor(successColor),
+      ],
     });
   },
 };

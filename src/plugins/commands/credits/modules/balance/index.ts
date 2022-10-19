@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
-import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
+import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },
@@ -38,39 +38,53 @@ export default {
       });
     }
 
-    const userObj = await fetchUser(discordUser || user, guild);
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: (discordUser || user).id,
+          guildId: guild.id,
+        },
+      },
+      update: {},
+      create: {
+        user: {
+          connectOrCreate: {
+            create: {
+              id: (discordUser || user).id,
+            },
+            where: {
+              id: (discordUser || user).id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+      include: {
+        user: true,
+        guild: true,
+      },
+    });
 
-    if (userObj === null) {
-      logger.silly(`User not found`);
+    logger.silly(createGuildMember);
 
-      return interaction.editReply({
-        embeds: [
-          embed
-            .setDescription(
-              "User is not found. Please try again with a valid user."
-            )
-            .setColor(errorColor),
-        ],
-      });
-    }
-
-    if (userObj.credits === null) {
-      logger.silly(`User has no credits`);
-
-      return interaction.editReply({
-        embeds: [
-          embed.setDescription("Credits not found").setColor(errorColor),
-        ],
-      });
-    }
-
-    logger.silly(`Found user ${discordUser || user}`);
+    if (!createGuildMember) throw new Error("No guild member exists.");
 
     return interaction.editReply({
       embeds: [
         embed
           .setDescription(
-            `${discordUser || user} currently has ${userObj.credits} credits.`
+            `${discordUser || user} currently has ${
+              createGuildMember.creditsEarned
+            } credits.`
           )
           .setColor(successColor),
       ],
