@@ -13,11 +13,34 @@ datasource db {
 model Guild {
   id          String        @unique
   GuildMember GuildMember[]
+
+  // Settings
+
+  // Modules
+  creditsEnabled     Boolean @default(false)
+  creditsRate        Int     @default(1)
+  creditsTimeout     Int     @default(5)
+  creditsWorkRate    Int     @default(25)
+  creditsWorkTimeout Int     @default(86400)
+
+  pointsEnabled Boolean @default(false)
+  pointsRate    Int     @default(1)
+  pointsTimeout Int     @default(5)
+
+  reputationsEnabled Boolean @default(false)
+
+  countersEnabled Boolean        @default(false)
+  counters        GuildCounter[]
 }
 
 model User {
   id          String        @unique
   GuildMember GuildMember[]
+
+  // Settings
+
+  // Modules
+  reputationsEarned Int @default(0)
 }
 
 model GuildMember {
@@ -27,5 +50,22 @@ model GuildMember {
   user  User  @relation(fields: [userId], references: [id])
   guild Guild @relation(fields: [guildId], references: [id])
 
+  // Settings
+
+  // Modules
+  creditsEarned Int?
+  pointsEarned  Int?
+
+  // Unique Identifier
   @@unique([userId, guildId])
+}
+
+model GuildCounter {
+  guildId     String
+  channelId   String
+  triggerWord String
+  count       Int    @default(0)
+  guild       Guild  @relation(fields: [guildId], references: [id])
+
+  @@unique([guildId, channelId])
 }
