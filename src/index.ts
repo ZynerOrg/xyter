@@ -1,7 +1,7 @@
 import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
 import "dotenv/config";
-
 import * as managers from "./managers";
+
 
 // Main process that starts all other sub processes
 const main = async () => {
