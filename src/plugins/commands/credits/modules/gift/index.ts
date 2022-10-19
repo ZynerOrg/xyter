@@ -35,8 +35,9 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
     const { options, user, guild, client } = interaction;
 
     const optionUser = options.getUser("user");
