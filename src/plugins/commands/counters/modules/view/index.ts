@@ -2,7 +2,7 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
-import counterSchema from "../../../../../models/counter";
+import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: false },
@@ -41,21 +41,26 @@ export default {
         iconURL: footerIcon,
       });
 
-    const counter = await counterSchema.findOne({
-      guildId: guild.id,
-      channelId: discordChannel.id,
+    const channelCounter = await prisma.guildCounter.findUnique({
+      where: {
+        guildId_channelId: {
+          guildId: guild.id,
+          channelId: discordChannel.id,
+        },
+      },
     });
 
-    if (!counter) throw new Error("No counter found for channel");
+    if (!channelCounter) throw new Error("No counter found for channel");
 
-    return interaction.editReply({
+    await interaction.editReply({
       embeds: [
         embed
           .setDescription(
-            `Viewing counter for channel ${discordChannel}: ${counter.counter}!`
+            `Viewing counter for channel ${discordChannel}: ${channelCounter.count}!`
           )
           .setColor(successColor),
       ],
     });
+    return;
   },
 };
