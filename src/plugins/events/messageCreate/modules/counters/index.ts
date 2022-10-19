@@ -1,6 +1,6 @@
 import { ChannelType, Message } from "discord.js";
 import logger from "../../../../../middlewares/logger";
-import counterSchema from "../../../../../models/counter";
+import prisma from "../../../../../prisma";
 
 export default {
   execute: async (message: Message) => {
@@ -13,21 +13,20 @@ export default {
     const messages = await message.channel.messages.fetch({ limit: 2 });
     const lastMessage = messages.last();
 
-    const { id: guildId } = guild;
-    const { id: channelId } = channel;
-
-    const counter = await counterSchema.findOne({
-      guildId,
-      channelId,
+    const channelCounter = await prisma.guildCounter.findUnique({
+      where: {
+        guildId_channelId: {
+          guildId: guild.id,
+          channelId: channel.id,
+        },
+      },
     });
 
-    if (counter === null) {
-      throw new Error("No counter found in database.");
-    }
+    if (!channelCounter) throw new Error("No counters found in channel.");
 
     if (
       lastMessage?.author.id === author.id &&
-      channel.id === counter.channelId
+      channel.id === channelCounter.channelId
     ) {
       logger.silly(
         `${author.username} sent the last message therefor not allowing again.`
@@ -36,29 +35,32 @@ export default {
       return;
     }
 
-    if (content !== counter.word) {
+    if (content !== channelCounter.triggerWord) {
       logger.silly(
-        `Counter word ${counter.word} does not match message ${content}`
+        `Counter word ${channelCounter.triggerWord} does not match message ${content}`
       );
 
       await message.delete();
       return;
     }
 
-    counter.counter += 1;
-    await counter
-      .save()
-      .then(() => {
-        logger.silly(
-          `Counter for guild ${guildId} and channel ${channelId} is now ${counter.counter}`
-        );
-      })
-      .catch(() => {
-        throw new Error(`Error saving counter to database.`);
-      });
+    const updateGuildCounter = await prisma.guildCounter.update({
+      where: {
+        guildId_channelId: {
+          guildId: guild.id,
+          channelId: channel.id,
+        },
+      },
+      data: {
+        count: {
+          increment: 1,
+        },
+      },
+    });
 
-    logger.silly(
-      `Counter word ${counter.word} was found in message ${content} from ${author.tag} (${author.id}) in guild: ${guild?.name} (${guild?.id})`
-    );
+    logger.silly(updateGuildCounter);
+
+    if (!updateGuildCounter)
+      logger.error(`Failed to update counter - ${updateGuildCounter}`);
   },
 };
