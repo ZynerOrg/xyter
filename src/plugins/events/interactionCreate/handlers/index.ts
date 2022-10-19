@@ -29,7 +29,7 @@ export const handleCommandInteraction = async (
       embeds: [
         new EmbedBuilder()
           .setTitle(`[:x:] ${capitalizeFirstLetter(interaction.commandName)}`)
-          .setDescription(`${"``"}${err}${"``"}`)
+          .setDescription(`${err}`)
           .setColor(errorColor)
           .setTimestamp(new Date())
           .setFooter({ text: footerText, iconURL: footerIcon }),
