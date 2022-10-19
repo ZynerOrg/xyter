@@ -1,10 +1,9 @@
 // 3rd party dependencies
 import { GuildMember } from "discord.js";
-// Dependencies
-import dropUser from "../../../helpers/deleteUserData";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";
+import prisma from "../../../prisma";
 import audits from "./audits";
 import leaveMessage from "./leaveMessage";
 
@@ -21,6 +20,15 @@ export const execute = async (member: GuildMember) => {
 
   await audits.execute(member);
   await leaveMessage.execute(member);
-  await dropUser(user, guild);
   await updatePresence(client);
+
+  // Delete guildMember object
+  const deleteGuildMember = await prisma.guildMember.deleteMany({
+    where: {
+      userId: user.id,
+      guildId: guild.id,
+    },
+  });
+
+  console.log(deleteGuildMember);
 };

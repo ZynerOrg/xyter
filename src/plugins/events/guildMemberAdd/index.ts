@@ -1,10 +1,9 @@
 // 3rd party dependencies
 import { GuildMember } from "discord.js";
 import updatePresence from "../../../helpers/updatePresence";
-// Dependencies
-import fetchUser from "../../../helpers/userData";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";
+import prisma from "../../../prisma";
 import audits from "./audits";
 import joinMessage from "./joinMessage";
 
@@ -21,6 +20,40 @@ export const execute = async (member: GuildMember) => {
 
   await audits.execute(member);
   await joinMessage.execute(member);
-  await fetchUser(user, guild);
   await updatePresence(client);
+
+  // Create guildMember object
+  const createGuildMember = await prisma.guildMember.upsert({
+    where: {
+      userId_guildId: {
+        userId: user.id,
+        guildId: guild.id,
+      },
+    },
+    update: {},
+    create: {
+      user: {
+        connectOrCreate: {
+          create: {
+            id: user.id,
+          },
+          where: {
+            id: user.id,
+          },
+        },
+      },
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guild.id,
+          },
+          where: {
+            id: guild.id,
+          },
+        },
+      },
+    },
+  });
+
+  logger.silly(createGuildMember);
 };
