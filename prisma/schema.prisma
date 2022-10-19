@@ -12,10 +12,16 @@ datasource db {
 }
 
 model Guild {
-  id          String        @unique
-  GuildMember GuildMember[]
+  id           String        @unique
+  guildMembers GuildMember[]
+  cooldowns    Cooldown[]
 
   // Settings
+  embedColorSuccess String @default("#22bb33")
+  embedColorWait    String @default("#f0ad4e")
+  embedColorError   String @default("#bb2124")
+  embedFooterText   String @default("https://github.com/ZynerOrg/xyter")
+  embedFooterIcon   String @default("https://github.com/ZynerOrg.png")
 
   //   {
   //   url: {
@@ -65,6 +71,9 @@ model Guild {
 
   countersEnabled Boolean        @default(false)
   counters        GuildCounter[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
@@ -74,7 +83,11 @@ model User {
   // Settings
 
   // Modules
-  reputationsEarned Int @default(0)
+  reputationsEarned Int        @default(0)
+  Cooldown          Cooldown[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model GuildMember {
@@ -90,6 +103,9 @@ model GuildMember {
   creditsEarned Int @default(0)
   pointsEarned  Int @default(0)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Unique Identifier
   @@unique([userId, guildId])
 }
@@ -101,5 +117,22 @@ model GuildCounter {
   count       Int    @default(0)
   guild       Guild  @relation(fields: [guildId], references: [id])
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([guildId, channelId])
+}
+
+model Cooldown {
+  guild     Guild  @relation(fields: [guildId], references: [id])
+  user      User   @relation(fields: [userId], references: [id])
+  guildId   String
+  userId    String
+  cooldown  Int
+  timeoutId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, userId, timeoutId])
 }
