@@ -1,8 +1,8 @@
 // 3rd party dependencies
 import { Guild } from "discord.js";
-import logger from "middlewares/logger";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
+import logger from "../../../middlewares/logger";
 import prisma from "../../../prisma";
 
 export const options: IEventOptions = {
