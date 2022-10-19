@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, ColorResolvable } from "discord.js";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import guildSchema from "../../../../../../../models/guild";
+import logger from "../../../../../../../middlewares/logger";
+import prisma from "../../../../../../../prisma";
 
 export default async (interaction: ChatInputCommandInteraction) => {
   const { options, guild } = interaction;
@@ -10,26 +11,46 @@ export default async (interaction: ChatInputCommandInteraction) => {
   const embedConfig = await getEmbedConfig(guild);
   if (!embedConfig) throw new Error("Embed config not found");
 
-  const newSuccessColor = options.getString("success-color") as ColorResolvable;
-  const newWaitColor = options.getString("wait-color") as ColorResolvable;
-  const newErrorColor = options.getString("error-color") as ColorResolvable;
+  const newSuccessColor = <ColorResolvable>options.getString("success-color");
+  const newWaitColor = <ColorResolvable>options.getString("wait-color");
+  const newErrorColor = <ColorResolvable>options.getString("error-color");
   const newFooterIcon = options.getString("footer-icon");
   const newFooterText = options.getString("footer-text");
 
-  const guildData = await guildSchema.findOne({
-    guildId: guild.id,
-  });
-  if (!guildData) throw new Error("Guild data not found");
-  if (!guildData?.embeds)
-    throw new Error("Guild embed configuration not found");
-  let { successColor, waitColor, errorColor, footerText, footerIcon } =
-    guildData.embeds;
+  if (!newSuccessColor) throw new Error("Success color not found");
+  if (!newWaitColor) throw new Error("Wait color not found");
+  if (!newErrorColor) throw new Error("Error color not found");
+  if (!newFooterIcon) throw new Error("Footer icon not found");
+  if (!newFooterText) throw new Error("Footer text not found");
 
-  successColor = newSuccessColor || successColor;
-  waitColor = newWaitColor || waitColor;
-  errorColor = newErrorColor || errorColor;
-  footerIcon = newFooterIcon || footerIcon;
-  footerText = newFooterText || footerText;
+  const createGuild = await prisma.guild.upsert({
+    where: {
+      id: guild.id,
+    },
+    update: {
+      embedColorSuccess: <string>newSuccessColor,
+      embedColorWait: <string>newWaitColor,
+      embedColorError: <string>newErrorColor,
+      embedFooterIcon: newFooterIcon,
+      embedFooterText: newFooterText,
+    },
+    create: {
+      id: guild.id,
+      embedColorSuccess: <string>newSuccessColor,
+      embedColorWait: <string>newWaitColor,
+      embedColorError: <string>newErrorColor,
+      embedFooterIcon: newFooterIcon,
+      embedFooterText: newFooterText,
+    },
+  });
+
+  logger.silly(createGuild);
+
+  const successColor = <ColorResolvable>createGuild.embedColorSuccess;
+  const waitColor = <ColorResolvable>createGuild.embedColorWait;
+  const errorColor = <ColorResolvable>createGuild.embedColorError;
+  const footerText = createGuild.embedFooterText;
+  const footerIcon = createGuild.embedFooterIcon;
 
   return { successColor, waitColor, errorColor, footerText, footerIcon };
 };
