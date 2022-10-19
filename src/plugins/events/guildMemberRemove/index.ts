@@ -30,5 +30,5 @@ export const execute = async (member: GuildMember) => {
     },
   });
 
-  console.log(deleteGuildMember);
+  logger.silly(deleteGuildMember);
 };
