@@ -1,5 +1,6 @@
 // 3rd party dependencies
 import { Guild } from "discord.js";
+import logger from "middlewares/logger";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import prisma from "../../../prisma";
@@ -29,4 +30,7 @@ export const execute = async (guild: Guild) => {
 
   // The transaction runs synchronously so deleteUsers must run last.
   await prisma.$transaction([deleteGuildMembers, deleteGuild]);
+
+  logger.silly(deleteGuildMembers);
+  logger.silly(deleteGuild);
 };
