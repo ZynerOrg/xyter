@@ -2,9 +2,10 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { command as CooldownCommand } from "../../../../../helpers/cooldown";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
-import fetchUser from "../../../../../helpers/userData";
 import logger from "../../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";
+
+import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },
@@ -38,15 +39,13 @@ export default {
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       guild
-    ); // Destructure
+    );
 
     const optionTarget = options?.getUser("target");
     const optionType = options?.getString("type");
 
     if (!guild) throw new Error("Guild is undefined");
-
-    const userObj = await fetchUser(user, guild);
-    if (!userObj) throw new Error("User is undefined");
+    if (!optionTarget) throw new Error("Target is not defined");
 
     // Pre-checks
     noSelfReputation(optionTarget, user);
@@ -55,31 +54,60 @@ export default {
     await CooldownCommand(interaction, process.env.REPUTATION_TIMEOUT);
 
     switch (optionType) {
-      case "positive":
-        userObj.reputation += 1;
+      case "positive": {
+        const createUser = await prisma.user.upsert({
+          where: {
+            id: optionTarget.id,
+          },
+          update: {
+            reputationsEarned: {
+              increment: 1,
+            },
+          },
+          create: {
+            id: optionTarget.id,
+            reputationsEarned: 1,
+          },
+        });
+
+        logger.silly(createUser);
         break;
-      case "negative":
-        userObj.reputation += 1;
+      }
+      case "negative": {
+        const createUser = await prisma.user.upsert({
+          where: {
+            id: optionTarget.id,
+          },
+          update: {
+            reputationsEarned: {
+              decrement: 1,
+            },
+          },
+          create: {
+            id: optionTarget.id,
+            reputationsEarned: -1,
+          },
+        });
+
+        logger.silly(createUser);
         break;
-      default:
+      }
+      default: {
         throw new Error("Invalid reputation type");
+      }
     }
 
-    await userObj.save().then(async () => {
-      logger.silly(`User reputation has been updated`);
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:loudspeaker:] Give")
+      .setDescription(
+        `You have given a ${optionType} repute to ${optionTarget}`
+      )
+      .setTimestamp()
+      .setColor(successColor)
+      .setFooter({ text: footerText, iconURL: footerIcon });
 
-      const interactionEmbed = new EmbedBuilder()
-        .setTitle("[:loudspeaker:] Give")
-        .setDescription(
-          `You have given a ${optionType} repute to ${optionTarget}`
-        )
-        .setTimestamp()
-        .setColor(successColor)
-        .setFooter({ text: footerText, iconURL: footerIcon });
-
-      await interaction.editReply({
-        embeds: [interactionEmbed],
-      });
+    await interaction.editReply({
+      embeds: [interactionEmbed],
     });
   },
 };
