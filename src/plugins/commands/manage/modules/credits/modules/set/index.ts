@@ -5,16 +5,13 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  PermissionsBitField
+  PermissionsBitField,
 } from "discord.js";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 import fetchUser from "../../../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../../../middlewares/logger";
-
-
-../../../../../../../helpers/userData
 
 // Function
 export default {
