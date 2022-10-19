@@ -1,5 +1,3 @@
-import guildSchema from "../../models/guild";
-
 import { Guild } from "discord.js";
 
 export default async (guild?: Guild | null) => {
@@ -23,10 +21,12 @@ export default async (guild?: Guild | null) => {
     return defaultEmbedConfig;
   }
 
-  const guildConfig = await guildSchema.findOne({ guildId: guild.id });
-  if (!guildConfig) {
-    return defaultEmbedConfig;
-  }
+  return defaultEmbedConfig;
 
-  return guildConfig.embeds;
+  // const guildConfig = await guildSchema.findOne({ guildId: guild.id });
+  // if (!guildConfig) {
+  // return defaultEmbedConfig;
+  // }
+
+  // return guildConfig.embeds;
 };
