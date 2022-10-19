@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -86,8 +87,8 @@ model GuildMember {
   // Settings
 
   // Modules
-  creditsEarned Int?
-  pointsEarned  Int?
+  creditsEarned Int @default(0)
+  pointsEarned  Int @default(0)
 
   // Unique Identifier
   @@unique([userId, guildId])
