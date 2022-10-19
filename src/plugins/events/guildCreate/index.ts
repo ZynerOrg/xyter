@@ -1,5 +1,5 @@
 import { Guild } from "discord.js";
-import fetchGuild from "../../../helpers/fetchGuild";
+import fetchGuild from "../../../helpers/guildData";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";
