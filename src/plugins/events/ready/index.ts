@@ -1,9 +1,9 @@
 // Dependencies
 import { Client } from "discord.js";
 // Helpers
-import deployCommands from "../../../helpers/deployCommands";
-import devMode from "../../../helpers/devMode";
-import updatePresence from "../../../helpers/updatePresence";
+import deployCommands from "../../../handlers/deployCommands";
+import devMode from "../../../handlers/devMode";
+import updatePresence from "../../../handlers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import logger from "../../../middlewares/logger";
 

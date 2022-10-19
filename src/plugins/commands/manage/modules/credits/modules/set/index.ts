@@ -10,8 +10,8 @@ import {
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 // Handlers
+import prisma from "../../../../../../../handlers/database";
 import logger from "../../../../../../../middlewares/logger";
-import prisma from "../../../../../../../prisma";
 
 // Function
 export default {

@@ -3,13 +3,13 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 // Models
-import * as cooldown from "../../../../../helpers/cooldown";
+import * as cooldown from "../../../../../handlers/cooldown";
 // Configurations
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 // Helpers
 // Handlers
+import prisma from "../../../../../handlers/database";
 import logger from "../../../../../middlewares/logger";
-import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },

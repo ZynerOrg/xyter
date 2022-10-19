@@ -1,7 +1,7 @@
 import { ChannelType, Message } from "discord.js";
-import { message as CooldownMessage } from "../../../../../helpers/cooldown";
+import { message as CooldownMessage } from "../../../../../handlers/cooldown";
+import prisma from "../../../../../handlers/database";
 import logger from "../../../../../middlewares/logger";
-import prisma from "../../../../../prisma";
 
 export default {
   execute: async (message: Message) => {

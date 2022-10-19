@@ -8,8 +8,8 @@ import {
   PermissionsBitField,
 } from "discord.js";
 // Configurations
+import prisma from "../../../../../../../handlers/database";
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import prisma from "../../../../../../../prisma";
 
 // Function
 export default {

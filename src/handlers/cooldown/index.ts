@@ -2,7 +2,7 @@
 import { ButtonInteraction, CommandInteraction, Message } from "discord.js";
 import addSeconds from "../../helpers/addSeconds";
 import logger from "../../middlewares/logger";
-import prisma from "../../prisma";
+import prisma from "../database";
 
 export const command = async (i: CommandInteraction, cooldown: number) => {
   const { guild, user, commandId } = i;

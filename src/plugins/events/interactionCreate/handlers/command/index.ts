@@ -1,7 +1,7 @@
 // Dependencies
 import { ChatInputCommandInteraction } from "discord.js";
-import { command as CooldownCommand } from "../../../../../helpers/cooldown";
-import deferReply from "../../../../../helpers/deferReply";
+import { command as CooldownCommand } from "../../../../../handlers/cooldown";
+import deferReply from "../../../../../handlers/deferReply";
 import getCommandMetadata from "../../../../../helpers/getCommandMetadata";
 
 export default async (interaction: ChatInputCommandInteraction) => {

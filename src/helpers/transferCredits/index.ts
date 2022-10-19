@@ -1,5 +1,5 @@
 import { Guild, User } from "discord.js";
-import prisma from "../prisma";
+import prisma from "../../handlers/database";
 
 export default async (guild: Guild, from: User, to: User, amount: number) => {
   return await prisma.$transaction(async (tx) => {

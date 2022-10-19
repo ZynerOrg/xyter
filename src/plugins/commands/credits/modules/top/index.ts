@@ -1,9 +1,9 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { GuildMember } from "@prisma/client";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
+import prisma from "../../../../../handlers/database";
 import getEmbedConfig from "../../../../../helpers/getEmbedData";
 import logger from "../../../../../middlewares/logger";
-import prisma from "../../../../../prisma";
 
 export default {
   metadata: { guildOnly: true, ephemeral: false },

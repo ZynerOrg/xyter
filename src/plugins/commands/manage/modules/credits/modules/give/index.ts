@@ -12,7 +12,7 @@ import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 import pluralize from "../../../../../../../helpers/pluralize";
 // Models
 // Handlers
-import prisma from "../../../../../../../prisma";
+import prisma from "../../../../../../../handlers/database";
 // Function
 export default {
   metadata: {

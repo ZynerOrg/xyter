@@ -11,8 +11,8 @@ import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 // Helpers../../../../../../../helpers/userData
 import pluralize from "../../../../../../../helpers/pluralize";
 // Handlers
+import prisma from "../../../../../../../handlers/database";
 import logger from "../../../../../../../middlewares/logger";
-import prisma from "../../../../../../../prisma";
 
 // Function
 export default {
