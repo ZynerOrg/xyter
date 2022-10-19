@@ -16,16 +16,49 @@ model Guild {
 
   // Settings
 
-  // Modules
-  creditsEnabled     Boolean @default(false)
-  creditsRate        Int     @default(1)
-  creditsTimeout     Int     @default(5)
-  creditsWorkRate    Int     @default(25)
-  creditsWorkTimeout Int     @default(86400)
+  //   {
+  //   url: {
+  //   iv: {
+  //   type: String,
+  //   required: true,
+  //   unique: false,
+  //   index: true,
+  // }
+  // ,
+  // content: {
+  // type: String,
+  // required: true,
+  // unique: false,
+  // index: true,
+  // },
+  // },
+  // token: {
+  // iv: {
+  // type: String,
+  // required: true,
+  // unique: false,
+  // index: true,
+  // },
+  // content: {
+  // type: String,
+  // required: true,
+  // unique: false,
+  // index: true,
+  // },
+  // },
 
-  pointsEnabled Boolean @default(false)
-  pointsRate    Int     @default(1)
-  pointsTimeout Int     @default(5)
+  // Modules
+  creditsEnabled       Boolean @default(false)
+  creditsRate          Int     @default(1)
+  creditsTimeout       Int     @default(5)
+  creditsWorkRate      Int     @default(25)
+  creditsWorkTimeout   Int     @default(86400)
+  creditsMinimumLength Int     @default(5)
+
+  pointsEnabled       Boolean @default(false)
+  pointsRate          Int     @default(1)
+  pointsTimeout       Int     @default(5)
+  pointsMinimumLength Int     @default(5)
 
   reputationsEnabled Boolean @default(false)
 
