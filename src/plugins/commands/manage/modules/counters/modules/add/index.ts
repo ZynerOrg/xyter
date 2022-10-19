@@ -8,8 +8,8 @@ import {
 } from "discord.js";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-// Models
-import counterSchema from "../../../../../../../models/counter";
+import logger from "../../../../../../../middlewares/logger";
+import prisma from "../../../../../../../prisma";
 
 // Function
 export default {
@@ -43,52 +43,71 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    );
     const { options, guild } = interaction;
 
     const discordChannel = options?.getChannel("channel");
-    const countingWord = options?.getString("word");
+    const triggerWord = options?.getString("word");
     const startValue = options?.getNumber("start");
 
-    const embed = new EmbedBuilder()
-      .setTitle("[:toolbox:] Counters - Add")
-      .setTimestamp(new Date())
-      .setFooter({ text: footerText, iconURL: footerIcon });
+    if (!guild) throw new Error("We could not find a guild");
+    if (!discordChannel) throw new Error("We could not find a channel");
+    if (!triggerWord) throw new Error("We could not find a word");
 
-    const counter = await counterSchema?.findOne({
-      guildId: guild?.id,
-      channelId: discordChannel?.id,
+    const channelCounter = await prisma.guildCounter.findUnique({
+      where: {
+        guildId_channelId: {
+          guildId: guild.id,
+          channelId: discordChannel.id,
+        },
+      },
     });
 
-    if (counter) {
-      return interaction?.editReply({
+    if (channelCounter)
+      throw new Error("A counter already exists for this channel.");
+
+    const createGuildCounter = await prisma.guildCounter.upsert({
+      where: {
+        guildId_channelId: {
+          guildId: guild.id,
+          channelId: discordChannel.id,
+        },
+      },
+      update: {},
+      create: {
+        channelId: discordChannel.id,
+        triggerWord,
+        count: startValue || 0,
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+    });
+
+    logger.silly(createGuildCounter);
+
+    if (createGuildCounter) {
+      const embed = new EmbedBuilder()
+        .setTitle("[:toolbox:] Counters - Add")
+        .setTimestamp(new Date())
+        .setFooter({ text: footerText, iconURL: footerIcon });
+
+      await interaction?.editReply({
         embeds: [
           embed
-            .setDescription(`A counter already exists for this channel.`)
-            .setColor(errorColor),
+            .setDescription(":white_check_mark: Counter created successfully.")
+            .setColor(successColor),
         ],
       });
     }
-
-    await counterSchema
-      ?.create({
-        guildId: guild?.id,
-        channelId: discordChannel?.id,
-        word: countingWord,
-        counter: startValue || 0,
-      })
-      .then(async () => {
-        await interaction?.editReply({
-          embeds: [
-            embed
-              .setDescription(
-                `Successfully created counter for ${discordChannel?.name}.`
-              )
-              .setColor(successColor),
-          ],
-        });
-        return;
-      });
   },
 };
