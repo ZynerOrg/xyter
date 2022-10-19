@@ -1,7 +1,5 @@
 // 3rd party dependencies
 import { Guild } from "discord.js";
-// Dependencies
-import dropGuild from "../../../helpers/deleteGuildData";
 import updatePresence from "../../../helpers/updatePresence";
 import { IEventOptions } from "../../../interfaces/EventOptions";
 import prisma from "../../../prisma";
@@ -14,7 +12,6 @@ export const execute = async (guild: Guild) => {
   const { client } = guild;
 
   await updatePresence(client);
-  await dropGuild(guild);
 
   // Delete guildMember objects
   const deleteGuildMembers = prisma.guildMember.deleteMany({
