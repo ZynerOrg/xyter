@@ -40,7 +40,7 @@
     "discord.js": "^14.0.0",
     "dotenv": "^16.0.1",
     "i18n": "^0.15.0",
-    "i18next": "^21.6.13",
+    "i18next": "^22.0.0",
     "i18next-async-backend": "^2.0.0",
     "i18next-fs-backend": "^1.1.4",
     "i18next-http-backend": "^1.4.0",
