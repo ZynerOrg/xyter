@@ -145,3 +145,6 @@ dist
 # Docker
 database
 docker-compose.local.yml
+
+# Prisma
+prisma/*.db
