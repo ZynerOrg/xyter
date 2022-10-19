@@ -5,14 +5,14 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import logger from "../../../../../../../middlewares/logger";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 // Helpers../../../../../../../helpers/userData
 import pluralize from "../../../../../../../helpers/pluralize";
 // Models
-import fetchUser from "../../../../../../../helpers/userData";
 // Handlers
-
+import prisma from "../../../../../../../prisma";
 // Function
 export default {
   metadata: {
@@ -48,50 +48,67 @@ export default {
     const creditAmount = options?.getInteger("amount");
 
     // If amount option is null
-    if (creditAmount === null) {
+    if (creditAmount === null)
       throw new Error("You need to provide a credit amount.");
-    }
 
     // If amount is zero or below
-    if (creditAmount <= 0) {
+    if (creditAmount <= 0)
       throw new Error("You must provide a credit amount greater than zero");
-    }
 
-    if (discordReceiver === null) {
+    if (discordReceiver === null)
       throw new Error("We could not get the receiving user from Discord");
-    }
-    if (guild === null) {
+
+    if (guild === null)
       throw new Error("We could not get the current guild from discord.");
-    }
 
-    const toUser = await fetchUser(discordReceiver, guild);
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: discordReceiver.id,
+          guildId: guild.id,
+        },
+      },
+      update: { creditsEarned: { increment: creditAmount } },
+      create: {
+        creditsEarned: creditAmount,
+        user: {
+          connectOrCreate: {
+            create: {
+              id: discordReceiver.id,
+            },
+            where: {
+              id: discordReceiver.id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+    });
 
-    if (toUser === null) {
-      throw new Error("The receiving user is not found.");
-    }
-
-    if (toUser?.credits === null) {
-      throw new Error("The receiving user's credits value could not found.");
-    }
-
-    // Deposit amount to toUser
-    toUser.credits += creditAmount;
+    logger.silly(createGuildMember);
 
     // Save toUser
-    await toUser?.save()?.then(async () => {
-      await interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Give)")
-            .setDescription(
-              `Successfully gave ${pluralize(creditAmount, "credit")}`
-            )
-            .setTimestamp(new Date())
-            .setColor(successColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-      return;
+    await interaction?.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("[:toolbox:] Manage - Credits (Give)")
+          .setDescription(
+            `Successfully gave ${pluralize(creditAmount, "credit")}`
+          )
+          .setTimestamp(new Date())
+          .setColor(successColor)
+          .setFooter({ text: footerText, iconURL: footerIcon }),
+      ],
     });
+    return;
   },
 };

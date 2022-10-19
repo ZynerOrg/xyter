@@ -9,9 +9,9 @@ import {
 } from "discord.js";
 // Configurations
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import fetchUser from "../../../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../../../middlewares/logger";
+import prisma from "../../../../../../../prisma";
 
 // Function
 export default {
@@ -91,60 +91,52 @@ export default {
       });
     }
 
-    // toUser Information
-    const toUser = await fetchUser(discordUser, guild);
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: discordUser.id,
+          guildId: guild.id,
+        },
+      },
+      update: { creditsEarned: creditAmount },
+      create: {
+        creditsEarned: creditAmount,
+        user: {
+          connectOrCreate: {
+            create: {
+              id: discordUser.id,
+            },
+            where: {
+              id: discordUser.id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+    });
 
-    // If toUser does not exist
-    if (toUser === null) {
-      logger?.silly(`User does not exist`);
+    logger.silly(createGuildMember);
 
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Set)")
-            .setDescription(`The user you provided does not exist.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    // If toUser.credits does not exist
-    if (toUser?.credits === null) {
-      logger?.silly(`User does not have any credits`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Set)")
-            .setDescription(`The user you provided does not have any credits.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    // Set toUser with amount
-    toUser.credits = creditAmount;
-
-    // Save toUser
-    await toUser?.save()?.then(async () => {
-      logger?.silly(`Saved user`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Set)")
-            .setDescription(
-              `Set **${discordUser}**'s credits to **${creditAmount}**.`
-            )
-            .setTimestamp(new Date())
-            .setColor(successColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
+    return interaction?.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("[:toolbox:] Manage - Credits (Set)")
+          .setDescription(
+            `Set **${discordUser}**'s credits to **${creditAmount}**.`
+          )
+          .setTimestamp(new Date())
+          .setColor(successColor)
+          .setFooter({ text: footerText, iconURL: footerIcon }),
+      ],
     });
   },
 };

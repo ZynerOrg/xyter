@@ -10,9 +10,9 @@ import {
 import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
 // Helpers../../../../../../../helpers/userData
 import pluralize from "../../../../../../../helpers/pluralize";
-import fetchUser from "../../../../../../../helpers/userData";
 // Handlers
 import logger from "../../../../../../../middlewares/logger";
+import prisma from "../../../../../../../prisma";
 
 // Function
 export default {
@@ -45,7 +45,7 @@ export default {
     const { guild, options } = interaction;
 
     // User option
-    const optionUser = options?.getUser("user");
+    const discordReceiver = options?.getUser("user");
 
     // Amount option
     const optionAmount = options?.getInteger("amount");
@@ -82,7 +82,7 @@ export default {
       });
     }
 
-    if (optionUser === null) {
+    if (discordReceiver === null) {
       logger?.silly(`Discord receiver is null`);
 
       return interaction?.editReply({
@@ -111,59 +111,52 @@ export default {
       });
     }
 
-    // toUser Information
-    const toUser = await fetchUser(optionUser, guild);
-
-    // If toUser does not exist
-    if (toUser === null) {
-      logger?.silly(`ToUser is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(`The user you provided does not exist.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    // If toUser.credits does not exist
-    if (toUser?.credits === null) {
-      logger?.silly(`ToUser.credits is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(`The user you provided does not have credits.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    // Withdraw amount from toUser
-    toUser.credits -= optionAmount;
-
-    // Save toUser
-    await toUser?.save()?.then(async () => {
-      await interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(
-              `Took ${pluralize(optionAmount, "credit")} from ${optionUser}.`
-            )
-            .setTimestamp(new Date())
-            .setColor(successColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-      return;
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: discordReceiver.id,
+          guildId: guild.id,
+        },
+      },
+      update: { creditsEarned: { decrement: optionAmount } },
+      create: {
+        creditsEarned: -optionAmount,
+        user: {
+          connectOrCreate: {
+            create: {
+              id: discordReceiver.id,
+            },
+            where: {
+              id: discordReceiver.id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
     });
+
+    logger.silly(createGuildMember);
+    await interaction?.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("[:toolbox:] Manage - Credits (Take)")
+          .setDescription(
+            `Took ${pluralize(optionAmount, "credit")} from ${discordReceiver}.`
+          )
+          .setTimestamp(new Date())
+          .setColor(successColor)
+          .setFooter({ text: footerText, iconURL: footerIcon }),
+      ],
+    });
+    return;
   },
 };
