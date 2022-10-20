@@ -4,10 +4,10 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import prisma from "../../../../handlers/database";
 import encryption from "../../../../helpers/encryption";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
-import apiSchema from "../../../../models/api";
 
 export default {
   metadata: {
@@ -55,35 +55,52 @@ export default {
     const token = tokenData && encryption.encrypt(tokenData);
     const url = scheme && domain && encryption.encrypt(`${scheme}://${domain}`);
 
-    await apiSchema
-      ?.findOneAndUpdate(
-        { guildId: guild?.id },
-        { url, token },
-        { new: true, upsert: true }
-      )
-      .then(async () => {
-        logger?.silly(`Updated API credentials.`);
+    if (!guild) throw new Error("No guild found");
+    if (!token) throw new Error("Token not found");
+    if (!url) throw new Error("URL not found");
 
-        const interactionEmbed = new EmbedBuilder()
-          .setTitle("[:tools:] CPGG")
-          .setDescription(
-            `The following configuration will be used.
+    const createGuild = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {
+        apiCpggTokenIv: token.iv,
+        apiCpggTokenContent: token.content,
+        apiCpggUrlIv: url.iv,
+        apiCpggUrlContent: url.content,
+      },
+      create: {
+        id: guild.id,
+        apiCpggTokenIv: token.iv,
+        apiCpggTokenContent: token.content,
+        apiCpggUrlIv: url.iv,
+        apiCpggUrlContent: url.content,
+      },
+    });
+
+    logger.silly(createGuild);
+
+    logger?.silly(`Updated API credentials.`);
+
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:tools:] CPGG")
+      .setDescription(
+        `The following configuration will be used.
 
 **Scheme**: ${scheme}
 **Domain**: ${domain}
 **Token**: ends with ${tokenData?.slice(-4)}`
-          )
-          .setColor(successColor)
-          .setTimestamp()
-          .setFooter({
-            iconURL: footerIcon,
-            text: footerText,
-          });
-
-        await interaction?.editReply({
-          embeds: [interactionEmbed],
-        });
-        return;
+      )
+      .setColor(successColor)
+      .setTimestamp()
+      .setFooter({
+        iconURL: footerIcon,
+        text: footerText,
       });
+
+    await interaction?.editReply({
+      embeds: [interactionEmbed],
+    });
+    return;
   },
 };
