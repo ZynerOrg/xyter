@@ -13,10 +13,16 @@ export const moduleData = modules;
 export const builder = new SlashCommandBuilder()
   .setName("reputation")
   .setDescription("Manage reputation.")
-  .addSubcommand(modules.give.builder);
+  .addSubcommand(modules.give.builder)
+  .addSubcommand(modules.view.builder);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.options.getSubcommand() === "give") {
     await modules.give.execute(interaction);
+    return;
+  }
+  if (interaction.options.getSubcommand() === "view") {
+    await modules.view.execute(interaction);
+    return;
   }
 };
