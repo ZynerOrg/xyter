@@ -23,11 +23,6 @@ model Guild {
   embedFooterText   String @default("https://github.com/ZynerOrg/xyter")
   embedFooterIcon   String @default("https://github.com/ZynerOrg.png")
 
-  apiCpggUrlIv        String?
-  apiCpggUrlContent   String?
-  apiCpggTokenIv      String?
-  apiCpggTokenContent String?
-
   // Modules
   creditsEnabled       Boolean @default(false)
   creditsRate          Int     @default(1)
@@ -45,6 +40,14 @@ model Guild {
 
   countersEnabled Boolean        @default(false)
   counters        GuildCounter[]
+
+  apiCpggUrlIv        String?
+  apiCpggUrlContent   String?
+  apiCpggTokenIv      String?
+  apiCpggTokenContent String?
+
+  auditsEnabled   Boolean @default(false)
+  auditsChannelId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
