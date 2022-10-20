@@ -24,7 +24,7 @@ export const command = async (i: CommandInteraction, cooldown: number) => {
 
   // If user is not on timeout
   if (hasTimeout) {
-    const { guildId, userId, timeoutId, createdAt } = hasTimeout;
+    const { userId, timeoutId, createdAt } = hasTimeout;
     const overDue = (await addSeconds(cooldown, createdAt)) < new Date();
 
     if (!overDue) {
@@ -114,7 +114,7 @@ export const button = async (i: ButtonInteraction, cooldown: number) => {
 
   // If user is not on timeout
   if (hasTimeout) {
-    const { guildId, userId, timeoutId, createdAt } = hasTimeout;
+    const { userId, timeoutId, createdAt } = hasTimeout;
     const overDue = (await addSeconds(cooldown, createdAt)) < new Date();
 
     if (!overDue) {
@@ -205,7 +205,7 @@ export const message = async (msg: Message, cooldown: number, id: string) => {
 
   // If user is not on timeout
   if (hasTimeout) {
-    const { guildId, userId, timeoutId, createdAt } = hasTimeout;
+    const { userId, timeoutId, createdAt } = hasTimeout;
     const overDue = (await addSeconds(cooldown, createdAt)) < new Date();
 
     if (!overDue) {
