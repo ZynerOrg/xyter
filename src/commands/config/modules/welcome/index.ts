@@ -5,9 +5,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import prisma from "../../../../handlers/database";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
-import guildSchema from "../../../../models/guild";
 
 export default {
   metadata: {
@@ -21,13 +21,17 @@ export default {
       .setName("welcome")
       .setDescription("Welcome")
       .addBooleanOption((option) =>
-        option.setName("status").setDescription("Should welcome be enabled?")
+        option
+          .setName("status")
+          .setDescription("Should welcome be enabled?")
+          .setRequired(true)
       )
       .addChannelOption((option) =>
         option
           .setName("join-channel")
           .setDescription("Channel for join messages.")
           .addChannelTypes(ChannelType.GuildText)
+          .setRequired(true)
       )
 
       .addChannelOption((option) =>
@@ -35,17 +39,20 @@ export default {
           .setName("leave-channel")
           .setDescription("Channel for leave messages.")
           .addChannelTypes(ChannelType.GuildText)
+          .setRequired(true)
       )
 
       .addStringOption((option) =>
         option
           .setName("leave-message")
           .setDescription("Message for leave messages.")
+          .setRequired(true)
       )
       .addStringOption((option) =>
         option
           .setName("join-message")
           .setDescription("Message for join messages.")
+          .setRequired(true)
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
@@ -60,121 +67,81 @@ export default {
     const joinChannelMessage = options?.getString("join-message");
     const leaveChannelMessage = options?.getString("leave-message");
 
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    if (!guild) throw new Error("Guild not found");
+    if (status === null) throw new Error("Status not specified");
+    if (!joinChannel) throw new Error("Join channel not specified");
+    if (!joinChannelMessage)
+      throw new Error("Join channel message not specified");
+    if (!leaveChannel) throw new Error("Leave channel not specified");
+    if (!leaveChannelMessage)
+      throw new Error("Leave channel message not specified");
+
+    const createGuild = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {
+        welcomeEnabled: status,
+        welcomeJoinChannelId: joinChannel.id,
+        welcomeJoinChannelMessage: joinChannelMessage,
+        welcomeLeaveChannelId: leaveChannel.id,
+        welcomeLeaveChannelMessage: leaveChannelMessage,
+      },
+      create: {
+        id: guild.id,
+        welcomeEnabled: status,
+        welcomeJoinChannelId: joinChannel.id,
+        welcomeJoinChannelMessage: joinChannelMessage,
+        welcomeLeaveChannelId: leaveChannel.id,
+        welcomeLeaveChannelMessage: leaveChannelMessage,
+      },
     });
 
-    if (guildDB === null) {
-      return logger?.silly(`Guild not found in database.`);
+    logger.silly(createGuild);
+
+    const interactionEmbedDisabled = new EmbedBuilder()
+      .setTitle("[:tools:] Welcome")
+      .setDescription(
+        "This module is currently disabled, please enable it to continue."
+      )
+      .setColor(successColor)
+      .setTimestamp()
+      .setFooter({
+        iconURL: footerIcon,
+        text: footerText,
+      });
+
+    if (!createGuild.welcomeEnabled) {
+      return interaction?.editReply({
+        embeds: [interactionEmbedDisabled],
+      });
     }
 
-    guildDB.welcome.status =
-      status !== null ? status : guildDB?.welcome?.status;
-    guildDB.welcome.joinChannel =
-      joinChannel !== null ? joinChannel.id : guildDB?.welcome?.joinChannel;
-    guildDB.welcome.leaveChannel =
-      leaveChannel !== null ? leaveChannel.id : guildDB?.welcome?.leaveChannel;
-
-    guildDB.welcome.joinChannelMessage =
-      joinChannelMessage !== null
-        ? joinChannelMessage
-        : guildDB?.welcome?.joinChannelMessage;
-    guildDB.welcome.leaveChannelMessage =
-      leaveChannelMessage !== null
-        ? leaveChannelMessage
-        : guildDB?.welcome?.leaveChannelMessage;
-
-    await guildDB?.save()?.then(async () => {
-      logger?.silly(`Guild welcome updated.`);
-
-      const interactionEmbedDisabled = new EmbedBuilder()
-        .setTitle("[:tools:] Welcome")
-        .setDescription(
-          "This module is currently disabled, please enable it to continue."
-        )
-        .setColor(successColor)
-        .addFields(
-          {
-            name: "🤖 Status",
-            value: `${guildDB?.points?.status}`,
-            inline: true,
-          },
-          {
-            name: "📈 Rate",
-            value: `${guildDB?.points?.rate}`,
-            inline: true,
-          },
-          {
-            name: "🔨 Minimum Length",
-            value: `${guildDB?.points?.minimumLength}`,
-            inline: true,
-          },
-          {
-            name: "⏰ Timeout",
-            value: `${guildDB?.points?.timeout}`,
-            inline: true,
-          }
-        )
-        .setTimestamp()
-        .setFooter({
-          iconURL: footerIcon,
-          text: footerText,
-        });
-
-      if (!guildDB?.welcome?.status) {
-        return interaction?.editReply({
-          embeds: [interactionEmbedDisabled],
-        });
-      }
-
-      const interactionEmbed = new EmbedBuilder()
-        .setTitle("[:tools:] Welcome")
-        .setDescription(
-          `The following configuration will be used.
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:tools:] Welcome")
+      .setDescription(
+        `The following configuration will be used.
 
         [👋] **Welcome**
 
-        ㅤ**Channel**: <#${guildDB?.welcome?.joinChannel}>
-        ㅤ**Message**: ${guildDB?.welcome?.joinChannelMessage}
+        ㅤ**Channel**: <#${createGuild.welcomeJoinChannelId}>
+        ㅤ**Message**: ${createGuild.welcomeJoinChannelMessage}
 
         [🚪] **Leave**
 
-        ㅤ**Channel**: <#${guildDB?.welcome?.leaveChannel}>
-        ㅤ**Message**: ${guildDB?.welcome?.leaveChannelMessage}`
-        )
-        .setColor(successColor)
-        .addFields(
-          {
-            name: "🤖 Status",
-            value: `${guildDB?.points?.status}`,
-            inline: true,
-          },
-          {
-            name: "📈 Rate",
-            value: `${guildDB?.points?.rate}`,
-            inline: true,
-          },
-          {
-            name: "🔨 Minimum Length",
-            value: `${guildDB?.points?.minimumLength}`,
-            inline: true,
-          },
-          {
-            name: "⏰ Timeout",
-            value: `${guildDB?.points?.timeout}`,
-            inline: true,
-          }
-        )
-        .setTimestamp()
-        .setFooter({
-          iconURL: footerIcon,
-          text: footerText,
-        });
-
-      await interaction?.editReply({
-        embeds: [interactionEmbed],
+        ㅤ**Channel**: <#${createGuild.welcomeLeaveChannelId}>
+        ㅤ**Message**: ${createGuild.welcomeLeaveChannelMessage}`
+      )
+      .setColor(successColor)
+      .setTimestamp()
+      .setFooter({
+        iconURL: footerIcon,
+        text: footerText,
       });
-      return;
+
+    await interaction?.editReply({
+      embeds: [interactionEmbed],
     });
+    return;
   },
 };

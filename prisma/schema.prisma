@@ -52,6 +52,12 @@ model Guild {
   shopRolesEnabled      Boolean @default(false)
   shopRolesPricePerHour Int     @default(5)
 
+  welcomeEnabled             Boolean @default(false)
+  welcomeJoinChannelId       String?
+  welcomeJoinChannelMessage  String?
+  welcomeLeaveChannelId      String?
+  welcomeLeaveChannelMessage String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
