@@ -4,9 +4,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import prisma from "../../../../handlers/database";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
-import guildSchema from "../../../../models/guild";
 
 export default {
   metadata: {
@@ -20,20 +20,28 @@ export default {
       .setName("points")
       .setDescription("Points")
       .addBooleanOption((option) =>
-        option.setName("status").setDescription("Should credits be enabled?")
+        option
+          .setName("status")
+          .setDescription("Should credits be enabled?")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
-        option.setName("rate").setDescription("Amount of credits per message.")
+        option
+          .setName("rate")
+          .setDescription("Amount of credits per message.")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("minimum-length")
           .setDescription("Minimum length of message to earn credits.")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("timeout")
           .setDescription("Timeout between earning credits (milliseconds).")
+          .setRequired(true)
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
@@ -48,60 +56,68 @@ export default {
     const timeout = options?.getNumber("timeout");
     const minimumLength = options?.getNumber("minimum-length");
 
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    if (!guild) throw new Error("Guild is required");
+    if (status === null) throw new Error("Status must be specified");
+    if (!rate) throw new Error("Rate must be specified");
+    if (!timeout) throw new Error("Timeout must be specified");
+    if (!minimumLength) throw new Error("Minimum length must be specified");
+
+    const createGuild = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {
+        pointsEnabled: status,
+        pointsRate: rate,
+        pointsTimeout: timeout,
+        pointsMinimumLength: minimumLength,
+      },
+      create: {
+        id: guild.id,
+        pointsEnabled: status,
+        pointsRate: rate,
+        pointsTimeout: timeout,
+        pointsMinimumLength: minimumLength,
+      },
     });
 
-    if (guildDB === null) {
-      return logger?.silly(`Guild not found in database.`);
-    }
+    logger.silly(createGuild);
 
-    guildDB.points.status = status !== null ? status : guildDB?.points?.status;
-    guildDB.points.rate = rate !== null ? rate : guildDB?.points?.rate;
-    guildDB.points.timeout =
-      timeout !== null ? timeout : guildDB?.points?.timeout;
-    guildDB.points.minimumLength =
-      minimumLength !== null ? minimumLength : guildDB?.points?.minimumLength;
-
-    await guildDB?.save()?.then(async () => {
-      logger?.silly(`Guild points updated.`);
-
-      const interactionEmbed = new EmbedBuilder()
-        .setTitle("[:tools:] Points")
-        .setDescription("Points settings updated")
-        .setColor(successColor)
-        .addFields(
-          {
-            name: "🤖 Status",
-            value: `${guildDB?.points?.status}`,
-            inline: true,
-          },
-          {
-            name: "📈 Rate",
-            value: `${guildDB?.points?.rate}`,
-            inline: true,
-          },
-          {
-            name: "🔨 Minimum Length",
-            value: `${guildDB?.points?.minimumLength}`,
-            inline: true,
-          },
-          {
-            name: "⏰ Timeout",
-            value: `${guildDB?.points?.timeout}`,
-            inline: true,
-          }
-        )
-        .setTimestamp()
-        .setFooter({
-          iconURL: footerIcon,
-          text: footerText,
-        });
-
-      await interaction?.editReply({
-        embeds: [interactionEmbed],
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:tools:] Points")
+      .setDescription("Points settings updated")
+      .setColor(successColor)
+      .addFields(
+        {
+          name: "🤖 Status",
+          value: `${createGuild.pointsEnabled}`,
+          inline: true,
+        },
+        {
+          name: "📈 Rate",
+          value: `${createGuild.pointsRate}`,
+          inline: true,
+        },
+        {
+          name: "🔨 Minimum Length",
+          value: `${createGuild.pointsMinimumLength}`,
+          inline: true,
+        },
+        {
+          name: "⏰ Timeout",
+          value: `${createGuild.pointsTimeout}`,
+          inline: true,
+        }
+      )
+      .setTimestamp()
+      .setFooter({
+        iconURL: footerIcon,
+        text: footerText,
       });
-      return;
+
+    await interaction?.editReply({
+      embeds: [interactionEmbed],
     });
+    return;
   },
 };
