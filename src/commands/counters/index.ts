@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 
-import modules from "../commands/counters/modules";
+import modules from "./modules";
 
 export const builder = new SlashCommandBuilder()
   .setName("counters")
