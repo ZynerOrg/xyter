@@ -4,10 +4,10 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-import encryption from "../../../../../helpers/encryption";
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
-import logger from "../../../../../middlewares/logger";
-import apiSchema from "../../../../../models/api";
+import encryption from "../../../../helpers/encryption";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
+import logger from "../../../../middlewares/logger";
+import apiSchema from "../../../../models/api";
 
 export default {
   metadata: {

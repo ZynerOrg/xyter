@@ -1,8 +1,8 @@
 // Dependencies
 import { Client } from "discord.js";
 // Helpers
-import { IEventOptions } from "../../../interfaces/EventOptions";
-import logger from "../../../middlewares/logger";
+import { IEventOptions } from "../../interfaces/EventOptions";
+import logger from "../../middlewares/logger";
 
 export const options: IEventOptions = {
   type: "on",

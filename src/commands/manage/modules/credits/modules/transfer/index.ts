@@ -6,9 +6,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-import transferCredits from "../../../../../../../helpers/transferCredits";
+import transferCredits from "../../../../../../helpers/transferCredits";
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../../../helpers/getEmbedData";
 // Handlers../../../../../../../helpers/userData
 
 // Function

@@ -1,9 +1,9 @@
 // 3rd party dependencies
 import { GuildMember } from "discord.js";
-import prisma from "../../../handlers/database";
-import updatePresence from "../../../handlers/updatePresence";
-import { IEventOptions } from "../../../interfaces/EventOptions";
-import logger from "../../../middlewares/logger";
+import prisma from "../../handlers/database";
+import updatePresence from "../../handlers/updatePresence";
+import { IEventOptions } from "../../interfaces/EventOptions";
+import logger from "../../middlewares/logger";
 import audits from "./audits";
 import joinMessage from "./joinMessage";
 

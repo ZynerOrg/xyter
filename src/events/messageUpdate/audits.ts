@@ -1,8 +1,8 @@
 /* eslint-disable no-loops/no-loops */
 import { ChannelType, EmbedBuilder, Message } from "discord.js";
-import getEmbedConfig from "../../../helpers/getEmbedData";
-import logger from "../../../middlewares/logger";
-import guildSchema from "../../../models/guild";
+import getEmbedConfig from "../../helpers/getEmbedData";
+import logger from "../../middlewares/logger";
+import guildSchema from "../../models/guild";
 
 export default {
   execute: async (oldMessage: Message, newMessage: Message) => {

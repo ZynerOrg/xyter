@@ -5,16 +5,16 @@ import {
   ChatInputCommandInteraction,
   ColorResolvable,
   EmbedBuilder,
-  GuildMemberRoleManager
+  GuildMemberRoleManager,
 } from "discord.js";
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import pluralize from "../../../../../../../helpers/pluralize";
-import fetchUser from "../../../../../../../helpers/userData";
-import logger from "../../../../../../../middlewares/logger";
+import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import pluralize from "../../../../../../helpers/pluralize";
+import fetchUser from "../../../../../../helpers/userData";
+import logger from "../../../../../../middlewares/logger";
 // Models
-import guildSchema from "../../../../../../../models/guild";
-import shopRolesSchema from "../../../../../../../models/shopRole";
+import guildSchema from "../../../../../../models/guild";
+import shopRolesSchema from "../../../../../../models/shopRole";
 
 // Function
 export default {
@@ -111,7 +111,7 @@ export default {
         });
       })
       .catch(() => {
-        throw new Error("Failed creating role.")
+        throw new Error("Failed creating role.");
       });
   },
 };

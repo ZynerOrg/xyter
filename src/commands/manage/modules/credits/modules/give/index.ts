@@ -5,14 +5,14 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-import logger from "../../../../../../../middlewares/logger";
+import logger from "../../../../../../middlewares/logger";
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../../../helpers/getEmbedData";
 // Helpers../../../../../../../helpers/userData
-import pluralize from "../../../../../../../helpers/pluralize";
+import pluralize from "../../../../../../helpers/pluralize";
 // Models
 // Handlers
-import prisma from "../../../../../../../handlers/database";
+import prisma from "../../../../../../handlers/database";
 // Function
 export default {
   metadata: {

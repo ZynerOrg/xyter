@@ -5,8 +5,8 @@ import {
   CommandInteraction,
   EmbedBuilder,
 } from "discord.js";
-import capitalizeFirstLetter from "../../../../helpers/capitalizeFirstLetter";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import capitalizeFirstLetter from "../../../helpers/capitalizeFirstLetter";
+import getEmbedConfig from "../../../helpers/getEmbedData";
 import button from "./button";
 import command from "./command";
 

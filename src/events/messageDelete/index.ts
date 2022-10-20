@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { IEventOptions } from "../../../interfaces/EventOptions";
-import audits from "../../events/messageDelete/audits";
+import { IEventOptions } from "../../interfaces/EventOptions";
+import audits from "./audits";
 import counter from "./modules/counter";
 
 export const options: IEventOptions = {

@@ -1,11 +1,11 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import { command as CooldownCommand } from "../../../../../handlers/cooldown";
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
-import logger from "../../../../../middlewares/logger";
+import { command as CooldownCommand } from "../../../../handlers/cooldown";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
+import logger from "../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";
 
-import prisma from "../../../../../handlers/database";
+import prisma from "../../../../handlers/database";
 
 export default {
   metadata: { guildOnly: true, ephemeral: true },

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
-import logger from "../../../middlewares/logger";
+import logger from "../../middlewares/logger";
 
 import modules from "./modules";
 

@@ -10,10 +10,10 @@ import {
   PermissionsBitField,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
-import encryption from "../../../../../../../helpers/encryption";
+import encryption from "../../../../../../helpers/encryption";
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import apiSchema from "../../../../../../../models/api";
+import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import apiSchema from "../../../../../../models/api";
 
 // Function
 export default {

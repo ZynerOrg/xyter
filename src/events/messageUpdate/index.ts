@@ -1,11 +1,11 @@
 // Dependencies
 import { Message } from "discord.js";
-import logger from "../../../middlewares/logger";
+import logger from "../../middlewares/logger";
 
 // Modules
 import counter from "./modules/counter";
 
-import { IEventOptions } from "../../../interfaces/EventOptions";
+import { IEventOptions } from "../../interfaces/EventOptions";
 import audits from "./audits";
 
 export const options: IEventOptions = {

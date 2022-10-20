@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 export default {
   metadata: { guildOnly: false, ephemeral: false, cooldown: 15 },

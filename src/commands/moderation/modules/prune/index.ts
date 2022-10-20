@@ -7,7 +7,7 @@ import {
   PermissionsBitField,
 } from "discord.js";
 // Configurations
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 // Function
 export default {

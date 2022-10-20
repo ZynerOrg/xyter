@@ -4,9 +4,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
-import logger from "../../../../../middlewares/logger";
-import guildSchema from "../../../../../models/guild";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
+import logger from "../../../../middlewares/logger";
+import guildSchema from "../../../../models/guild";
 
 export default {
   metadata: {

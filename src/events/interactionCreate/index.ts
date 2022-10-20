@@ -4,8 +4,8 @@ import {
   CommandInteraction,
   InteractionType,
 } from "discord.js";
-import { IEventOptions } from "../../../interfaces/EventOptions";
-import logger from "../../../middlewares/logger";
+import { IEventOptions } from "../../interfaces/EventOptions";
+import logger from "../../middlewares/logger";
 // Dependencies
 import { handleCommandInteraction as HandlersHandleCommandInteraction } from "./handlers";
 

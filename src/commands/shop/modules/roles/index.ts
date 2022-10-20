@@ -7,7 +7,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 // Modules
 import modules from "./modules";
 
-import guildSchema from "../../../../../models/guild";
+import guildSchema from "../../../../models/guild";
 
 export const moduleData = modules;
 

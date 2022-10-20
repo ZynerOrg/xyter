@@ -1,8 +1,8 @@
 // Dependencies
 import { Message } from "discord.js";
 // Models
-import prisma from "../../../../handlers/database";
-import logger from "../../../../middlewares/logger";
+import prisma from "../../../handlers/database";
+import logger from "../../../middlewares/logger";
 
 export default async (message: Message) => {
   const { guild, channel, author, content } = message;

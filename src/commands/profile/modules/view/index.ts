@@ -2,10 +2,10 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 // Configurations
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
 // Models
-import fetchUser from "../../../../../helpers/userData";
-import logger from "../../../../../middlewares/logger";
+import fetchUser from "../../../../helpers/userData";
+import logger from "../../../../middlewares/logger";
 
 // Function
 export default {

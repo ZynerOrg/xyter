@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
-import logger from "../../../middlewares/logger";
+import logger from "../../middlewares/logger";
 
-import modules from "../../commands/fun/modules";
+import modules from "../commands/fun/modules";
 
 export const builder = new SlashCommandBuilder()
   .setName("fun")

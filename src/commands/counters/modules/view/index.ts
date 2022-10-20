@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import prisma from "../../../../../handlers/database";
-import getEmbedConfig from "../../../../../helpers/getEmbedData";
+import prisma from "../../../../handlers/database";
+import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 export default {
   metadata: { guildOnly: true, ephemeral: false },

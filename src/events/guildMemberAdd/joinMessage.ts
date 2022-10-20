@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, TextChannel } from "discord.js";
-import getEmbedConfig from "../../../helpers/getEmbedData";
-import guildSchema from "../../../models/guild";
+import getEmbedConfig from "../../helpers/getEmbedData";
+import guildSchema from "../../models/guild";
 
 export default {
   execute: async (member: GuildMember) => {

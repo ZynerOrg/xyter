@@ -1,6 +1,6 @@
 import { ChannelType, Message } from "discord.js";
-import prisma from "../../../../../handlers/database";
-import logger from "../../../../../middlewares/logger";
+import prisma from "../../../../handlers/database";
+import logger from "../../../../middlewares/logger";
 
 export default {
   execute: async (message: Message) => {

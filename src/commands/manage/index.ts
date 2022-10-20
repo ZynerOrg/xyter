@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 
 // Groups
-import modules from "../../commands/manage/modules";
+import modules from "../commands/manage/modules";
 
 export const moduleData = modules;
 

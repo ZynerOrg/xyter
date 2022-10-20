@@ -7,12 +7,12 @@ import {
   GuildMemberRoleManager,
 } from "discord.js";
 // Configurations
-import getEmbedConfig from "../../../../../../../helpers/getEmbedData";
-import pluralize from "../../../../../../../helpers/pluralize";
-import fetchUser from "../../../../../../../helpers/userData";
-import logger from "../../../../../../../middlewares/logger";
+import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import pluralize from "../../../../../../helpers/pluralize";
+import fetchUser from "../../../../../../helpers/userData";
+import logger from "../../../../../../middlewares/logger";
 // Models
-import shopRolesSchema from "../../../../../../../models/shopRole";
+import shopRolesSchema from "../../../../../../models/shopRole";
 
 // Function
 export default {
