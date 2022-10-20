@@ -49,6 +49,9 @@ model Guild {
   auditsEnabled   Boolean @default(false)
   auditsChannelId String?
 
+  shopRolesEnabled      Boolean @default(false)
+  shopRolesPricePerHour Int     @default(5)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

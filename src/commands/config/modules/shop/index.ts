@@ -4,9 +4,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import prisma from "../../../../handlers/database";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
-import guildSchema from "../../../../models/guild";
 
 export default {
   metadata: {
@@ -23,11 +23,13 @@ export default {
         option
           .setName("roles-status")
           .setDescription("Should roles be enabled?")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("roles-price-per-hour")
           .setDescription("Price per hour for roles.")
+          .setRequired(true)
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
@@ -39,50 +41,53 @@ export default {
     const rolesStatus = options?.getBoolean("roles-status");
     const rolesPricePerHour = options?.getNumber("roles-price-per-hour");
 
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    if (!guild) throw new Error("Guild not found");
+    if (rolesStatus === null) throw new Error("Status must be provided");
+    if (!rolesPricePerHour)
+      throw new Error("Roles price per hour must be provided");
+
+    const createGuild = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {
+        shopRolesEnabled: rolesStatus,
+        shopRolesPricePerHour: rolesPricePerHour,
+      },
+      create: {
+        id: guild.id,
+        shopRolesEnabled: rolesStatus,
+        shopRolesPricePerHour: rolesPricePerHour,
+      },
     });
 
-    if (guildDB === null) {
-      return logger?.silly(`Guild not found in database.`);
-    }
+    logger.silly(createGuild);
 
-    guildDB.shop.roles.status =
-      rolesStatus !== null ? rolesStatus : guildDB?.shop?.roles?.status;
-    guildDB.shop.roles.pricePerHour =
-      rolesPricePerHour !== null
-        ? rolesPricePerHour
-        : guildDB?.shop?.roles?.pricePerHour;
-
-    await guildDB?.save()?.then(async () => {
-      logger?.silly(`Guild shop updated.`);
-
-      const interactionEmbed = new EmbedBuilder()
-        .setTitle("[:tools:] Shop")
-        .setDescription("Shop settings updated")
-        .setColor(successColor)
-        .addFields(
-          {
-            name: "🤖 Roles Status",
-            value: `${guildDB?.shop?.roles.status}`,
-            inline: true,
-          },
-          {
-            name: "🌊 Roles Price Per Hour",
-            value: `${guildDB?.shop?.roles.pricePerHour}`,
-            inline: true,
-          }
-        )
-        .setTimestamp()
-        .setFooter({
-          iconURL: footerIcon,
-          text: footerText,
-        });
-
-      await interaction?.editReply({
-        embeds: [interactionEmbed],
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:tools:] Shop")
+      .setDescription("Shop settings updated")
+      .setColor(successColor)
+      .addFields(
+        {
+          name: "🤖 Roles Status",
+          value: `${createGuild.shopRolesEnabled}`,
+          inline: true,
+        },
+        {
+          name: "🌊 Roles Price Per Hour",
+          value: `${createGuild.shopRolesPricePerHour}`,
+          inline: true,
+        }
+      )
+      .setTimestamp()
+      .setFooter({
+        iconURL: footerIcon,
+        text: footerText,
       });
-      return;
+
+    await interaction?.editReply({
+      embeds: [interactionEmbed],
     });
+    return;
   },
 };
