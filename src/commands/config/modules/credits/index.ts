@@ -4,9 +4,9 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import prisma from "../../../../handlers/database";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
-import guildSchema from "../../../../models/guild";
 
 export default {
   metadata: {
@@ -20,30 +20,40 @@ export default {
       .setName("credits")
       .setDescription(`Credits`)
       .addBooleanOption((option) =>
-        option.setName("status").setDescription("Should credits be enabled?")
+        option
+          .setName("status")
+          .setDescription("Should credits be enabled?")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
-        option.setName("rate").setDescription("Amount of credits per message.")
+        option
+          .setName("rate")
+          .setDescription("Amount of credits per message.")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("minimum-length")
           .setDescription("Minimum length of message to earn credits.")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("work-rate")
           .setDescription("Maximum amount of credits on work.")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("work-timeout")
           .setDescription("Timeout between work schedules (seconds).")
+          .setRequired(true)
       )
       .addNumberOption((option) =>
         option
           .setName("timeout")
           .setDescription("Timeout between earning credits (seconds).")
+          .setRequired(true)
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
@@ -52,8 +62,6 @@ export default {
     );
     const { guild, options } = interaction;
 
-    if (!guild) return;
-
     const status = options?.getBoolean("status");
     const rate = options?.getNumber("rate");
     const timeout = options?.getNumber("timeout");
@@ -61,75 +69,84 @@ export default {
     const workRate = options?.getNumber("work-rate");
     const workTimeout = options?.getNumber("work-timeout");
 
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    if (!guild) throw new Error("Guild is not found");
+    if (status === null) throw new Error("Status is null");
+    if (!rate) throw new Error("Rate is null");
+    if (!workRate) throw new Error("WorkRate is null");
+    if (!workTimeout) throw new Error("WorkTimeout is null");
+    if (!timeout) throw new Error("Timeout is null");
+    if (!minimumLength) throw new Error("Minimum Length is null");
+
+    const createGuild = await prisma.guild.upsert({
+      where: {
+        id: guild.id,
+      },
+      update: {
+        creditsEnabled: status,
+        creditsRate: rate,
+        creditsTimeout: timeout,
+        creditsWorkRate: workRate,
+        creditsWorkTimeout: workTimeout,
+        creditsMinimumLength: minimumLength,
+      },
+      create: {
+        id: guild.id,
+        creditsEnabled: status,
+        creditsRate: rate,
+        creditsTimeout: timeout,
+        creditsWorkRate: workRate,
+        creditsWorkTimeout: workTimeout,
+        creditsMinimumLength: minimumLength,
+      },
     });
 
-    if (guildDB === null) {
-      return logger?.silly(`Guild is null`);
-    }
+    logger.silly(createGuild);
 
-    guildDB.credits.status =
-      status !== null ? status : guildDB?.credits?.status;
-    guildDB.credits.rate = rate !== null ? rate : guildDB?.credits?.rate;
-    guildDB.credits.timeout =
-      timeout !== null ? timeout : guildDB?.credits?.timeout;
-    guildDB.credits.workRate =
-      workRate !== null ? workRate : guildDB?.credits?.workRate;
-    guildDB.credits.workTimeout =
-      workTimeout !== null ? workTimeout : guildDB?.credits?.workTimeout;
-    guildDB.credits.minimumLength =
-      minimumLength !== null ? minimumLength : guildDB?.credits?.minimumLength;
-
-    await guildDB?.save()?.then(async () => {
-      logger?.silly(`Guild saved`);
-
-      const interactionEmbed = new EmbedBuilder()
-        .setTitle("[:tools:] Credits")
-        .setDescription("Credits settings updated")
-        .setColor(successColor)
-        .addFields(
-          {
-            name: "🤖 Status",
-            value: `${guildDB?.credits?.status}`,
-            inline: true,
-          },
-          {
-            name: "📈 Rate",
-            value: `${guildDB?.credits?.rate}`,
-            inline: true,
-          },
-          {
-            name: "📈 Work Rate",
-            value: `${guildDB?.credits?.workRate}`,
-            inline: true,
-          },
-          {
-            name: "🔨 Minimum Length",
-            value: `${guildDB?.credits?.minimumLength}`,
-            inline: true,
-          },
-          {
-            name: "⏰ Timeout",
-            value: `${guildDB?.credits?.timeout}`,
-            inline: true,
-          },
-          {
-            name: "⏰ Work Timeout",
-            value: `${guildDB?.credits?.workTimeout}`,
-            inline: true,
-          }
-        )
-        .setTimestamp()
-        .setFooter({
-          iconURL: footerIcon,
-          text: footerText,
-        });
-
-      await interaction?.editReply({
-        embeds: [interactionEmbed],
+    const interactionEmbed = new EmbedBuilder()
+      .setTitle("[:tools:] Credits")
+      .setDescription("Credits settings updated")
+      .setColor(successColor)
+      .addFields(
+        {
+          name: "🤖 Status",
+          value: `${createGuild.creditsEnabled}`,
+          inline: true,
+        },
+        {
+          name: "📈 Rate",
+          value: `${createGuild.creditsRate}`,
+          inline: true,
+        },
+        {
+          name: "📈 Work Rate",
+          value: `${createGuild.creditsWorkRate}`,
+          inline: true,
+        },
+        {
+          name: "🔨 Minimum Length",
+          value: `${createGuild.creditsMinimumLength}`,
+          inline: true,
+        },
+        {
+          name: "⏰ Timeout",
+          value: `${createGuild.creditsTimeout}`,
+          inline: true,
+        },
+        {
+          name: "⏰ Work Timeout",
+          value: `${createGuild.creditsWorkTimeout}`,
+          inline: true,
+        }
+      )
+      .setTimestamp()
+      .setFooter({
+        iconURL: footerIcon,
+        text: footerText,
       });
-      return;
+
+    await interaction?.editReply({
+      embeds: [interactionEmbed],
     });
+    return;
   },
 };
