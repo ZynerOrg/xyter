@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 
 // Modules
-import modules from "../commands/profile/modules";
+import modules from "./modules";
 
 // Handlers
 
