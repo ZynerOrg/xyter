@@ -7,7 +7,7 @@ declare global {
       DISCORD_TOKEN: string;
       DISCORD_CLIENT_ID: Snowflake;
       DISCORD_GUILD_ID: Snowflake;
-      DEVELOPMENT_MODE: boolean;
+      DEVELOPMENT_MODE: string;
       ENCRYPTION_ALGORITHM: string;
       ENCRYPTION_SECRET: string;
       EMBED_COLOR_SUCCESS: ColorResolvable;
@@ -16,7 +16,7 @@ declare global {
       EMBED_FOOTER_TEXT: string;
       EMBED_FOOTER_ICON: string;
       LOG_LEVEL: string;
-      REPUTATION_TIMEOUT: number;
+      REPUTATION_TIMEOUT: string;
       BOT_HOSTER_NAME: string;
       BOT_HOSTER_URL: string;
     }
