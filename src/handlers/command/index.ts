@@ -5,7 +5,7 @@ import logger from "../../middlewares/logger";
 
 export const register = async (client: Client) => {
   // Get name of directories containing commands
-  const commandNames = await listDir("plugins/commands");
+  const commandNames = await listDir("commands");
   if (!commandNames) throw new Error("📦 No commands available");
 
   const amountOfCommands = commandNames.length;
@@ -13,10 +13,8 @@ export const register = async (client: Client) => {
   logger.info(`📦 Trying to load ${amountOfCommands} commands`);
 
   const importCommand = async (commandName: string) => {
-    // Import command from plugins/commands
-    const command: ICommand = await import(
-      `../../plugins/commands/${commandName}`
-    );
+    // Import command from commands
+    const command: ICommand = await import(`../../commands/${commandName}`);
     if (!command)
       throw new Error(`📦 No command found while importing "${commandName}"`);
     if (!command.builder)

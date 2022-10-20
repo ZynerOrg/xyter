@@ -6,7 +6,7 @@ import logger from "../../middlewares/logger";
 
 // Registers all available events
 export const register = async (client: Client) => {
-  const eventNames = await listDir("plugins/events");
+  const eventNames = await listDir("events");
   if (!eventNames) throw new Error("📦 No events available");
 
   const amountOfEvents = eventNames.length;
@@ -14,8 +14,8 @@ export const register = async (client: Client) => {
   logger.info(`📦 Trying to load ${amountOfEvents} events`);
 
   const importEvent = async (eventName: string) => {
-    // Import event from plugins/events
-    const event: IEvent = await import(`../../plugins/events/${eventName}`);
+    // Import event from events
+    const event: IEvent = await import(`../../events/${eventName}`);
     if (!event)
       throw new Error(`📦 No event found while importing "${eventName}"`);
     if (!event.options)
@@ -76,7 +76,7 @@ export const register = async (client: Client) => {
   });
 
   // for await (const eventName of eventNames) {
-  //   const event: IEvent = await import(`../../plugins/events/${eventName}`);
+  //   const event: IEvent = await import(`../../events/${eventName}`);
   //   const eventExecutor = async (...args: Promise<void>[]) =>
   //     event.execute(...args).catch(async (err) => {
   //       logger.error(`${err}`);
