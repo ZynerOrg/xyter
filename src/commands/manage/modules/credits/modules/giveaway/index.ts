@@ -12,8 +12,9 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import encryption from "../../../../../../helpers/encryption";
 // Configurations
+import prisma from "../../../../../../handlers/database";
 import getEmbedConfig from "../../../../../../helpers/getEmbedData";
-import apiSchema from "../../../../../../models/api";
+import logger from "../../../../../../middlewares/logger";
 
 // Function
 export default {
@@ -51,7 +52,7 @@ export default {
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     ); // Destructure
-    const { guild, options } = interaction;
+    const { guild, user, options } = interaction;
 
     const uses = options?.getInteger("uses");
     const creditAmount = options?.getInteger("credit");
@@ -60,6 +61,7 @@ export default {
     if (!uses) throw new Error("Amount of uses is required.");
     if (!creditAmount) throw new Error("Amount of credits is required.");
     if (!channel) throw new Error("Channel is required.");
+    if (!guild) throw new Error("Guild is required.");
 
     const embed = new EmbedBuilder()
       .setTitle("[:toolbox:] Giveaway")
@@ -67,18 +69,67 @@ export default {
 
     const code = uuidv4();
 
-    const apiCredentials = await apiSchema?.findOne({
-      guildId: guild?.id,
+    const createGuildMember = await prisma.guildMember.upsert({
+      where: {
+        userId_guildId: {
+          userId: user.id,
+          guildId: guild.id,
+        },
+      },
+      update: {},
+      create: {
+        user: {
+          connectOrCreate: {
+            create: {
+              id: user.id,
+            },
+            where: {
+              id: user.id,
+            },
+          },
+        },
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
+      },
+      include: {
+        user: true,
+        guild: true,
+      },
     });
 
-    if (!apiCredentials) return;
+    logger.silly(createGuildMember);
 
-    const url = encryption.decrypt(apiCredentials?.url);
+    if (
+      !createGuildMember.guild.apiCpggUrlIv ||
+      !createGuildMember.guild.apiCpggUrlContent
+    )
+      throw new Error("No API url available");
 
+    if (
+      !createGuildMember.guild.apiCpggTokenIv ||
+      !createGuildMember.guild.apiCpggTokenContent
+    )
+      throw new Error("No API token available");
+
+    const url = encryption.decrypt({
+      iv: createGuildMember.guild.apiCpggUrlIv,
+      content: createGuildMember.guild.apiCpggUrlContent,
+    });
     const api = axios?.create({
       baseURL: `${url}/api/`,
       headers: {
-        Authorization: `Bearer ${encryption.decrypt(apiCredentials.token)}`,
+        Authorization: `Bearer ${encryption.decrypt({
+          iv: createGuildMember.guild.apiCpggTokenIv,
+          content: createGuildMember.guild.apiCpggTokenContent,
+        })}`,
       },
     });
 
