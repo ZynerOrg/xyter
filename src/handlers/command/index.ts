@@ -21,10 +21,6 @@ export const register = async (client: Client) => {
       throw new Error(
         `📦 No command builder found while importing "${commandName}"`
       );
-    if (!command.moduleData)
-      throw new Error(
-        `📦 No command moduleData found while importing "${commandName}"`
-      );
 
     // Add command to collection
     client.commands.set(command.builder.name, command);

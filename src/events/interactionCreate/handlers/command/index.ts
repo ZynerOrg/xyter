@@ -1,6 +1,5 @@
 // Dependencies
 import { ChatInputCommandInteraction } from "discord.js";
-import getCommandMetadata from "../../../../helpers/getCommandMetadata";
 
 export default async (interaction: ChatInputCommandInteraction) => {
   if (!interaction.isCommand()) return;
@@ -9,7 +8,7 @@ export default async (interaction: ChatInputCommandInteraction) => {
   const currentCommand = client.commands.get(commandName);
   if (!currentCommand) throw new Error(`Unknown command ${commandName}`);
 
-  const metadata = await getCommandMetadata(interaction, currentCommand);
+  // const metadata = await getCommandMetadata(interaction, currentCommand);
   // await deferReply(interaction, metadata.ephemeral || false);
 
   // if (metadata.guildOnly && !interaction.guild)
