@@ -2,6 +2,6 @@ import fs from "fs";
 const fsPromises = fs.promises;
 
 export default async (path: string) => {
-  const result = fsPromises.readdir(path);
+  const result = await fsPromises.readdir(path);
   return result;
 };

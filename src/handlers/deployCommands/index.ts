@@ -13,28 +13,28 @@ export default async (client: Client) => {
   logger.info("Gathering command list");
 
   await Promise.all(
-    client.commands.map(async (commandData: ICommand) => {
+    client.commands.map((commandData: ICommand) => {
       commandList.push(commandData.builder.toJSON());
 
       logger.verbose(`${commandData.builder.name} pushed to list`);
     })
   )
-    .then(async () => {
+    .then(() => {
       logger.info(`Finished gathering command list.`);
     })
-    .catch(async (error) => {
+    .catch((error) => {
       throw new Error(`Could not gather command list: ${error}`);
     });
 
   await client.application?.commands
     .set(commandList, process.env.DISCORD_GUILD_ID)
-    .then(async () => {
+    .then(() => {
       logger.info(`Finished updating command list.`);
     });
 
   if (process.env.NODE_ENV !== "production") {
     await client.application?.commands
       .set(commandList)
-      .then(async () => logger.info(`Finished updating guild command list.`));
+      .then(() => logger.info(`Finished updating guild command list.`));
   }
 };
