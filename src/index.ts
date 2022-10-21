@@ -19,6 +19,7 @@ const main = async () => {
   // Create command collection
   client.commands = new Collection();
 
+  // Start critical handlers
   await scheduleStart(client);
   await eventRegister(client);
   await commandRegister(client);
