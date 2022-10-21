@@ -6,10 +6,9 @@ import logger from "../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";
 
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("give")
@@ -35,6 +34,8 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
     const { options, user, guild } = interaction;
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
