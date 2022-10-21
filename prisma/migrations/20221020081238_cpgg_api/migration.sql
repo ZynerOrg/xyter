@@ -10,4 +10,3 @@ ALTER TABLE "Guild"
 
 ALTER TABLE "Guild"
     ADD COLUMN "apiCpggUrlIv" TEXT;
-

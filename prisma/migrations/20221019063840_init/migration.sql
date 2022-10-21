@@ -27,4 +27,3 @@ CREATE UNIQUE INDEX "User_id_key" ON "User" ("id");
 -- CreateIndex
 
 CREATE UNIQUE INDEX "GuildMember_userId_guildId_key" ON "GuildMember" ("userId", "guildId");
-

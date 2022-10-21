@@ -33,4 +33,3 @@ CREATE UNIQUE INDEX "GuildCounter_guildId_channelId_key" ON "GuildCounter" ("gui
 PRAGMA foreign_key_check;
 
 PRAGMA foreign_keys = ON;
-
