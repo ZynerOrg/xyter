@@ -1,5 +1,6 @@
 -- RedefineTables
-PRAGMA foreign_keys=OFF;
+PRAGMA foreign_keys = OFF;
+
 CREATE TABLE "new_Guild" (
     "id" TEXT NOT NULL,
     "embedColorSuccess" TEXT NOT NULL DEFAULT '#22bb33',
@@ -7,32 +8,68 @@ CREATE TABLE "new_Guild" (
     "embedColorError" TEXT NOT NULL DEFAULT '#bb2124',
     "embedFooterText" TEXT NOT NULL DEFAULT 'https://github.com/ZynerOrg/xyter',
     "embedFooterIcon" TEXT NOT NULL DEFAULT 'https://github.com/ZynerOrg.png',
-    "creditsEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "creditsEnabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "creditsRate" INTEGER NOT NULL DEFAULT 1,
     "creditsTimeout" INTEGER NOT NULL DEFAULT 5,
     "creditsWorkRate" INTEGER NOT NULL DEFAULT 25,
     "creditsWorkTimeout" INTEGER NOT NULL DEFAULT 86400,
     "creditsMinimumLength" INTEGER NOT NULL DEFAULT 5,
-    "pointsEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "pointsEnabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "pointsRate" INTEGER NOT NULL DEFAULT 1,
     "pointsTimeout" INTEGER NOT NULL DEFAULT 5,
     "pointsMinimumLength" INTEGER NOT NULL DEFAULT 5,
-    "reputationsEnabled" BOOLEAN NOT NULL DEFAULT false,
-    "countersEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "reputationsEnabled" BOOLEAN NOT NULL DEFAULT FALSE,
+    "countersEnabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "apiCpggUrlIv" TEXT,
     "apiCpggUrlContent" TEXT,
     "apiCpggTokenIv" TEXT,
     "apiCpggTokenContent" TEXT,
-    "auditsEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "auditsEnabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "auditsChannelId" TEXT,
-    "shopRolesEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "shopRolesEnabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "shopRolesPricePerHour" INTEGER NOT NULL DEFAULT 5,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
-INSERT INTO "new_Guild" ("apiCpggTokenContent", "apiCpggTokenIv", "apiCpggUrlContent", "apiCpggUrlIv", "auditsChannelId", "auditsEnabled", "countersEnabled", "createdAt", "creditsEnabled", "creditsMinimumLength", "creditsRate", "creditsTimeout", "creditsWorkRate", "creditsWorkTimeout", "embedColorError", "embedColorSuccess", "embedColorWait", "embedFooterIcon", "embedFooterText", "id", "pointsEnabled", "pointsMinimumLength", "pointsRate", "pointsTimeout", "reputationsEnabled", "updatedAt") SELECT "apiCpggTokenContent", "apiCpggTokenIv", "apiCpggUrlContent", "apiCpggUrlIv", "auditsChannelId", "auditsEnabled", "countersEnabled", "createdAt", "creditsEnabled", "creditsMinimumLength", "creditsRate", "creditsTimeout", "creditsWorkRate", "creditsWorkTimeout", "embedColorError", "embedColorSuccess", "embedColorWait", "embedFooterIcon", "embedFooterText", "id", "pointsEnabled", "pointsMinimumLength", "pointsRate", "pointsTimeout", "reputationsEnabled", "updatedAt" FROM "Guild";
+
+INSERT INTO "new_Guild" ("apiCpggTokenContent", "apiCpggTokenIv", "apiCpggUrlContent", "apiCpggUrlIv", "auditsChannelId", "auditsEnabled", "countersEnabled", "createdAt", "creditsEnabled", "creditsMinimumLength", "creditsRate", "creditsTimeout", "creditsWorkRate", "creditsWorkTimeout", "embedColorError", "embedColorSuccess", "embedColorWait", "embedFooterIcon", "embedFooterText", "id", "pointsEnabled", "pointsMinimumLength", "pointsRate", "pointsTimeout", "reputationsEnabled", "updatedAt")
+SELECT
+    "apiCpggTokenContent",
+    "apiCpggTokenIv",
+    "apiCpggUrlContent",
+    "apiCpggUrlIv",
+    "auditsChannelId",
+    "auditsEnabled",
+    "countersEnabled",
+    "createdAt",
+    "creditsEnabled",
+    "creditsMinimumLength",
+    "creditsRate",
+    "creditsTimeout",
+    "creditsWorkRate",
+    "creditsWorkTimeout",
+    "embedColorError",
+    "embedColorSuccess",
+    "embedColorWait",
+    "embedFooterIcon",
+    "embedFooterText",
+    "id",
+    "pointsEnabled",
+    "pointsMinimumLength",
+    "pointsRate",
+    "pointsTimeout",
+    "reputationsEnabled",
+    "updatedAt"
+FROM
+    "Guild";
+
 DROP TABLE "Guild";
+
 ALTER TABLE "new_Guild" RENAME TO "Guild";
-CREATE UNIQUE INDEX "Guild_id_key" ON "Guild"("id");
+
+CREATE UNIQUE INDEX "Guild_id_key" ON "Guild" ("id");
+
 PRAGMA foreign_key_check;
-PRAGMA foreign_keys=ON;
+
+PRAGMA foreign_keys = ON;
+
