@@ -1,16 +1,20 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { command as CooldownCommand } from "../../../../handlers/cooldown";
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 export default {
-  metadata: { guildOnly: false, ephemeral: false, cooldown: 15 },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command.setName("meme").setDescription("Get a meme from r/memes)");
   },
 
   execute: async (interaction: CommandInteraction) => {
+    await deferReply(interaction, false);
+
+    await CooldownCommand(interaction, 15);
+
     const { guild } = interaction;
 
     const embedConfig = await getEmbedConfig(guild);
