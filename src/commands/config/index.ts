@@ -24,6 +24,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(moduleShop.builder)
   .addSubcommand(moduleWelcome.builder);
 
+// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "audits":

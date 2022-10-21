@@ -11,6 +11,7 @@ export const builder = new SlashCommandBuilder()
 
   .addSubcommand(moduleMeme.builder);
 
+// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 

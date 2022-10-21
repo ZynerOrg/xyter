@@ -3,6 +3,7 @@ import logger from "../../../../../middlewares/logger";
 
 import { GuildShopRoles } from "@prisma/client";
 
+// Execute the dueForPayment function
 export const execute = (_client: Client, role: GuildShopRoles) => {
   const { roleId } = role;
 

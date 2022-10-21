@@ -12,6 +12,7 @@ export const builder = new SlashCommandBuilder()
   // Modules
   .addSubcommand(moduleView.builder);
 
+// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "view":

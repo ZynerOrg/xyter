@@ -16,6 +16,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(moduleGive.builder)
   .addSubcommand(moduleView.builder);
 
+// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.options.getSubcommand() === "give") {
     await moduleGive.execute(interaction);

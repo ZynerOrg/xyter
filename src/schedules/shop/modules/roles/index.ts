@@ -5,6 +5,7 @@ import prisma from "../../../../handlers/database";
 import { execute as dueForPaymentExecute } from "./components/dueForPayment";
 import { execute as overDueForPaymentExecute } from "./components/overDueForPayment";
 
+// Execute the roles function
 export const execute = async (client: Client) => {
   const roles = await prisma.guildShopRoles.findMany();
 

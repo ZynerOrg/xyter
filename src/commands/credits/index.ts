@@ -19,6 +19,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(moduleTop.builder)
   .addSubcommand(moduleWork.builder);
 
+// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
