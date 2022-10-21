@@ -1,10 +1,9 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 export default {
-  metadata: { guildOnly: false, ephemeral: false },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("avatar")
@@ -16,6 +15,8 @@ export default {
       );
   },
   execute: async (interaction: CommandInteraction) => {
+    await deferReply(interaction, false);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
