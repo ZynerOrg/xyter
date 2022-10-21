@@ -11,6 +11,7 @@ export const options: IEventOptions = {
   type: "on",
 };
 
+// Execute the function
 export const execute = async (member: GuildMember) => {
   const { client, user, guild } = member;
 

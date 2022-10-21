@@ -9,6 +9,7 @@ export const options: IEventOptions = {
   type: "on",
 };
 
+// Execute the function
 export const execute = async (guild: Guild) => {
   const { client } = guild;
 

@@ -4,6 +4,7 @@ import addSeconds from "../../helpers/addSeconds";
 import logger from "../../middlewares/logger";
 import prisma from "../database";
 
+// Command cooldown
 export const command = async (i: CommandInteraction, cooldown: number) => {
   const { guild, user, commandId } = i;
 
@@ -94,6 +95,7 @@ export const command = async (i: CommandInteraction, cooldown: number) => {
   logger.silly(createCooldown);
 };
 
+// Button cooldown
 export const button = async (i: ButtonInteraction, cooldown: number) => {
   const { guild, user, customId } = i;
 
@@ -184,6 +186,7 @@ export const button = async (i: ButtonInteraction, cooldown: number) => {
   logger.silly(createCooldown);
 };
 
+// Message cooldown
 export const message = async (msg: Message, cooldown: number, id: string) => {
   const { guild, member } = msg;
 
