@@ -37,4 +37,3 @@ CREATE UNIQUE INDEX "GuildShopRoles_guildId_userId_roleId_key" ON "GuildShopRole
 PRAGMA foreign_key_check;
 
 PRAGMA foreign_keys = ON;
-

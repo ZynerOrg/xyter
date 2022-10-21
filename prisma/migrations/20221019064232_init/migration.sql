@@ -24,4 +24,3 @@ CREATE UNIQUE INDEX "GuildMember_userId_guildId_key" ON "GuildMember" ("userId",
 PRAGMA foreign_key_check;
 
 PRAGMA foreign_keys = ON;
-

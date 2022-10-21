@@ -242,4 +242,3 @@ CREATE UNIQUE INDEX "User_id_key" ON "User" ("id");
 PRAGMA foreign_key_check;
 
 PRAGMA foreign_keys = ON;
-

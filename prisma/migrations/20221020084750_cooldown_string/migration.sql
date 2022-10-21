@@ -32,4 +32,3 @@ CREATE UNIQUE INDEX "Cooldown_guildId_userId_timeoutId_key" ON "Cooldown" ("guil
 PRAGMA foreign_key_check;
 
 PRAGMA foreign_keys = ON;
-

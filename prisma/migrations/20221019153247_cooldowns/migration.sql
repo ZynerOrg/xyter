@@ -11,4 +11,3 @@ CREATE TABLE "Cooldown" (
 -- CreateIndex
 
 CREATE UNIQUE INDEX "Cooldown_guildId_userId_timeoutId_key" ON "Cooldown" ("guildId", "userId", "timeoutId");
-
