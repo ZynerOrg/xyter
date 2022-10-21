@@ -3,6 +3,7 @@ import logger from "../../middlewares/logger";
 
 export const metadata = { guildOnly: false, ephemeral: false };
 
-export const execute = async (interaction: ButtonInteraction) => {
+// Execute the function
+export const execute = (interaction: ButtonInteraction) => {
   logger.debug(interaction.customId, "primary button clicked!");
 };

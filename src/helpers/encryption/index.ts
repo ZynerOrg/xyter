@@ -3,6 +3,7 @@ import { IEncryptionData } from "../../interfaces/EncryptionData";
 
 const iv = crypto.randomBytes(16);
 
+// Encrypts a string
 const encrypt = (text: crypto.BinaryLike): IEncryptionData => {
   const cipher = crypto.createCipheriv(
     process.env.ENCRYPTION_ALGORITHM,
@@ -17,6 +18,7 @@ const encrypt = (text: crypto.BinaryLike): IEncryptionData => {
   };
 };
 
+// Decrypts a string
 const decrypt = (hash: IEncryptionData) => {
   const decipher = crypto.createDecipheriv(
     process.env.ENCRYPTION_ALGORITHM,
