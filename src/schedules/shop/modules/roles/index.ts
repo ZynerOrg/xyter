@@ -1,32 +1,28 @@
+/* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
+import prisma from "../../../../handlers/database";
 
-import { IShopRole } from "../../../../interfaces/ShopRole";
-import shopRoleSchema from "../../../../models/shopRole";
+import { execute as dueForPaymentExecute } from "./components/dueForPayment";
+import { execute as overDueForPaymentExecute } from "./components/overDueForPayment";
 
-import * as dueForPayment from "./components/dueForPayment";
-import * as overDueForPayment from "./components/overDueForPayment";
-
+// Execute the roles function
 export const execute = async (client: Client) => {
-  const roles = await shopRoleSchema.find();
+  const roles = await prisma.guildShopRoles.findMany();
 
-  await Promise.all(
-    roles.map(async (role: IShopRole) => {
-      const { lastPayed } = role;
-      const nextPayment = new Date(
-        lastPayed.setHours(lastPayed.getHours() + 1)
-      );
+  for await (const role of roles) {
+    const { lastPayed } = role;
+    const nextPayment = new Date(lastPayed.setHours(lastPayed.getHours() + 1));
 
-      const now = new Date();
+    const now = new Date();
 
-      if (nextPayment > now) {
-        await dueForPayment.execute(client, role);
+    if (nextPayment > now) {
+      dueForPaymentExecute(client, role);
 
-        return;
-      }
+      return;
+    }
 
-      if (nextPayment < now) {
-        await overDueForPayment.execute(client, role);
-      }
-    })
-  );
+    if (nextPayment < now) {
+      await overDueForPaymentExecute(client, role);
+    }
+  }
 };

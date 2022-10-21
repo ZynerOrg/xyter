@@ -5,39 +5,41 @@ import { ChatInputCommandInteraction } from "discord.js";
 // Handlers
 
 // Modules
-import modules from "./modules";
+import moduleBuy from "./modules/buy";
+import moduleCancel from "./modules/cancel";
 
-import guildSchema from "../../../../models/guild";
+import prisma from "../../../../handlers/database";
 
-export const moduleData = modules;
+export default {
+  builder: (group: SlashCommandSubcommandGroupBuilder) => {
+    return (
+      group
+        .setName("roles")
+        .setDescription("Shop for custom roles.")
 
-// Function
-export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
-  return group
-    .setName("roles")
-    .setDescription("Shop for custom roles.")
-    .addSubcommand(modules.buy.builder)
-    .addSubcommand(modules.cancel.builder);
-};
+        // Modules
+        .addSubcommand(moduleBuy.builder)
+        .addSubcommand(moduleCancel.builder)
+    );
+  },
+  execute: async (interaction: ChatInputCommandInteraction) => {
+    if (!interaction.guild) return;
+    const { options, guild } = interaction;
 
-export const execute = async (interaction: ChatInputCommandInteraction) => {
-  if (!interaction.guild) return;
-  const { options, guild } = interaction;
+    const getGuild = await prisma.guild.findUnique({
+      where: { id: guild.id },
+    });
+    if (!getGuild) throw new Error("Guild not found");
 
-  const guildDB = await guildSchema?.findOne({
-    guildId: guild?.id,
-  });
+    if (!getGuild.shopRolesEnabled)
+      throw new Error("This server has disabled shop roles.");
 
-  if (guildDB === null) return;
+    if (options?.getSubcommand() === "buy") {
+      await moduleBuy.execute(interaction);
+    }
 
-  if (!guildDB.shop.roles.status)
-    throw new Error("This server has disabled shop roles.");
-
-  if (options?.getSubcommand() === "buy") {
-    await modules.buy.execute(interaction);
-  }
-
-  if (options?.getSubcommand() === "cancel") {
-    await modules.cancel.execute(interaction);
-  }
+    if (options?.getSubcommand() === "cancel") {
+      await moduleCancel.execute(interaction);
+    }
+  },
 };

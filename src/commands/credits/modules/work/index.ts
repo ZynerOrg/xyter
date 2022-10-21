@@ -3,21 +3,22 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 // Models
-import * as cooldown from "../../../../handlers/cooldown";
+import { command as CooldownCommand } from "../../../../handlers/cooldown";
 // Configurations
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 // Helpers
 // Handlers
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 import logger from "../../../../middlewares/logger";
 
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command.setName("work").setDescription(`Work to earn credits`);
   },
   execute: async (interaction: CommandInteraction) => {
+    await deferReply(interaction, true);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     ); // Destructure member
@@ -50,7 +51,7 @@ export default {
 
     logger.silly(createGuild);
 
-    await cooldown.command(interaction, createGuild.creditsWorkTimeout);
+    await CooldownCommand(interaction, createGuild.creditsWorkTimeout);
 
     const creditsEarned = chance.integer({
       min: 0,

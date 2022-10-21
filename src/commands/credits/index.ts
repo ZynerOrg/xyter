@@ -2,34 +2,39 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 import logger from "../../middlewares/logger";
 
-import modules from "./modules";
+// Modules
+import moduleBalance from "./modules/balance";
+import moduleGift from "./modules/gift";
+import moduleTop from "./modules/top";
+import moduleWork from "./modules/work";
 
 export const builder = new SlashCommandBuilder()
   .setName("credits")
   .setDescription("Manage your credits.")
+  .setDMPermission(false)
 
-  .addSubcommand(modules.balance.builder)
-  .addSubcommand(modules.gift.builder)
-  .addSubcommand(modules.top.builder)
-  .addSubcommand(modules.work.builder);
+  // Modules
+  .addSubcommand(moduleBalance.builder)
+  .addSubcommand(moduleGift.builder)
+  .addSubcommand(moduleTop.builder)
+  .addSubcommand(moduleWork.builder);
 
-export const moduleData = modules;
-
+// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
   switch (options.getSubcommand()) {
     case "balance":
-      await modules.balance.execute(interaction);
+      await moduleBalance.execute(interaction);
       break;
     case "gift":
-      await modules.gift.execute(interaction);
+      await moduleGift.execute(interaction);
       break;
     case "top":
-      await modules.top.execute(interaction);
+      await moduleTop.execute(interaction);
       break;
     case "work":
-      await modules.work.execute(interaction);
+      await moduleWork.execute(interaction);
       break;
     default:
       logger.silly(`Unknown subcommand ${options.getSubcommand()}`);

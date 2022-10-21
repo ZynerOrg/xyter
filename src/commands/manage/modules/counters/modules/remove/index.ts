@@ -7,18 +7,14 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import deferReply from "../../../../../../handlers/deferReply";
+import checkPermission from "../../../../../../helpers/checkPermission";
 // Configurations
 import prisma from "../../../../../../handlers/database";
 import getEmbedConfig from "../../../../../../helpers/getEmbedData";
 
 // Function
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("remove")
@@ -32,6 +28,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );

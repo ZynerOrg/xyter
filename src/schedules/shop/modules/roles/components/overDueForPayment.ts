@@ -1,21 +1,13 @@
 import { Client } from "discord.js";
 import logger from "../../../../../middlewares/logger";
 
-import { IShopRole } from "../../../../../interfaces/ShopRole";
-import guildSchema from "../../../../../models/guild";
-import shopRoleSchema from "../../../../../models/shopRole";
-import userSchema from "../../../../../models/user";
+import { GuildShopRoles } from "@prisma/client";
+import prisma from "../../../../../handlers/database";
 
 // Execute the component
-export const execute = async (client: Client, role: IShopRole) => {
+export const execute = async (client: Client, role: GuildShopRoles) => {
   const { guildId, userId, roleId } = role;
   if (!userId) throw new Error("User ID not found for shop role.");
-
-  const guildData = await guildSchema.findOne({ guildId });
-  if (!guildData) throw new Error("Guild not found.");
-
-  const userData = await userSchema.findOne({ guildId, userId });
-  if (!userData) throw new Error("User not found.");
 
   const rGuild = client.guilds.cache.get(guildId);
   if (!rGuild) throw new Error("Guild not found.");
@@ -28,26 +20,44 @@ export const execute = async (client: Client, role: IShopRole) => {
 
   logger.debug(`Shop role ${roleId} is due for payment.`);
 
-  const { pricePerHour } = guildData.shop.roles;
+  const getGuildMember = await prisma.guildMember.findUnique({
+    where: {
+      userId_guildId: {
+        userId,
+        guildId,
+      },
+    },
+    include: {
+      user: true,
+      guild: true,
+    },
+  });
 
-  if (userData.credits < pricePerHour) {
+  logger.silly(getGuildMember);
+
+  if (!getGuildMember) throw new Error("Could not find guild member.");
+
+  const pricePerHour = getGuildMember.guild.shopRolesPricePerHour;
+
+  if (getGuildMember.creditsEarned < pricePerHour) {
     await rMember.roles
       .remove(roleId)
       .then(async () => {
-        await shopRoleSchema
-          .deleteOne({
-            userId,
-            roleId,
-            guildId,
-          })
-          .then(() => {
-            logger.silly(
-              `Shop role document ${roleId} has been deleted from user ${userId}.`
-            );
-          })
-          .catch(() => {
-            throw new Error("Failed deleting shop role from user.");
-          });
+        const deleteShopRole = await prisma.guildShopRoles.delete({
+          where: {
+            guildId_userId_roleId: {
+              guildId,
+              userId,
+              roleId,
+            },
+          },
+        });
+
+        logger.silly(deleteShopRole);
+
+        logger.silly(
+          `Shop role document ${roleId} has been deleted from user ${userId}.`
+        );
       })
       .catch(() => {
         throw new Error(`Failed removing role from user.`);
@@ -56,25 +66,63 @@ export const execute = async (client: Client, role: IShopRole) => {
     throw new Error("User does not have enough credits.");
   }
 
-  userData.credits -= pricePerHour;
-  await userData
-    .save()
-    .then(async () => {
-      logger.silly(`User ${userId} has been updated.`);
+  const createGuildMember = await prisma.guildMember.upsert({
+    where: {
+      userId_guildId: {
+        userId,
+        guildId,
+      },
+    },
+    update: { creditsEarned: { decrement: pricePerHour } },
+    create: {
+      creditsEarned: -pricePerHour,
+      user: {
+        connectOrCreate: {
+          create: {
+            id: userId,
+          },
+          where: {
+            id: userId,
+          },
+        },
+      },
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guildId,
+          },
+          where: {
+            id: guildId,
+          },
+        },
+      },
+    },
+    include: {
+      user: true,
+      guild: true,
+    },
+  });
 
-      role.lastPayed = new Date();
-      await role
-        .save()
-        .then(() => {
-          logger.silly(`Shop role ${roleId} has been updated.`);
-        })
-        .catch(() => {
-          throw new Error("Failed updating shop role.");
-        });
+  logger.silly(createGuildMember);
 
-      logger.debug(`Shop role ${roleId} has been paid.`);
-    })
-    .catch(() => {
-      throw new Error("Failed updating user.");
-    });
+  logger.silly(`User ${userId} has been updated.`);
+
+  const updateGuildShopRole = await prisma.guildShopRoles.update({
+    where: {
+      guildId_userId_roleId: {
+        guildId,
+        userId,
+        roleId,
+      },
+    },
+    data: {
+      lastPayed: new Date(),
+    },
+  });
+
+  logger.silly(updateGuildShopRole);
+
+  logger.silly(`Shop role ${roleId} has been updated.`);
+
+  logger.debug(`Shop role ${roleId} has been paid.`);
 };

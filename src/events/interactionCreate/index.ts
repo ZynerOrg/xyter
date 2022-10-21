@@ -7,6 +7,7 @@ import {
 import { IEventOptions } from "../../interfaces/EventOptions";
 import logger from "../../middlewares/logger";
 // Dependencies
+import audits from "./audits";
 import { handleCommandInteraction as HandlersHandleCommandInteraction } from "./handlers";
 
 export const options: IEventOptions = {
@@ -21,7 +22,7 @@ export const execute = async (interaction: BaseInteraction) => {
     `New interaction: ${id} in guild: ${guild?.name} (${guild?.id})`
   );
 
-  // await audits.execute(interaction);
+  await audits.execute(interaction);
 
   switch (interaction.type) {
     case InteractionType.ApplicationCommand:

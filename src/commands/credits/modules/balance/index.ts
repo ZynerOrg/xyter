@@ -1,11 +1,11 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("balance")
@@ -17,6 +17,8 @@ export default {
       );
   },
   execute: async (interaction: CommandInteraction) => {
+    await deferReply(interaction, true);
+
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { options, user, guild } = interaction;

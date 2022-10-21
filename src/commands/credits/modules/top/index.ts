@@ -2,6 +2,7 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { GuildMember } from "@prisma/client";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
@@ -12,6 +13,8 @@ export default {
     return command.setName("top").setDescription(`View the top users`);
   },
   execute: async (interaction: CommandInteraction) => {
+    await deferReply(interaction, false);
+
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const { guild } = interaction;

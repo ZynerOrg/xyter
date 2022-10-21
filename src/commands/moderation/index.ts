@@ -1,20 +1,21 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 
-import modules from "./modules";
-export const moduleData = modules;
+// Modules
+import modulePrune from "./modules/prune";
 
 export const builder = new SlashCommandBuilder()
   .setName("moderation")
   .setDescription("Moderation.")
+  .setDMPermission(false)
 
-  .addSubcommand(modules.prune.builder);
+  .addSubcommand(modulePrune.builder);
 
 // Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "prune": {
-      await modules.prune.execute(interaction);
+      await modulePrune.execute(interaction);
       break;
     }
     default: {

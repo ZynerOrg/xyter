@@ -6,17 +6,13 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import deferReply from "../../../../handlers/deferReply";
+import checkPermission from "../../../../helpers/checkPermission";
 // Configurations
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 // Function
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: false,
-    permissions: [PermissionsBitField.Flags.ManageMessages],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("prune")
@@ -32,6 +28,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, false);
+
+    checkPermission(interaction, PermissionsBitField.Flags.ManageMessages);
+
     const { errorColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );

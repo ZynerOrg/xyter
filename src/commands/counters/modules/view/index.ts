@@ -2,11 +2,10 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 export default {
-  metadata: { guildOnly: true, ephemeral: false },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("view")
@@ -23,6 +22,8 @@ export default {
   },
 
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, false);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );

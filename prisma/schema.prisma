@@ -58,8 +58,9 @@ model Guild {
   welcomeLeaveChannelId      String?
   welcomeLeaveChannelMessage String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  GuildShopRoles GuildShopRoles[]
 }
 
 model User {
@@ -72,8 +73,9 @@ model User {
   reputationsEarned Int        @default(0)
   Cooldown          Cooldown[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  GuildShopRoles GuildShopRoles[]
 }
 
 model GuildMember {
@@ -89,8 +91,9 @@ model GuildMember {
   creditsEarned Int @default(0)
   pointsEarned  Int @default(0)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  GuildShopRoles GuildShopRoles[]
 
   // Unique Identifier
   @@unique([userId, guildId])
@@ -121,4 +124,21 @@ model Cooldown {
   updatedAt DateTime @updatedAt
 
   @@unique([guildId, userId, timeoutId])
+}
+
+model GuildShopRoles {
+  guildId      String
+  roleId       String
+  userId       String
+  pricePerHour Int      @default(5)
+  lastPayed    DateTime
+
+  guild Guild @relation(fields: [guildId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  member    GuildMember? @relation(fields: [userId, guildId], references: [userId, guildId])
+
+  @@unique([guildId, userId, roleId])
 }

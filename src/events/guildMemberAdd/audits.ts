@@ -1,25 +1,28 @@
 import { ChannelType, EmbedBuilder, GuildMember } from "discord.js";
+import prisma from "../../handlers/database";
 import getEmbedConfig from "../../helpers/getEmbedData";
 import logger from "../../middlewares/logger";
-import guildSchema from "../../models/guild";
 
 export default {
   execute: async (member: GuildMember) => {
     const { client, guild } = member;
 
-    const guildData = await guildSchema.findOne({ guildId: member.guild.id });
-    if (!guildData) {
-      throw new Error("Could not find guild");
-    }
-    if (guildData.audits.status !== true) return;
-    if (!guildData.audits.channelId) {
+    const getGuild = await prisma.guild.findUnique({
+      where: { id: member.guild.id },
+    });
+    if (!getGuild) throw new Error("Guild not found");
+
+    if (getGuild.auditsEnabled !== true) return;
+    if (!getGuild.auditsChannelId) {
       throw new Error("Channel not found");
     }
 
     const embedConfig = await getEmbedConfig(guild);
 
-    const channel = client.channels.cache.get(guildData.audits.channelId);
-    if (channel?.type !== ChannelType.GuildText) {
+    const channel = client.channels.cache.get(getGuild.auditsChannelId);
+
+    if (!channel) throw new Error("Channel not found");
+    if (channel.type !== ChannelType.GuildText) {
       throw new Error("Channel must be a text channel");
     }
 

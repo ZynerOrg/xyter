@@ -1,7 +1,7 @@
 import { BaseInteraction, ChannelType, EmbedBuilder } from "discord.js";
+import prisma from "../../handlers/database";
 import getEmbedConfig from "../../helpers/getEmbedData";
 import logger from "../../middlewares/logger";
-import guildSchema from "../../models/guild";
 
 export default {
   execute: async (interaction: BaseInteraction) => {
@@ -9,22 +9,21 @@ export default {
 
     if (interaction.guild === null) return;
 
+    const getGuild = await prisma.guild.findUnique({
+      where: { id: interaction.guild.id },
+    });
+    if (!getGuild) throw new Error("Guild not found");
+
     const { footerText, footerIcon, successColor } = await getEmbedConfig(
       interaction.guild
     );
 
-    const guildData = await guildSchema.findOne({
-      guildId: interaction.guild.id,
-    });
-
     const { client } = interaction;
 
-    if (guildData === null) return;
+    if (getGuild.auditsEnabled !== true) return;
+    if (!getGuild.auditsChannelId) return;
 
-    if (guildData.audits.status !== true) return;
-    if (!guildData.audits.channelId) return;
-
-    const channel = client.channels.cache.get(`${guildData.audits.channelId}`);
+    const channel = client.channels.cache.get(`${getGuild.auditsChannelId}`);
 
     if (!channel) return;
     if (channel.type !== ChannelType.GuildText) return;

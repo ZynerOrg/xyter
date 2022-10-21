@@ -1,6 +1,6 @@
-import { EmbedBuilder, GuildMember, TextChannel } from "discord.js";
+import { ChannelType, EmbedBuilder, GuildMember } from "discord.js";
+import prisma from "../../handlers/database";
 import getEmbedConfig from "../../helpers/getEmbedData";
-import guildSchema from "../../models/guild";
 
 export default {
   execute: async (member: GuildMember) => {
@@ -8,29 +8,33 @@ export default {
       member.guild
     );
 
-    const guildData = await guildSchema.findOne({ guildId: member.guild.id });
+    const getGuild = await prisma.guild.findUnique({
+      where: { id: member.guild.id },
+    });
+
+    if (!getGuild) throw new Error("Guild not found");
 
     const { client } = member;
 
-    if (guildData === null) return;
-
-    if (guildData.welcome.status !== true) return;
-    if (!guildData.welcome.leaveChannel) return;
+    if (getGuild.welcomeEnabled !== true) return;
+    if (!getGuild.welcomeLeaveChannelId) return;
 
     const channel = client.channels.cache.get(
-      `${guildData.welcome.leaveChannel}`
+      `${getGuild.welcomeLeaveChannelId}`
     );
 
-    if (channel === null) return;
+    if (!channel) throw new Error("Channel not found");
+    if (channel.type !== ChannelType.GuildText)
+      throw new Error("Channel is not a text channel");
 
-    (channel as TextChannel).send({
+    channel.send({
       embeds: [
         new EmbedBuilder()
           .setColor(errorColor)
           .setTitle(`${member.user.username} has left the server!`)
           .setThumbnail(member.user.displayAvatarURL())
           .setDescription(
-            guildData.welcome.leaveChannelMessage ||
+            getGuild.welcomeLeaveChannelMessage ||
               "Configure a leave message in the `/settings guild welcome`."
           )
           .setTimestamp()

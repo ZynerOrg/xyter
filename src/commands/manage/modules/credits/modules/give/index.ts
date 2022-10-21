@@ -13,14 +13,10 @@ import pluralize from "../../../../../../helpers/pluralize";
 // Models
 // Handlers
 import prisma from "../../../../../../handlers/database";
+import deferReply from "../../../../../../handlers/deferReply";
+import checkPermission from "../../../../../../helpers/checkPermission";
 // Function
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("give")
@@ -39,6 +35,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     ); // Destructure
