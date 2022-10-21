@@ -9,15 +9,16 @@ import getEmbedConfig from "../../../../helpers/getEmbedData";
 // Helpers
 // Handlers
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 import logger from "../../../../middlewares/logger";
 
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command.setName("work").setDescription(`Work to earn credits`);
   },
   execute: async (interaction: CommandInteraction) => {
+    await deferReply(interaction, true);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     ); // Destructure member

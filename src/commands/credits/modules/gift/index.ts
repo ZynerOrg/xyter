@@ -7,13 +7,12 @@ import {
 } from "discord.js";
 import transferCredits from "../../../../helpers/transferCredits";
 // Configurations
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 // Handlers
 
 // Function
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("gift")
@@ -35,6 +34,8 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );
