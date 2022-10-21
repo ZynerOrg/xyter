@@ -4,6 +4,7 @@ import checkDirectory from "../../helpers/checkDirectory";
 import { IJob } from "../../interfaces/Job";
 import logger from "../../middlewares/logger";
 
+// Start all jobs that are in the schedules directory
 export const start = async (client: Client) => {
   logger.info("⏰ Started job management");
 
