@@ -1,11 +1,10 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 export default {
-  metadata: { guildOnly: false, ephemeral: false },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("lookup")
@@ -20,6 +19,8 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, false);
+
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild);
     const embedTitle = "[:hammer:] Utility (Lookup)";
