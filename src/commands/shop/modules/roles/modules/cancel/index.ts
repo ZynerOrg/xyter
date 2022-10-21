@@ -5,11 +5,10 @@ import { ChatInputCommandInteraction } from "discord.js";
 // Configurations
 // import fetchUser from "../../../../../../helpers/userData";
 // Models
+import deferReply from "../../../../../../handlers/deferReply";
 
 // Function
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("cancel")
@@ -22,6 +21,8 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
     // const { successColor, footerText, footerIcon } = await getEmbedConfig(
     //   interaction.guild
     // );

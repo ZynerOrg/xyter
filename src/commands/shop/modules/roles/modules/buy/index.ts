@@ -2,14 +2,13 @@
 // Helpers
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
+import deferReply from "../../../../../../handlers/deferReply";
 // Configurations
 // import fetchUser from "../../../../../../helpers/userData";
 // Models
 
 // Function
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("buy")
@@ -28,6 +27,8 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
     // const { successColor, footerText, footerIcon } = await getEmbedConfig(
     //   interaction.guild
     // );

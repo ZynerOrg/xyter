@@ -10,13 +10,12 @@ import {
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
 import encryption from "../../../../helpers/encryption";
 import getEmbedData from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
 export default {
-  metadata: { guildOnly: true, ephemeral: true },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("cpgg")
@@ -29,6 +28,8 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedData(interaction.guild);
     const { options, guild, user, client } = interaction;
