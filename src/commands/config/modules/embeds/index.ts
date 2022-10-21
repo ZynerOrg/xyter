@@ -5,15 +5,11 @@ import {
 } from "discord.js";
 
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
+import deferReply from "../../../../handlers/deferReply";
+import checkPermission from "../../../../helpers/checkPermission";
 import getValues from "./components/getValues";
 
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("embeds")
@@ -50,6 +46,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { guild } = interaction;
     if (!guild) throw new Error("Guild not found");
 

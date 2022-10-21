@@ -1,21 +1,17 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChannelType } from "discord-api-types/v10";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/database";
+import deferReply from "../../../../handlers/deferReply";
+import checkPermission from "../../../../helpers/checkPermission";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("audits")
@@ -35,6 +31,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { guild, options } = interaction;
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       guild
