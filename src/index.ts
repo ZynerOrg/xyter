@@ -1,8 +1,8 @@
 import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
 import "dotenv/config";
-import * as command from "./handlers/command";
-import * as event from "./handlers/event";
-import * as schedule from "./handlers/schedule";
+import { register as commandRegister } from "./handlers/command";
+import { register as eventRegister } from "./handlers/event";
+import { start as scheduleStart } from "./handlers/schedule";
 
 // Main process that starts all other sub processes
 const main = async () => {
@@ -19,9 +19,9 @@ const main = async () => {
   // Create command collection
   client.commands = new Collection();
 
-  await schedule.start(client);
-  await event.register(client);
-  await command.register(client);
+  await scheduleStart(client);
+  await eventRegister(client);
+  await commandRegister(client);
 
   // Authorize with Discord's API
   await client.login(process.env.DISCORD_TOKEN);
