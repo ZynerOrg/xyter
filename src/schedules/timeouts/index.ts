@@ -1,8 +1,9 @@
+/* eslint-disable no-loops/no-loops */
 import logger from "../../middlewares/logger";
 
-import timeoutSchema from "../../models/timeout";
-
 import addSeconds from "../../helpers/addSeconds";
+
+import prisma from "../../handlers/database";
 
 export const options = {
   schedule: "*/30 * * * *", // https://crontab.guru/
@@ -10,27 +11,30 @@ export const options = {
 
 // Execute the job
 export const execute = async () => {
-  const timeouts = await timeoutSchema.find();
-  await Promise.all(
-    timeouts.map(async (timeout) => {
-      const { guildId, userId, timeoutId, cooldown, createdAt } = timeout;
+  const getCooldown = await prisma.cooldown.findMany();
 
-      const overDue = (await addSeconds(cooldown, createdAt)) < new Date();
+  for await (const timeout of getCooldown) {
+    const { guildId, userId, timeoutId, cooldown, createdAt } = timeout;
 
-      if (overDue) {
-        timeoutSchema
-          .deleteOne({
+    const overDue = (await addSeconds(cooldown, createdAt)) < new Date();
+
+    if (overDue) {
+      logger.info(timeout);
+      const deleteCooldown = await prisma.cooldown.delete({
+        where: {
+          guildId_userId_timeoutId: {
             guildId,
             userId,
             timeoutId,
-            cooldown,
-          })
-          .then(() => {
-            logger.debug(
-              `Timeout document ${timeoutId} has been deleted from user ${userId}.`
-            );
-          });
-      }
-    })
-  );
+          },
+        },
+      });
+
+      logger.silly(deleteCooldown);
+
+      logger.debug(
+        `Timeout document ${timeoutId} has been deleted from user ${userId}.`
+      );
+    }
+  }
 };

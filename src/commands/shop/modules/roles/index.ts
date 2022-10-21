@@ -8,7 +8,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 import moduleBuy from "./modules/buy";
 import moduleCancel from "./modules/cancel";
 
-import guildSchema from "../../../../models/guild";
+import prisma from "../../../../handlers/database";
 
 export default {
   builder: (group: SlashCommandSubcommandGroupBuilder) => {
@@ -26,13 +26,12 @@ export default {
     if (!interaction.guild) return;
     const { options, guild } = interaction;
 
-    const guildDB = await guildSchema?.findOne({
-      guildId: guild?.id,
+    const getGuild = await prisma.guild.findUnique({
+      where: { id: guild.id },
     });
+    if (!getGuild) throw new Error("Guild not found");
 
-    if (guildDB === null) return;
-
-    if (!guildDB.shop.roles.status)
+    if (!getGuild.shopRolesEnabled)
       throw new Error("This server has disabled shop roles.");
 
     if (options?.getSubcommand() === "buy") {
