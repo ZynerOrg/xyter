@@ -13,4 +13,6 @@ CREATE TABLE "GuildShopRoles" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "GuildShopRoles_guildId_channelId_key" ON "GuildShopRoles"("guildId", "channelId");
+
+CREATE UNIQUE INDEX "GuildShopRoles_guildId_channelId_key" ON "GuildShopRoles" ("guildId", "channelId");
+

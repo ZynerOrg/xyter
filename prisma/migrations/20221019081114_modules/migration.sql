@@ -69,3 +69,4 @@ PRAGMA foreign_keys = ON;
 -- CreateIndex
 
 CREATE UNIQUE INDEX "GuildCounter_guildId_channelId_key" ON "GuildCounter" ("guildId", "channelId");
+
