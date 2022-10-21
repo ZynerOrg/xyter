@@ -91,7 +91,7 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
             },
           },
         },
-        creditsEarned: +amount,
+        creditsEarned: amount,
       },
       where: {
         userId_guildId: {
