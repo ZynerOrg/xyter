@@ -30,10 +30,7 @@ export default {
   execute: async (interaction: ChatInputCommandInteraction) => {
     await deferReply(interaction, false);
 
-    await checkPermission(
-      interaction,
-      PermissionsBitField.Flags.ManageMessages
-    );
+    checkPermission(interaction, PermissionsBitField.Flags.ManageMessages);
 
     const { errorColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild

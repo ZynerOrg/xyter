@@ -15,7 +15,7 @@ export const execute = async (client: Client) => {
     const now = new Date();
 
     if (nextPayment > now) {
-      await dueForPayment.execute(client, role);
+      dueForPayment.execute(client, role);
 
       return;
     }

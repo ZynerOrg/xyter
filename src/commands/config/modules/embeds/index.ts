@@ -48,7 +48,7 @@ export default {
   execute: async (interaction: ChatInputCommandInteraction) => {
     await deferReply(interaction, true);
 
-    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+    checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
     const { guild } = interaction;
     if (!guild) throw new Error("Guild not found");

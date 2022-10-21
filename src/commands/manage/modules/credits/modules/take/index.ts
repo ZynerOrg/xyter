@@ -38,7 +38,7 @@ export default {
   execute: async (interaction: ChatInputCommandInteraction) => {
     await deferReply(interaction, true);
 
-    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+    checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild); // Destructure

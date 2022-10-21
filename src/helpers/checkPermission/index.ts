@@ -1,6 +1,6 @@
 import { BaseInteraction, PermissionResolvable } from "discord.js";
 
-export default async (
+export default (
   interaction: BaseInteraction,
   permission: PermissionResolvable
 ) => {
