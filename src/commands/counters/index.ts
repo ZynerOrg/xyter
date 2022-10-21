@@ -1,18 +1,23 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 
-import modules from "./modules";
+// Modules
+import moduleView from "./modules/view";
 
 export const builder = new SlashCommandBuilder()
   .setName("counters")
   .setDescription("View guild counters")
+  .setDMPermission(false)
 
-  .addSubcommand(modules.view.builder);
-
-export const moduleData = modules;
+  // Modules
+  .addSubcommand(moduleView.builder);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  if (interaction.options.getSubcommand() === "view") {
-    await modules.view.execute(interaction);
+  switch (interaction.options.getSubcommand()) {
+    case "view":
+      await moduleView.execute(interaction);
+      break;
+    default:
+      throw new Error("No module found for that command.");
   }
 };
