@@ -11,7 +11,7 @@ export const options: IEventOptions = {
 export const execute = async (guild: Guild) => {
   const { client } = guild;
 
-  await updatePresence(client);
+  updatePresence(client);
 
   // Create guildMember object
   const createGuildMember = await prisma.guildMember.upsert({

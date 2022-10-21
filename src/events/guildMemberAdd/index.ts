@@ -20,7 +20,7 @@ export const execute = async (member: GuildMember) => {
 
   await audits.execute(member);
   await joinMessage.execute(member);
-  await updatePresence(client);
+  updatePresence(client);
 
   // Create guildMember object
   const createGuildMember = await prisma.guildMember.upsert({

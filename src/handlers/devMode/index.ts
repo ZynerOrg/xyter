@@ -3,9 +3,9 @@ import logger from "../../middlewares/logger";
 
 export default async (client: Client) => {
   if (process.env.NODE_ENV !== "production") {
-    return client?.application?.commands
+    await client?.application?.commands
       ?.set([], process.env.DISCORD_GUILD_ID)
-      .then(async () => {
+      .then(() => {
         return logger.verbose(`Development mode is disabled.`);
       });
   }

@@ -3,7 +3,7 @@ import { ActivityType, Client } from "discord.js";
 import logger from "../../middlewares/logger";
 
 // Function
-export default async (client: Client) => {
+export default (client: Client) => {
   if (!client?.user) throw new Error("Client's user is undefined.");
   const { guilds } = client;
 

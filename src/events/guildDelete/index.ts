@@ -12,7 +12,7 @@ export const options: IEventOptions = {
 export const execute = async (guild: Guild) => {
   const { client } = guild;
 
-  await updatePresence(client);
+  updatePresence(client);
 
   // Delete guildMember objects
   const deleteGuildMembers = prisma.guildMember.deleteMany({

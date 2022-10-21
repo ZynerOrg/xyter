@@ -16,7 +16,7 @@ export const execute = async () => {
   for await (const timeout of getCooldown) {
     const { guildId, userId, timeoutId, cooldown, createdAt } = timeout;
 
-    const overDue = (await addSeconds(cooldown, createdAt)) < new Date();
+    const overDue = addSeconds(cooldown, createdAt) < new Date();
 
     if (overDue) {
       logger.info(timeout);

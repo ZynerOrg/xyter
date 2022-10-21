@@ -30,17 +30,11 @@ export default async (client: Client) => {
     .set(commandList, process.env.DISCORD_GUILD_ID)
     .then(async () => {
       logger.info(`Finished updating command list.`);
-    })
-    .catch(async (error) => {
-      logger.error(`${error}`);
     });
 
   if (process.env.NODE_ENV !== "production") {
     await client.application?.commands
       .set(commandList)
-      .then(async () => logger.info(`Finished updating guild command list.`))
-      .catch(async (error) => {
-        logger.error(`${error}`);
-      });
+      .then(async () => logger.info(`Finished updating guild command list.`));
   }
 };

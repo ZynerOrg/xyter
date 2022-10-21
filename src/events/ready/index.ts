@@ -14,7 +14,7 @@ export const options: IEventOptions = {
 export const execute = async (client: Client) => {
   logger.info("Discord's API client is ready!");
 
-  await updatePresence(client);
+  updatePresence(client);
   await devMode(client);
   await deployCommands(client);
 };

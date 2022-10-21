@@ -20,7 +20,7 @@ export const execute = async (member: GuildMember) => {
 
   await audits.execute(member);
   await leaveMessage.execute(member);
-  await updatePresence(client);
+  updatePresence(client);
 
   // Delete guildMember object
   const deleteGuildMember = await prisma.guildMember.deleteMany({
