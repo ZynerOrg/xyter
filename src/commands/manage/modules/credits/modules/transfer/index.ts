@@ -8,17 +8,12 @@ import {
 } from "discord.js";
 import transferCredits from "../../../../../../helpers/transferCredits";
 // Configurations
+import deferReply from "../../../../../../handlers/deferReply";
+import checkPermission from "../../../../../../helpers/checkPermission";
 import getEmbedConfig from "../../../../../../helpers/getEmbedData";
-// Handlers../../../../../../../helpers/userData
 
 // Function
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("transfer")
@@ -43,6 +38,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild); // Destructure member
     const { guild, options } = interaction;

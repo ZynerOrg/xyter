@@ -2,17 +2,19 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 
-// Groups
-import modules from "./modules";
-
-export const moduleData = modules;
+// Modules
+import moduleCounters from "./modules/counters";
+import moduleCredits from "./modules/credits";
 
 // Function
 export const builder = new SlashCommandBuilder()
   .setName("manage")
   .setDescription("Manage the bot.")
-  .addSubcommandGroup(modules.counters.builder)
-  .addSubcommandGroup(modules.credits.builder);
+  .setDMPermission(false)
+
+  // Modules
+  .addSubcommandGroup(moduleCounters.builder)
+  .addSubcommandGroup(moduleCredits.builder);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   // Destructure
@@ -20,11 +22,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   switch (options.getSubcommandGroup()) {
     case "credits": {
-      await modules.credits.execute(interaction);
+      await moduleCredits.execute(interaction);
       break;
     }
     case "counters": {
-      await modules.counters.execute(interaction);
+      await moduleCounters.execute(interaction);
       break;
     }
     default: {

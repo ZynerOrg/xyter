@@ -1,38 +1,43 @@
 import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
-import modules from "./modules";
 
-export const moduleData = modules;
+// Modules
+import moduleGive from "./modules/give";
+import moduleGiveaway from "./modules/giveaway";
+import moduleSet from "./modules/set";
+import moduleTake from "./modules/take";
+import moduleTransfer from "./modules/transfer";
 
-export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
-  return group
-    .setName("credits")
-    .setDescription("Manage the credits of a user.")
-    .addSubcommand(modules.give.builder)
-    .addSubcommand(modules.set.builder)
-    .addSubcommand(modules.take.builder)
-    .addSubcommand(modules.transfer.builder)
-    .addSubcommand(modules.giveaway.builder);
-};
-
-export const execute = async (interaction: ChatInputCommandInteraction) => {
-  switch (interaction.options.getSubcommand()) {
-    case "give":
-      await modules.give.execute(interaction);
-      break;
-    case "set":
-      await modules.set.execute(interaction);
-      break;
-    case "take":
-      await modules.take.execute(interaction);
-      break;
-    case "transfer":
-      await modules.transfer.execute(interaction);
-      break;
-    case "giveaway":
-      await modules.giveaway.execute(interaction);
-      break;
-    default:
-      throw new Error("No module found for that specific command");
-  }
+export default {
+  builder: (group: SlashCommandSubcommandGroupBuilder) => {
+    return group
+      .setName("credits")
+      .setDescription("Manage the credits of a user.")
+      .addSubcommand(moduleGive.builder)
+      .addSubcommand(moduleSet.builder)
+      .addSubcommand(moduleTake.builder)
+      .addSubcommand(moduleTransfer.builder)
+      .addSubcommand(moduleGiveaway.builder);
+  },
+  execute: async (interaction: ChatInputCommandInteraction) => {
+    switch (interaction.options.getSubcommand()) {
+      case "give":
+        await moduleGive.execute(interaction);
+        break;
+      case "set":
+        await moduleSet.execute(interaction);
+        break;
+      case "take":
+        await moduleTake.execute(interaction);
+        break;
+      case "transfer":
+        await moduleTransfer.execute(interaction);
+        break;
+      case "giveaway":
+        await moduleGiveaway.execute(interaction);
+        break;
+      default:
+        throw new Error("No module found for that specific command");
+    }
+  },
 };

@@ -6,6 +6,8 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
+import deferReply from "../../../../../../handlers/deferReply";
+import checkPermission from "../../../../../../helpers/checkPermission";
 // Configurations
 import prisma from "../../../../../../handlers/database";
 import getEmbedConfig from "../../../../../../helpers/getEmbedData";
@@ -13,12 +15,6 @@ import logger from "../../../../../../middlewares/logger";
 
 // Function
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("add")
@@ -43,6 +39,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
     );

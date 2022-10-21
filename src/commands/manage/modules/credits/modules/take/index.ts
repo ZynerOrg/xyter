@@ -12,16 +12,12 @@ import getEmbedConfig from "../../../../../../helpers/getEmbedData";
 import pluralize from "../../../../../../helpers/pluralize";
 // Handlers
 import prisma from "../../../../../../handlers/database";
+import deferReply from "../../../../../../handlers/deferReply";
+import checkPermission from "../../../../../../helpers/checkPermission";
 import logger from "../../../../../../middlewares/logger";
 
 // Function
 export default {
-  metadata: {
-    guildOnly: true,
-    ephemeral: true,
-    permissions: [PermissionsBitField.Flags.ManageGuild],
-  },
-
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
       .setName("take")
@@ -40,6 +36,10 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    await deferReply(interaction, true);
+
+    await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
     const { errorColor, successColor, footerText, footerIcon } =
       await getEmbedConfig(interaction.guild); // Destructure
     const { guild, options } = interaction;
