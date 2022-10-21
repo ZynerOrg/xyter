@@ -42,8 +42,9 @@ export default {
 
     await checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild); // Destructure member
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(
+      interaction.guild
+    ); // Destructure member
     const { guild, options } = interaction;
 
     // Get options

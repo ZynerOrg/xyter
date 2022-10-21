@@ -20,7 +20,7 @@ export default {
   execute: async (interaction: ChatInputCommandInteraction) => {
     await deferReply(interaction, true);
 
-    const { options, user, guild } = interaction;
+    const { options, guild } = interaction;
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       guild
