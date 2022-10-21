@@ -1,11 +1,12 @@
 /*
-  Warnings:
+ Warnings:
 
-  - You are about to alter the column `cooldown` on the `Cooldown` table. The data in that column could be lost. The data in that column will be cast from `String` to `Int`.
-
-*/
+ - You are about to alter the column `cooldown` on the `Cooldown` table. The data in that column could be lost. The data in that column will be cast from `String` to `Int`.
+ */
 -- RedefineTables
-PRAGMA foreign_keys=OFF;
+
+PRAGMA foreign_keys = OFF;
+
 CREATE TABLE "new_Cooldown" (
     "guildId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -16,9 +17,24 @@ CREATE TABLE "new_Cooldown" (
     CONSTRAINT "Cooldown_guildId_fkey" FOREIGN KEY ("guildId") REFERENCES "Guild" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Cooldown_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Cooldown" ("cooldown", "createdAt", "guildId", "timeoutId", "updatedAt", "userId") SELECT "cooldown", "createdAt", "guildId", "timeoutId", "updatedAt", "userId" FROM "Cooldown";
+
+INSERT INTO "new_Cooldown" ("cooldown", "createdAt", "guildId", "timeoutId", "updatedAt", "userId")
+SELECT
+    "cooldown",
+    "createdAt",
+    "guildId",
+    "timeoutId",
+    "updatedAt",
+    "userId"
+FROM
+    "Cooldown";
+
 DROP TABLE "Cooldown";
+
 ALTER TABLE "new_Cooldown" RENAME TO "Cooldown";
-CREATE UNIQUE INDEX "Cooldown_guildId_userId_timeoutId_key" ON "Cooldown"("guildId", "userId", "timeoutId");
+
+CREATE UNIQUE INDEX "Cooldown_guildId_userId_timeoutId_key" ON "Cooldown" ("guildId", "userId", "timeoutId");
+
 PRAGMA foreign_key_check;
-PRAGMA foreign_keys=ON;
+
+PRAGMA foreign_keys = ON;
