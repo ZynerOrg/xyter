@@ -2,8 +2,8 @@
 import { Client } from "discord.js";
 import prisma from "../../../../handlers/database";
 
-import * as dueForPayment from "./components/dueForPayment";
-import * as overDueForPayment from "./components/overDueForPayment";
+import { execute as dueForPaymentExecute } from "./components/dueForPayment";
+import { execute as overDueForPaymentExecute } from "./components/overDueForPayment";
 
 export const execute = async (client: Client) => {
   const roles = await prisma.guildShopRoles.findMany();
@@ -15,13 +15,13 @@ export const execute = async (client: Client) => {
     const now = new Date();
 
     if (nextPayment > now) {
-      dueForPayment.execute(client, role);
+      dueForPaymentExecute(client, role);
 
       return;
     }
 
     if (nextPayment < now) {
-      await overDueForPayment.execute(client, role);
+      await overDueForPaymentExecute(client, role);
     }
   }
 };

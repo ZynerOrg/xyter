@@ -3,7 +3,7 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 // Models
-import * as cooldown from "../../../../handlers/cooldown";
+import { command as CooldownCommand } from "../../../../handlers/cooldown";
 // Configurations
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 // Helpers
@@ -51,7 +51,7 @@ export default {
 
     logger.silly(createGuild);
 
-    await cooldown.command(interaction, createGuild.creditsWorkTimeout);
+    await CooldownCommand(interaction, createGuild.creditsWorkTimeout);
 
     const creditsEarned = chance.integer({
       min: 0,
