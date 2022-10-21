@@ -28,4 +28,5 @@ const main = async () => {
   await client.login(process.env.DISCORD_TOKEN);
 };
 
+// Start main process
 main();
