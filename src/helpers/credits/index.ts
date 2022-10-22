@@ -1,7 +1,12 @@
 import { Guild, User } from "discord.js";
 import prisma from "../../handlers/database";
 
-export default async (guild: Guild, from: User, to: User, amount: number) => {
+export const transfer = async (
+  guild: Guild,
+  from: User,
+  to: User,
+  amount: number
+) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Decrement amount from the sender.
     const sender = await tx.guildMember.upsert({
