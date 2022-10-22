@@ -57,13 +57,18 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
       throw new Error("You can't transfer below one credit.");
     }
 
-    // 6. Verify that recipient are not an bot.
+    // 6. Verify that the sender is not trying to send more than 100.000.000 credits.
+    if (amount > 100000000) {
+      throw new Error("You can't transfer more than 100.000.000 credits.");
+    }
+
+    // 7. Verify that recipient are not an bot.
     if (to.bot) throw new Error("You can't transfer to an bot.");
 
-    // 7. Verify that sender and recipient are not the same user.
+    // 8. Verify that sender and recipient are not the same user.
     if (from.id === to.id) throw new Error("You can't transfer to yourself.");
 
-    // 8. Increment the recipient's balance by amount.
+    // 9. Increment the recipient's balance by amount.
     const recipient = await tx.guildMember.upsert({
       update: {
         creditsEarned: {
