@@ -9,6 +9,7 @@ import { builder as GiftBuilder, execute as GiftExecute } from "./modules/gift";
 import { builder as TopBuilder, execute as TopExecute } from "./modules/top";
 import { builder as WorkBuilder, execute as WorkExecute } from "./modules/work";
 
+// 1. Export a builder function.
 export const builder = new SlashCommandBuilder()
   .setName("credits")
   .setDescription("Manage your credits.")
@@ -20,7 +21,7 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(TopBuilder)
   .addSubcommand(WorkBuilder);
 
-// Execute function
+// 2. Export an execute function.
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "balance":

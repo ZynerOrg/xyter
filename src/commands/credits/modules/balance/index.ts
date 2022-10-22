@@ -5,6 +5,7 @@ import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import logger from "../../../../middlewares/logger";
 
+// 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("balance")
@@ -16,6 +17,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     );
 };
 
+// 2. Export an execute function.
 export const execute = async (interaction: CommandInteraction) => {
   // 1. Defer reply as ephemeral.
   await deferReply(interaction, true);

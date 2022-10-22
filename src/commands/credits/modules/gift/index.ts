@@ -7,6 +7,7 @@ import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import transferCredits from "../../../../helpers/transferCredits";
 
+// 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("gift")
@@ -28,6 +29,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     );
 };
 
+// 2. Export an execute function.
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   // 1. Defer reply as ephemeral.
   await deferReply(interaction, true);
