@@ -1,73 +1,59 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { GuildMember } from "@prisma/client";
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import {
+  CommandInteraction,
+  SlashCommandSubcommandBuilder,
+  userMention,
+} from "discord.js";
+
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import logger from "../../../../middlewares/logger";
 
-export default {
-  metadata: { guildOnly: true, ephemeral: false },
+// 1. Export a builder function.
+export const builder = (command: SlashCommandSubcommandBuilder) => {
+  return command.setName("top").setDescription(`View the top users`);
+};
 
-  builder: (command: SlashCommandSubcommandBuilder) => {
-    return command.setName("top").setDescription(`View the top users`);
-  },
-  execute: async (interaction: CommandInteraction) => {
-    await deferReply(interaction, false);
+// 2. Export an execute function.
+export const execute = async (interaction: CommandInteraction) => {
+  // 1. Defer reply as permanent.
+  await deferReply(interaction, false);
 
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
-    const { guild } = interaction;
+  // 2. Destructure interaction object.
+  const { guild, client } = interaction;
+  if (!guild) throw new Error("Guild not found");
+  if (!client) throw new Error("Client not found");
 
-    const embed = new EmbedBuilder()
-      .setTitle("[:dollar:] Top")
-      .setTimestamp(new Date())
-      .setFooter({ text: footerText, iconURL: footerIcon });
+  // 3. Create base embeds.
+  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Top");
 
-    if (guild === null) {
-      logger.silly(`Guild is null`);
+  // 4. Get the top 10 users.
+  const topTen = await prisma.guildMember.findMany({
+    where: {
+      guildId: guild.id,
+    },
+    orderBy: {
+      creditsEarned: "desc",
+    },
+    take: 10,
+  });
+  logger.silly(topTen);
 
-      return interaction.editReply({
-        embeds: [
-          embed
-            .setDescription(
-              "Guild is not found. Please try again with a valid guild."
-            )
-            .setColor(errorColor),
-        ],
-      });
-    }
+  // 5. Create the top 10 list.
+  const entry = (guildMember: GuildMember, index: number) =>
+    `${index + 1}. ${userMention(guildMember.userId)} | :coin: ${
+      guildMember.creditsEarned
+    }`;
 
-    // const usersDB = await userSchema.find({ guildId: guild.id });
-
-    const topTen = await prisma.guildMember.findMany({
-      where: {
-        guildId: guild.id,
-      },
-      orderBy: {
-        creditsEarned: "desc",
-      },
-      take: 10,
-    });
-
-    logger.silly(topTen);
-
-    // Create entry object
-    const entry = (guildMember: GuildMember, index: number) =>
-      `${index + 1}. <@${guildMember.userId}> - ${
-        guildMember.creditsEarned
-      } credits`;
-
-    return interaction.editReply({
-      embeds: [
-        embed
-          .setDescription(
-            `Below are the top ten members in this guild.
-
-            ${topTen.map(entry).join("\n")}`
-          )
-          .setColor(successColor),
-      ],
-    });
-  },
+  // 6. Send embed
+  return interaction.editReply({
+    embeds: [
+      EmbedSuccess.setDescription(
+        `The top 10 users in this server are:\n\n${topTen
+          .map(entry)
+          .join("\n")}`
+      ),
+    ],
+  });
 };
