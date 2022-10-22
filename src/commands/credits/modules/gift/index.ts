@@ -28,6 +28,8 @@ export default {
           .setName("amount")
           .setDescription("The amount of credits you want to gift.")
           .setRequired(true)
+          .setMinValue(1)
+          .setMaxValue(100000000)
       )
       .addStringOption((option) =>
         option.setName("reason").setDescription("Your reason.")
