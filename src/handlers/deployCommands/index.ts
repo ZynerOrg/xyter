@@ -26,15 +26,13 @@ export default async (client: Client) => {
       throw new Error(`Could not gather command list: ${error}`);
     });
 
-  await client.application?.commands
-    .set(commandList, process.env.DISCORD_GUILD_ID)
-    .then(() => {
-      logger.info(`Finished updating command list.`);
-    });
+  await client.application?.commands.set(commandList).then(() => {
+    logger.info(`Finished updating command list.`);
+  });
 
   if (process.env.NODE_ENV !== "production") {
     await client.application?.commands
-      .set(commandList)
+      .set(commandList, process.env.DISCORD_GUILD_ID)
       .then(() => logger.info(`Finished updating guild command list.`));
   }
 };
