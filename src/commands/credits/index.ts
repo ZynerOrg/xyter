@@ -1,12 +1,13 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { ChatInputCommandInteraction } from "discord.js";
-import logger from "../../middlewares/logger";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 // Modules
-import moduleBalance from "./modules/balance";
-import moduleGift from "./modules/gift";
-import moduleTop from "./modules/top";
-import moduleWork from "./modules/work";
+import {
+  builder as BalanceBuilder,
+  execute as BalanceExecute,
+} from "./modules/balance";
+import { builder as GiftBuilder, execute as GiftExecute } from "./modules/gift";
+import { builder as TopBuilder, execute as TopExecute } from "./modules/top";
+import { builder as WorkBuilder, execute as WorkExecute } from "./modules/work";
 
 export const builder = new SlashCommandBuilder()
   .setName("credits")
@@ -14,29 +15,27 @@ export const builder = new SlashCommandBuilder()
   .setDMPermission(false)
 
   // Modules
-  .addSubcommand(moduleBalance.builder)
-  .addSubcommand(moduleGift.builder)
-  .addSubcommand(moduleTop.builder)
-  .addSubcommand(moduleWork.builder);
+  .addSubcommand(BalanceBuilder)
+  .addSubcommand(GiftBuilder)
+  .addSubcommand(TopBuilder)
+  .addSubcommand(WorkBuilder);
 
 // Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  const { options } = interaction;
-
-  switch (options.getSubcommand()) {
+  switch (interaction.options.getSubcommand()) {
     case "balance":
-      await moduleBalance.execute(interaction);
+      await BalanceExecute(interaction);
       break;
     case "gift":
-      await moduleGift.execute(interaction);
+      await GiftExecute(interaction);
       break;
     case "top":
-      await moduleTop.execute(interaction);
+      await TopExecute(interaction);
       break;
     case "work":
-      await moduleWork.execute(interaction);
+      await WorkExecute(interaction);
       break;
     default:
-      logger.silly(`Unknown subcommand ${options.getSubcommand()}`);
+      throw new Error("Subcommand not found");
   }
 };

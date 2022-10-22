@@ -1,95 +1,84 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
+
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import logger from "../../../../middlewares/logger";
 
-export default {
-  builder: (command: SlashCommandSubcommandBuilder) => {
-    return command
-      .setName("balance")
-      .setDescription(`View a user's balance`)
-      .addUserOption((option) =>
-        option
-          .setName("user")
-          .setDescription(`The user whose balance you want to view`)
-      );
-  },
-  execute: async (interaction: CommandInteraction) => {
-    await deferReply(interaction, true);
+export const builder = (command: SlashCommandSubcommandBuilder) => {
+  return command
+    .setName("balance")
+    .setDescription(`View a user's balance`)
+    .addUserOption((option) =>
+      option
+        .setName("target")
+        .setDescription(`The user whose balance you want to view`)
+    );
+};
 
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
-    const { options, user, guild } = interaction;
+export const execute = async (interaction: CommandInteraction) => {
+  // 1. Defer reply as ephemeral.
+  await deferReply(interaction, true);
 
-    const discordUser = options.getUser("user");
+  // 2. Destructure interaction object.
+  const { options, user, guild } = interaction;
+  if (!guild) throw new Error("Guild not found");
+  if (!user) throw new Error("User not found");
+  if (!options) throw new Error("Options not found");
 
-    const embed = new EmbedBuilder()
-      .setTitle("[:dollar:] Balance")
-      .setTimestamp(new Date())
-      .setFooter({ text: footerText, iconURL: footerIcon });
+  // 3. Get options from interaction.
+  const target = options.getUser("target");
 
-    if (guild === null) {
-      logger.silly(`Guild is null`);
+  // 4. Create base embeds.
+  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Balance");
 
-      return interaction.editReply({
-        embeds: [
-          embed.setDescription("Guild is not found").setColor(errorColor),
-        ],
-      });
-    }
-
-    const createGuildMember = await prisma.guildMember.upsert({
-      where: {
-        userId_guildId: {
-          userId: (discordUser || user).id,
-          guildId: guild.id,
-        },
+  // 5. Upsert the user in the database.
+  const createGuildMember = await prisma.guildMember.upsert({
+    where: {
+      userId_guildId: {
+        userId: (target || user).id,
+        guildId: guild.id,
       },
-      update: {},
-      create: {
-        user: {
-          connectOrCreate: {
-            create: {
-              id: (discordUser || user).id,
-            },
-            where: {
-              id: (discordUser || user).id,
-            },
+    },
+    update: {},
+    create: {
+      user: {
+        connectOrCreate: {
+          create: {
+            id: (target || user).id,
           },
-        },
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
+          where: {
+            id: (target || user).id,
           },
         },
       },
-      include: {
-        user: true,
-        guild: true,
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guild.id,
+          },
+          where: {
+            id: guild.id,
+          },
+        },
       },
-    });
+    },
+    include: {
+      user: true,
+      guild: true,
+    },
+  });
+  logger.silly(createGuildMember);
+  if (!createGuildMember) throw new Error("No guild member exists.");
 
-    logger.silly(createGuildMember);
-
-    if (!createGuildMember) throw new Error("No guild member exists.");
-
-    return interaction.editReply({
-      embeds: [
-        embed
-          .setDescription(
-            `${discordUser || user} currently has ${
-              createGuildMember.creditsEarned
-            } credits.`
-          )
-          .setColor(successColor),
-      ],
-    });
-  },
+  // 6. Send embed.
+  await interaction.editReply({
+    embeds: [
+      EmbedSuccess.setDescription(
+        target
+          ? `${target} has ${createGuildMember.creditsEarned} credits.`
+          : `You have ${createGuildMember.creditsEarned} credits.`
+      ),
+    ],
+  });
 };
