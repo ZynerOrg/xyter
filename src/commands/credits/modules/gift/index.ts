@@ -5,7 +5,7 @@ import {
 
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import { transfer as CreditsTransfer } from "../../../../helpers/credits";
+import creditsTransfer from "../../../../helpers/credits/transfer";
 
 // 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -55,7 +55,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Gift");
 
   // 5. Start an transaction of the credits.
-  await CreditsTransfer(guild, user, target, credits);
+  await creditsTransfer(guild, user, target, credits);
 
   // 6. Tell the target that they have been gifted credits.
   await target.send({

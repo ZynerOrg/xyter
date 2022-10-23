@@ -6,7 +6,7 @@ import { command as CooldownCommand } from "../../../../handlers/cooldown";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import { give as CreditsGive } from "../../../../helpers/credits";
+import creditsGive from "../../../../helpers/credits/give";
 import logger from "../../../../middlewares/logger";
 
 // 1. Export a builder function.
@@ -52,7 +52,7 @@ export const execute = async (interaction: CommandInteraction) => {
     max: createGuild.creditsWorkRate,
   });
 
-  const upsertGuildMember = await CreditsGive(guild, user, creditsEarned);
+  const upsertGuildMember = await creditsGive(guild, user, creditsEarned);
 
   // 8. Send embed.
   await interaction.editReply({

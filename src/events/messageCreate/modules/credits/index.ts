@@ -1,7 +1,7 @@
 import { ChannelType, Message } from "discord.js";
 import { message as CooldownMessage } from "../../../../handlers/cooldown";
 import prisma from "../../../../handlers/database";
-import { give as CreditsGive } from "../../../../helpers/credits";
+import creditsGive from "../../../../helpers/credits/give";
 import logger from "../../../../middlewares/logger";
 
 export default {
@@ -59,6 +59,6 @@ export default {
     );
     if (isOnCooldown) return;
 
-    await CreditsGive(guild, author, createGuildMember.guild.creditsRate);
+    await creditsGive(guild, author, createGuildMember.guild.creditsRate);
   },
 };

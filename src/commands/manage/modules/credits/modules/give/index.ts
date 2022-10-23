@@ -4,7 +4,7 @@ import { ChatInputCommandInteraction, PermissionsBitField } from "discord.js";
 import deferReply from "../../../../../../handlers/deferReply";
 import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../../../helpers/checkPermission";
-import { give as CreditsGive } from "../../../../../../helpers/credits";
+import creditsGive from "../../../../../../helpers/credits/give";
 import pluralize from "../../../../../../helpers/pluralize";
 
 export default {
@@ -51,7 +51,7 @@ export default {
     const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Give");
 
     // 6. Give the credits.
-    await CreditsGive(guild, discordReceiver, creditsAmount);
+    await creditsGive(guild, discordReceiver, creditsAmount);
 
     // 7. Send embed.
     return await interaction.editReply({
