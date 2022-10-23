@@ -9,6 +9,7 @@
     "prisma:generate": "prisma generate",
     "test": "jest",
     "start": "node dist",
+    "start:migrate:prod": "prisma migrate deploy && npm run start",
     "prettier-format": "prettier \"src/**/*.ts\" --write",
     "lint": "eslint ./src --ext .ts"
   },
