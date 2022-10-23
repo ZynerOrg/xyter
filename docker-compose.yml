@@ -1,41 +1,56 @@
-# Not working yet due to change from Mongoose to Prisma
-
-version: "3"
+version: "3.7"
 
 services:
   app:
-    image: zyner/xyter:latest
-    restart: unless-stopped
-    #    build: .
-    stdin_open: true
-    tty: true
+    container_name: app
+    restart: always
+    build: .
+    env_file: .env
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/usr/logs
     environment:
-      - DISCORD_TOKEN=DISCORD_TOKEN
-      - DISCORD_CLIENT_ID=DISCORD_CLIENT_ID
-      - DISCORD_GUILD_ID=DISCORD_GUILD_ID
-      - MONGO_URL=mongodb://MONGO_USER:MONGO_PASS@mongodb:27017/admin?retryWrites=true&w=majority
-      - ENCRYPTION_ALGORITHM=ENCRYPTION_ALGORITHM
-      - ENCRYPTION_SECRET=ENCRYPTION_SECRET
-      - EMEBD_COLOR_SUCCESS=EMEBD_COLOR_SUCCESS
-      - EMBED_COLOR_WAIT=EMBED_COLOR_WAIT
-      - EMBED_COLOR_ERROR=EMBED_COLOR_ERROR
-      - EMBED_FOOTER_TEXT=EMBED_FOOTER_TEXT
-      - EMBED_FOOTER_ICON=EMBED_FOOTER_ICON
-      - LOG_LEVEL=LOG_LEVEL
-      - REPUTATION_TIMEOUT=REPUTATION_TIMEOUT
-      - BOT_HOSTER_NAME=BOT_HOSTER_NAME
-      - BOT_HOSTER_URL=BOT_HOSTER_URL
-      - NODE_ENV=production
-    depends_on:
-      - mongodb
+      - DATABASE_URL="file:./dev.db"
 
-  mongodb:
-    image: mongo:latest
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: MONGO_USER
-      MONGO_INITDB_ROOT_PASSWORD: MONGO_PASS
-    volumes:
-      - ./database:/data/db
+volumes:
+  xyter-testdb:
+# # Not working yet due to change from Mongoose to Prisma
+
+# version: "3"
+
+# services:
+#   app:
+#     image: zyner/xyter:latest
+#     restart: unless-stopped
+#     #    build: .
+#     stdin_open: true
+#     tty: true
+#     volumes:
+#       - ./logs:/app/logs
+#     environment:
+#       - DISCORD_TOKEN=DISCORD_TOKEN
+#       - DISCORD_CLIENT_ID=DISCORD_CLIENT_ID
+#       - DISCORD_GUILD_ID=DISCORD_GUILD_ID
+#       - MONGO_URL=mongodb://MONGO_USER:MONGO_PASS@mongodb:27017/admin?retryWrites=true&w=majority
+#       - ENCRYPTION_ALGORITHM=ENCRYPTION_ALGORITHM
+#       - ENCRYPTION_SECRET=ENCRYPTION_SECRET
+#       - EMEBD_COLOR_SUCCESS=EMEBD_COLOR_SUCCESS
+#       - EMBED_COLOR_WAIT=EMBED_COLOR_WAIT
+#       - EMBED_COLOR_ERROR=EMBED_COLOR_ERROR
+#       - EMBED_FOOTER_TEXT=EMBED_FOOTER_TEXT
+#       - EMBED_FOOTER_ICON=EMBED_FOOTER_ICON
+#       - LOG_LEVEL=LOG_LEVEL
+#       - REPUTATION_TIMEOUT=REPUTATION_TIMEOUT
+#       - BOT_HOSTER_NAME=BOT_HOSTER_NAME
+#       - BOT_HOSTER_URL=BOT_HOSTER_URL
+#       - NODE_ENV=production
+#     depends_on:
+#       - mongodb
+
+#   mongodb:
+#     image: mongo:latest
+#     restart: unless-stopped
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: MONGO_USER
+#       MONGO_INITDB_ROOT_PASSWORD: MONGO_PASS
+#     volumes:
+#       - ./database:/data/db

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es6",
     "module": "CommonJS",
     "allowJs": true,
     "skipLibCheck": true,
@@ -11,7 +11,8 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "isolatedModules": true,
-    "outDir": "./build",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "resolveJsonModule": true,
     "typeRoots": ["/types/common", "./node_modules/@types"]
   },

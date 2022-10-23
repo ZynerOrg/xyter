@@ -2,13 +2,15 @@
   "name": "xyter",
   "version": "3.1.0",
   "description": "Earn credits while chatting! And more",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
+    "dev": "tsc --watch & nodemon dist",
+    "build": "tsc -p .",
+    "prisma:generate": "prisma generate",
     "test": "jest",
-    "start": "nodemon src/index.ts",
+    "start": "node dist",
     "prettier-format": "prettier \"src/**/*.ts\" --write",
-    "lint": "eslint ./src --ext .ts",
-    "prepare": "husky install"
+    "lint": "eslint ./src --ext .ts"
   },
   "keywords": [
     "Zyner",

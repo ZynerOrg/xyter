@@ -1,19 +1,34 @@
 FROM node:19
 
-LABEL maintainer="xyter@zyner.org"
+WORKDIR /usr
 
-WORKDIR /build
+COPY package.json ./
 
-COPY package* .
+COPY tsconfig.json ./
+
+COPY src ./src
+COPY prisma ./prisma
+
+RUN ls -a
+
 RUN npm install
 
-COPY . .
+RUN npm run build
 
-RUN npx -y tsc
+## this is stage two , where the app actually runs
 
-WORKDIR /app
+FROM node:19
 
-RUN cp -r /build/build/* .
-RUN cp -r /build/node_modules .
+WORKDIR /usr
 
-CMD [ "node", "." ]
+COPY package.json ./
+
+COPY prisma ./
+
+RUN npm install --omit=dev
+
+COPY --from=0 /usr/dist .
+
+RUN npx prisma migrate deploy
+
+CMD ["node","index.js"]
