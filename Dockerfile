@@ -1,13 +1,14 @@
-FROM node:19
+FROM node:19 AS builder
 
 WORKDIR /usr
-
-COPY package.json ./
 
 COPY tsconfig.json ./
 
 COPY src ./src
-COPY prisma ./prisma
+
+COPY package*.json ./
+
+COPY prisma ./prisma/
 
 RUN ls -a
 
@@ -21,18 +22,14 @@ FROM node:19
 
 WORKDIR /usr
 
-COPY package.json ./
+COPY package*.json ./
 
-COPY prisma ./prisma/
-
-COPY .env ./
-
-RUN npx prisma generate
+COPY dist ./dist/
 
 RUN npm install --omit=dev
 
-COPY --from=0 /usr/dist .
+COPY --from=builder /usr/package*.json ./
 
-RUN npx prisma migrate deploy
+COPY --from=builder /usr/dist ./dist
 
-CMD ["node","index.js"]
+CMD ["node","dist/index.js"]
