@@ -1,6 +1,7 @@
 import { ChannelType, Message } from "discord.js";
 import { message as CooldownMessage } from "../../../../handlers/cooldown";
 import prisma from "../../../../handlers/database";
+import { give as CreditsGive } from "../../../../helpers/credits";
 import logger from "../../../../middlewares/logger";
 
 export default {
@@ -58,23 +59,6 @@ export default {
     );
     if (isOnCooldown) return;
 
-    const updateGuildMember = await prisma.guildMember.update({
-      where: {
-        userId_guildId: {
-          userId: author.id,
-          guildId: guild.id,
-        },
-      },
-      data: {
-        creditsEarned: {
-          increment: createGuildMember.guild.creditsRate,
-        },
-      },
-    });
-
-    logger.silly(updateGuildMember);
-
-    if (!updateGuildMember)
-      throw new Error("Failed to update guildMember object");
+    await CreditsGive(guild, author, createGuildMember.guild.creditsRate);
   },
 };

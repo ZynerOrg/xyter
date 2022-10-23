@@ -1,21 +1,12 @@
-// Dependencies
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import {
-  ChatInputCommandInteraction,
-  EmbedBuilder,
-  PermissionsBitField,
-} from "discord.js";
-import logger from "../../../../../../middlewares/logger";
-// Configurations
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
-// Helpers../../../../../../../helpers/userData
-import pluralize from "../../../../../../helpers/pluralize";
-// Models
-// Handlers
-import prisma from "../../../../../../handlers/database";
+import { ChatInputCommandInteraction, PermissionsBitField } from "discord.js";
+
 import deferReply from "../../../../../../handlers/deferReply";
+import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../../../helpers/checkPermission";
-// Function
+import { give as CreditsGive } from "../../../../../../helpers/credits";
+import pluralize from "../../../../../../helpers/pluralize";
+
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
@@ -34,81 +25,41 @@ export default {
           .setRequired(true)
       );
   },
+
   execute: async (interaction: ChatInputCommandInteraction) => {
+    // 1. Defer reply as ephemeral.
     await deferReply(interaction, true);
 
+    // 2. Check if the user has the MANAGE_GUILD permission.
     checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
-      interaction.guild
-    ); // Destructure
+    // 3. Destructure interaction object.
     const { guild, options } = interaction;
+    if (!guild)
+      throw new Error("We could not get the current guild from discord.");
+    if (!options) throw new Error("We could not get the options from discord.");
 
-    const discordReceiver = options?.getUser("user");
-    const creditAmount = options?.getInteger("amount");
-
-    // If amount option is null
-    if (creditAmount === null)
+    // 4. Get the user and amount from the options.
+    const discordReceiver = options.getUser("user");
+    const creditsAmount = options.getInteger("amount");
+    if (typeof creditsAmount !== "number")
       throw new Error("You need to provide a credit amount.");
-
-    // If amount is zero or below
-    if (creditAmount <= 0)
-      throw new Error("You must provide a credit amount greater than zero");
-
-    if (discordReceiver === null)
+    if (!discordReceiver)
       throw new Error("We could not get the receiving user from Discord");
 
-    if (guild === null)
-      throw new Error("We could not get the current guild from discord.");
+    // 5. Create base embeds.
+    const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Give");
 
-    const createGuildMember = await prisma.guildMember.upsert({
-      where: {
-        userId_guildId: {
-          userId: discordReceiver.id,
-          guildId: guild.id,
-        },
-      },
-      update: { creditsEarned: { increment: creditAmount } },
-      create: {
-        creditsEarned: creditAmount,
-        user: {
-          connectOrCreate: {
-            create: {
-              id: discordReceiver.id,
-            },
-            where: {
-              id: discordReceiver.id,
-            },
-          },
-        },
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
-          },
-        },
-      },
-    });
+    // 6. Give the credits.
+    await CreditsGive(guild, discordReceiver, creditsAmount);
 
-    logger.silly(createGuildMember);
-
-    // Save toUser
-    await interaction?.editReply({
+    // 7. Send embed.
+    return await interaction.editReply({
       embeds: [
-        new EmbedBuilder()
-          .setTitle("[:toolbox:] Manage - Credits (Give)")
-          .setDescription(
-            `Successfully gave ${pluralize(creditAmount, "credit")}`
-          )
-          .setTimestamp(new Date())
-          .setColor(successColor)
-          .setFooter({ text: footerText, iconURL: footerIcon }),
+        embedSuccess.setDescription(
+          `Successfully gave ${pluralize(creditsAmount, "credit")}`
+        ),
       ],
     });
-    return;
   },
 };

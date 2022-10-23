@@ -115,3 +115,59 @@ export const transfer = async (
     return recipient;
   });
 };
+
+// Give to guildMember
+export const give = async (guild: Guild, user: User, amount: number) => {
+  // 1. Verify that the amount is not above 100.000.000 credits.
+  if (amount > 100000000) {
+    throw new Error("You can't give more than 1.000.000 credits.");
+  }
+
+  // 2. Verify that the amount is not below 1 credits.
+  if (amount <= 0) {
+    throw new Error("You can't give below one credit.");
+  }
+
+  // 3. Verify that the user is not an bot.
+  if (user.bot) {
+    throw new Error("You can't give to an bot.");
+  }
+
+  // 4. Increment the user's balance by amount.
+  return await prisma.guildMember.upsert({
+    update: {
+      creditsEarned: {
+        increment: amount,
+      },
+    },
+    create: {
+      user: {
+        connectOrCreate: {
+          create: {
+            id: user.id,
+          },
+          where: {
+            id: user.id,
+          },
+        },
+      },
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guild.id,
+          },
+          where: {
+            id: guild.id,
+          },
+        },
+      },
+      creditsEarned: amount,
+    },
+    where: {
+      userId_guildId: {
+        userId: user.id,
+        guildId: guild.id,
+      },
+    },
+  });
+};
