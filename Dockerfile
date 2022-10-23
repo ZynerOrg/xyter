@@ -22,14 +22,11 @@ FROM node:19
 
 WORKDIR /usr
 
-COPY package*.json ./
-
-COPY dist ./dist/
-
-RUN npm install --omit=dev
 
 COPY --from=builder /usr/package*.json ./
 
 COPY --from=builder /usr/dist ./dist
+
+RUN npm install --omit=dev
 
 CMD ["node","dist/index.js"]
