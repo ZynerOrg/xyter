@@ -10,7 +10,6 @@ COPY prisma ./prisma/
 # Install app dependencies
 RUN npm install
 
-RUN npx prisma migrate deploy
 
 COPY . .
 
@@ -21,6 +20,8 @@ FROM node:19
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
+
+RUN npx prisma migrate deploy
 
 EXPOSE 3000
 CMD [ "npm", "run", "start" ]
