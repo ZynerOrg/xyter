@@ -1,5 +1,6 @@
 import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
 import "dotenv/config";
+
 import { register as commandRegister } from "./handlers/command";
 import { register as eventRegister } from "./handlers/event";
 import { start as scheduleStart } from "./handlers/schedule";

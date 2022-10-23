@@ -2,11 +2,11 @@ import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
 import { CommandInteraction } from "discord.js";
 
-import { command as CooldownCommand } from "../../../../handlers/cooldown";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import creditsGive from "../../../../helpers/credits/give";
+import cooldown from "../../../../middlewares/cooldown";
 import logger from "../../../../middlewares/logger";
 
 // 1. Export a builder function.
@@ -20,7 +20,7 @@ export const execute = async (interaction: CommandInteraction) => {
   await deferReply(interaction, true);
 
   // 2. Destructure interaction object.
-  const { guild, user } = interaction;
+  const { guild, user, commandId } = interaction;
   if (!guild) throw new Error("Guild not found");
   if (!user) throw new Error("User not found");
 
@@ -44,7 +44,7 @@ export const execute = async (interaction: CommandInteraction) => {
   if (!createGuild) throw new Error("Guild not found");
 
   // 6. Create a cooldown for the user.
-  await CooldownCommand(interaction, createGuild.creditsWorkTimeout);
+  await cooldown(guild, user, commandId, createGuild.creditsWorkTimeout);
 
   // 6. Generate a random number between 0 and creditsWorkRate.
   const creditsEarned = chance.integer({

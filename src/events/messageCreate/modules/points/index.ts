@@ -1,6 +1,6 @@
 import { ChannelType, Message } from "discord.js";
-import { message as CooldownMessage } from "../../../../handlers/cooldown";
 import prisma from "../../../../handlers/database";
+import cooldown from "../../../../middlewares/cooldown";
 import logger from "../../../../middlewares/logger";
 
 export default {
@@ -51,12 +51,13 @@ export default {
 
     if (content.length < createGuildMember.guild.pointsMinimumLength) return;
 
-    const isOnCooldown = await CooldownMessage(
-      message,
+    await cooldown(
+      guild,
+      author,
+      "event-messageCreate-points",
       createGuildMember.guild.pointsTimeout,
-      "messageCreate-points"
+      true
     );
-    if (isOnCooldown) return;
 
     const updateGuildMember = await prisma.guildMember.update({
       where: {

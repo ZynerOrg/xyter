@@ -1,12 +1,12 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import { command as CooldownCommand } from "../../../../handlers/cooldown";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";
 
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
+import cooldown from "../../../../middlewares/cooldown";
 
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -36,7 +36,7 @@ export default {
   execute: async (interaction: ChatInputCommandInteraction) => {
     await deferReply(interaction, true);
 
-    const { options, user, guild } = interaction;
+    const { options, user, guild, commandId } = interaction;
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       guild
@@ -52,8 +52,10 @@ export default {
     noSelfReputation(optionTarget, user);
 
     // Check if user is on cooldown otherwise create one
-    await CooldownCommand(
-      interaction,
+    await cooldown(
+      guild,
+      user,
+      commandId,
       parseInt(process.env.REPUTATION_TIMEOUT)
     );
 
