@@ -3,7 +3,7 @@ version: "3.7"
 services:
   app:
     container_name: app
-    image: vermiumwastaken/xyter
+    image: zyner/xyter:dev
     restart: unless-stopped
     env_file:
       - .env
