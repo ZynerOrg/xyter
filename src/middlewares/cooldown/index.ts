@@ -45,13 +45,13 @@ export default async (
       });
     }
 
-    if (!silent) {
-      throw new Error(`You are still on cooldown for ${duration}`);
+    if (silent) {
+      return logger.verbose(
+        `User ${userId} is on cooldown for ${timeoutId}, it ends in ${duration}.`
+      );
     }
 
-    return logger.verbose(
-      `User ${userId} is on cooldown for ${timeoutId}, it ends in ${duration}.`
-    );
+    throw new Error(`You are still on cooldown for ${duration}`);
   }
 
   const createCooldown = await prisma.cooldown.upsert({
