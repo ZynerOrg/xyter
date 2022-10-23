@@ -1,6 +1,7 @@
 import { Guild, User } from "discord.js";
 import prisma from "../../handlers/database";
 
+// Start an transaction between two users in a guild.
 export const transfer = async (
   guild: Guild,
   from: User,
