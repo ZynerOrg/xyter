@@ -156,4 +156,3 @@ ALTER TABLE `GuildShopRoles`
     ADD CONSTRAINT `GuildShopRoles_userId_guildId_fkey` FOREIGN KEY (`userId`, `guildId`) REFERENCES `GuildMember` (`userId`, `guildId`) ON DELETE RESTRICT ON
     UPDATE
         CASCADE;
-
