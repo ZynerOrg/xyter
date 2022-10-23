@@ -4,7 +4,7 @@
   "description": "Earn credits while chatting! And more",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsc --watch & nodemon dist",
+    "dev": "tsc --watch & NODE_ENV=development nodemon dist",
     "build": "tsc -p .",
     "prisma:generate": "prisma generate",
     "test": "jest",

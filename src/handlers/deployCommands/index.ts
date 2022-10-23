@@ -30,7 +30,7 @@ export default async (client: Client) => {
     await application.commands
       .set(commands, process.env.DISCORD_GUILD_ID)
       .then(() => {
-        logger.verbose(`🔧 Deployed commands to guild`);
+        logger.info(`🔧 Deployed commands to guild`);
       });
   }
 
