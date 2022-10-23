@@ -1,6 +1,6 @@
+import { add, formatDuration, intervalToDuration, isPast } from "date-fns";
 import { Guild, User } from "discord.js";
 import prisma from "../../handlers/database";
-import addSeconds from "../../helpers/addSeconds";
 import logger from "../logger";
 
 export default async (
@@ -11,7 +11,7 @@ export default async (
   silent?: boolean
 ) => {
   // Check if user has a timeout
-  const hasTimeout = await prisma.cooldown.findUnique({
+  const isOnCooldown = await prisma.cooldown.findUnique({
     where: {
       guildId_userId_timeoutId: {
         guildId: guild.id,
@@ -20,48 +20,40 @@ export default async (
       },
     },
   });
+  logger.silly(isOnCooldown);
 
-  logger.silly(hasTimeout);
+  if (isOnCooldown) {
+    const { userId, timeoutId, createdAt } = isOnCooldown;
+    const dueDate = add(createdAt, { seconds: cooldown });
 
-  // If user is not on timeout
-  if (hasTimeout) {
-    const { userId, timeoutId, createdAt } = hasTimeout;
-    const overDue = addSeconds(cooldown, createdAt) < new Date();
+    const duration = formatDuration(
+      intervalToDuration({
+        start: new Date(),
+        end: dueDate,
+      })
+    );
 
-    if (!overDue) {
-      const diff = Math.round(
-        (new Date(hasTimeout.createdAt).getTime() - new Date().getTime()) / 1000
-      );
-
-      if (silent)
-        return logger.verbose(
-          `User ${userId} is on cooldown for ${timeoutId} for ${diff} seconds`
-        );
-
-      throw new Error(
-        `You must wait ${diff} seconds before using this command.`
-      );
+    if (isPast(dueDate)) {
+      return await prisma.cooldown.delete({
+        where: {
+          guildId_userId_timeoutId: {
+            guildId: guild.id,
+            userId: user.id,
+            timeoutId: id,
+          },
+        },
+      });
     }
 
-    // Delete timeout
-    const deleteCooldown = await prisma.cooldown.delete({
-      where: {
-        guildId_userId_timeoutId: {
-          guildId: guild.id,
-          userId: user.id,
-          timeoutId: id,
-        },
-      },
-    });
+    if (!silent) {
+      throw new Error(`You are still on cooldown for ${duration}`);
+    }
 
-    logger.silly(deleteCooldown);
-
-    logger.debug(
-      `Timeout document ${timeoutId} has been deleted from user ${userId}.`
+    return logger.verbose(
+      `User ${userId} is on cooldown for ${timeoutId}, it ends in ${duration}.`
     );
   }
 
-  // Create timeout
   const createCooldown = await prisma.cooldown.upsert({
     where: {
       guildId_userId_timeoutId: {
@@ -98,4 +90,6 @@ export default async (
   });
 
   logger.silly(createCooldown);
+
+  return createCooldown;
 };
