@@ -1,32 +1,24 @@
 FROM node:19 AS builder
 
-WORKDIR /usr
+# Create app directory
+WORKDIR /app
 
-COPY tsconfig.json ./
-
-COPY src ./src
-
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
-
 COPY prisma ./prisma/
 
-RUN ls -a
-
+# Install app dependencies
 RUN npm install
+
+COPY . .
 
 RUN npm run build
 
-## this is stage two , where the app actually runs
-
 FROM node:19
 
-WORKDIR /usr
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
 
-
-COPY --from=builder /usr/package*.json ./
-
-COPY --from=builder /usr/dist ./dist
-
-RUN npm install --omit=dev
-
-CMD ["node","dist/index.js"]
+EXPOSE 3000
+CMD [ "npm", "run", "start:prod" ]
