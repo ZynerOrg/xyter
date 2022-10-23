@@ -1,39 +1,28 @@
-version: "3"
+version: "3.7"
 
 services:
   app:
-    image: zyner/xyter:latest
+    container_name: app
+    image: zyner/xyter:dev
     restart: unless-stopped
-    #    build: .
-    stdin_open: true
-    tty: true
+    env_file:
+      - .env
     volumes:
-      - ./logs:/app/logs
-    environment:
-      - DISCORD_TOKEN=DISCORD_TOKEN
-      - DISCORD_CLIENT_ID=DISCORD_CLIENT_ID
-      - DISCORD_GUILD_ID=DISCORD_GUILD_ID
-      - MONGO_URL=mongodb://MONGO_USER:MONGO_PASS@mongodb:27017/admin?retryWrites=true&w=majority
-      - ENCRYPTION_ALGORITHM=ENCRYPTION_ALGORITHM
-      - ENCRYPTION_SECRET=ENCRYPTION_SECRET
-      - EMEBD_COLOR_SUCCESS=EMEBD_COLOR_SUCCESS
-      - EMBED_COLOR_WAIT=EMBED_COLOR_WAIT
-      - EMBED_COLOR_ERROR=EMBED_COLOR_ERROR
-      - EMBED_FOOTER_TEXT=EMBED_FOOTER_TEXT
-      - EMBED_FOOTER_ICON=EMBED_FOOTER_ICON
-      - LOG_LEVEL=LOG_LEVEL
-      - REPUTATION_TIMEOUT=REPUTATION_TIMEOUT
-      - BOT_HOSTER_NAME=BOT_HOSTER_NAME
-      - BOT_HOSTER_URL=BOT_HOSTER_URL
-      - NODE_ENV=production
-    depends_on:
-      - mongodb
+      - ./logs:/logs
 
-  mongodb:
-    image: mongo:latest
+  mariadb:
+    container_name: mariadb
+    image: lscr.io/linuxserver/mariadb:latest
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: MONGO_USER
-      MONGO_INITDB_ROOT_PASSWORD: MONGO_PASS
+      - PUID=1000
+      - PGID=1000
+      - TZ=Region/City
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=database
+      - MYSQL_USER=username
+      - MYSQL_PASSWORD=password
     volumes:
-      - ./database:/data/db
+      - ./db:/config
+    ports:
+      - 3306:3306

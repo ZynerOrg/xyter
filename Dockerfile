@@ -1,19 +1,25 @@
-FROM node:19
+FROM node:19 AS builder
 
-LABEL maintainer="xyter@zyner.org"
+# Create app directory
+WORKDIR /app
 
-WORKDIR /build
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
+COPY prisma ./prisma/
 
-COPY package* .
+# Install app dependencies
 RUN npm install
+
 
 COPY . .
 
-RUN npx -y tsc
+RUN npm run build
 
-WORKDIR /app
+FROM node:19
 
-RUN cp -r /build/build/* .
-RUN cp -r /build/node_modules .
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
 
-CMD [ "node", "." ]
+CMD [  "npm", "run", "start:migrate:prod" ]

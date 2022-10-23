@@ -20,7 +20,7 @@ export default async (message: Message) => {
     },
   });
 
-  if (!channelCounter) throw new Error("No counters found in channel.");
+  if (!channelCounter) return logger.debug("No counters found in channel.");
 
   if (content === channelCounter.triggerWord)
     return logger?.silly(

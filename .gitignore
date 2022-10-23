@@ -1,10 +1,7 @@
 json.sqlite
 node_modules
 .env
-config.json
-package-lock.json
-
-src/config/
+db/
 
 # Build
 build/
