@@ -3,7 +3,7 @@ version: "3.7"
 services:
   app:
     container_name: app
-    image: vermiumwastaken/xyter
+    image: zyner/xyter:main
     restart: unless-stopped
     env_file:
       - .env
@@ -18,6 +18,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Region/City
+      - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=database
       - MYSQL_USER=username
       - MYSQL_PASSWORD=password
