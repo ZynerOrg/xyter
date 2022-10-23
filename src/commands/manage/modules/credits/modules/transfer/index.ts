@@ -6,7 +6,7 @@ import {
   EmbedBuilder,
   PermissionsBitField,
 } from "discord.js";
-import transferCredits from "../../../../../../helpers/transferCredits";
+import { transfer as CreditsTransfer } from "../../../../../../helpers/credits";
 // Configurations
 import deferReply from "../../../../../../handlers/deferReply";
 import checkPermission from "../../../../../../helpers/checkPermission";
@@ -65,7 +65,7 @@ export default {
     if (!optionToUser)
       throw new Error("You must provide a user to transfer to.");
 
-    await transferCredits(guild, optionFromUser, optionToUser, optionAmount);
+    await CreditsTransfer(guild, optionFromUser, optionToUser, optionAmount);
 
     return interaction?.editReply({
       embeds: [
