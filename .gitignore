@@ -1,9 +1,7 @@
 json.sqlite
 node_modules
 .env
-config.json
-
-src/config/
+db/
 
 # Build
 build/
