@@ -22,8 +22,6 @@ export const execute = async (interaction: BaseInteraction) => {
     `New interaction: ${id} in guild: ${guild?.name} (${guild?.id})`
   );
 
-  await audits.execute(interaction);
-
   switch (interaction.type) {
     case InteractionType.ApplicationCommand:
       await HandlersHandleCommandInteraction(<CommandInteraction>interaction);
@@ -32,4 +30,6 @@ export const execute = async (interaction: BaseInteraction) => {
     default:
       logger?.error(`Unknown interaction type: ${interaction.type}`);
   }
+
+  await audits.execute(interaction);
 };
