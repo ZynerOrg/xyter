@@ -9,19 +9,19 @@ services:
       - .env
     volumes:
       - ./logs:/logs
+
   mariadb:
-    image: lscr.io/linuxserver/mariadb:latest
     container_name: mariadb
+    image: lscr.io/linuxserver/mariadb:latest
+    restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=1000
-      - MYSQL_ROOT_PASSWORD=test
-      - TZ=Europe/Stockholm
-      - MYSQL_DATABASE=test #optional
-      - MYSQL_USER=test #optional
-      - MYSQL_PASSWORD=test #optional
+      - TZ=Region/City
+      - MYSQL_DATABASE=database
+      - MYSQL_USER=username
+      - MYSQL_PASSWORD=password
     volumes:
       - ./db:/config
     ports:
       - 3306:3306
-    restart: unless-stopped
