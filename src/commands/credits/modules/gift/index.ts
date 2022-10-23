@@ -1,89 +1,81 @@
-// Dependencies
-// Models
 import {
   ChatInputCommandInteraction,
-  EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import transferCredits from "../../../../helpers/transferCredits";
-// Configurations
+
 import deferReply from "../../../../handlers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
-// Handlers
+import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
+import { transfer as CreditsTransfer } from "../../../../helpers/credits";
 
-// Function
-export default {
-  builder: (command: SlashCommandSubcommandBuilder) => {
-    return command
-      .setName("gift")
-      .setDescription(`Gift a user credits`)
-      .addUserOption((option) =>
-        option
-          .setName("user")
-          .setDescription("The user you want to gift credits to.")
-          .setRequired(true)
-      )
-      .addIntegerOption((option) =>
-        option
-          .setName("amount")
-          .setDescription("The amount of credits you want to gift.")
-          .setRequired(true)
-      )
-      .addStringOption((option) =>
-        option.setName("reason").setDescription("Your reason.")
-      );
-  },
-  execute: async (interaction: ChatInputCommandInteraction) => {
-    await deferReply(interaction, true);
-
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
-      interaction.guild
+// 1. Export a builder function.
+export const builder = (command: SlashCommandSubcommandBuilder) => {
+  return command
+    .setName("gift")
+    .setDescription(`Gift a user credits`)
+    .addUserOption((option) =>
+      option
+        .setName("target")
+        .setDescription("The user you want to gift credits to.")
+        .setRequired(true)
+    )
+    .addIntegerOption((option) =>
+      option
+        .setName("credits")
+        .setDescription("The amount of credits you want to gift.")
+        .setRequired(true)
+        .setMinValue(1)
+        .setMaxValue(100000000)
+    )
+    .addStringOption((option) =>
+      option.setName("reason").setDescription("Your reason.")
     );
-    const { options, user, guild, client } = interaction;
+};
 
-    const optionUser = options.getUser("user");
-    const optionAmount = options.getInteger("amount");
-    const optionReason = options.getString("reason");
+// 2. Export an execute function.
+export const execute = async (interaction: ChatInputCommandInteraction) => {
+  // 1. Defer reply as ephemeral.
+  await deferReply(interaction, true);
 
-    const embed = new EmbedBuilder()
-      .setTitle("[:dollar:] Gift")
-      .setTimestamp(new Date())
-      .setFooter({ text: footerText, iconURL: footerIcon });
+  // 2. Destructure interaction object.
+  const { options, user, guild, client } = interaction;
+  if (!guild) throw new Error("Guild not found");
+  if (!user) throw new Error("User not found");
+  if (!client) throw new Error("Client not found");
+  if (!options) throw new Error("Options not found");
 
-    if (!guild) throw new Error("Guild not found");
-    if (!optionUser) throw new Error("No receiver found");
-    if (optionAmount === null) throw new Error("Amount not found");
+  // 3. Get options from interaction.
+  const target = options.getUser("target");
+  const credits = options.getInteger("credits");
+  const reason = options.getString("reason");
+  if (!target) throw new Error("Target user not found");
+  if (typeof credits !== "number")
+    throw new Error("You need to specify a number of credits you want to gift");
 
-    await transferCredits(guild, user, optionUser, optionAmount);
+  // 4. Create base embeds.
+  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Gift");
 
-    // Get DM user object
-    const dmUser = client.users.cache.get(optionUser.id);
+  // 5. Start an transaction of the credits.
+  await CreditsTransfer(guild, user, target, credits);
 
-    if (!dmUser) throw new Error("User not found");
+  // 6. Tell the target that they have been gifted credits.
+  await target.send({
+    embeds: [
+      EmbedSuccess.setDescription(
+        reason
+          ? `You received ${credits} credits from ${user} for the reason: ${reason}.`
+          : `You received ${credits} credits from ${user}.`
+      ),
+    ],
+  });
 
-    // Send DM to user
-    await dmUser.send({
-      embeds: [
-        embed
-          .setDescription(
-            `${user.tag} has gifted you ${optionAmount} credits with reason: ${
-              optionReason || "unspecified"
-            }`
-          )
-          .setColor(successColor),
-      ],
-    });
-
-    return interaction.editReply({
-      embeds: [
-        embed
-          .setDescription(
-            `Successfully gifted ${optionAmount} credits to ${optionUser} with reason: ${
-              optionReason || "unspecified"
-            }`
-          )
-          .setColor(successColor),
-      ],
-    });
-  },
+  // 7. Tell the sender that they have gifted the credits.
+  await interaction.editReply({
+    embeds: [
+      EmbedSuccess.setDescription(
+        reason
+          ? `You have successfully gifted ${credits} credits to ${target} with reason: ${reason}.`
+          : `You have successfully gifted ${credits} credits to ${target}.`
+      ),
+    ],
+  });
 };

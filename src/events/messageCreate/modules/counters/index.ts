@@ -22,7 +22,7 @@ export default {
       },
     });
 
-    if (!channelCounter) throw new Error("No counters found in channel.");
+    if (!channelCounter) return logger.debug("No counters found in channel.");
 
     if (
       lastMessage?.author.id === author.id &&
