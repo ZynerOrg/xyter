@@ -5,7 +5,7 @@ import transactionRules from "./transactionRules";
 export default async (guild: Guild, user: User, amount: number) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Check if the transaction is valid.
-    await transactionRules(guild, user, amount);
+    transactionRules(guild, user, amount);
 
     // 2. Make the transaction.
     const recipient = await tx.guildMember.upsert({

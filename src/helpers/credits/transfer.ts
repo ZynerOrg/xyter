@@ -48,8 +48,8 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
     }
 
     // 5. Check if the transactions is valid.
-    await transactionRules(guild, from, amount);
-    await transactionRules(guild, to, amount);
+    transactionRules(guild, from, amount);
+    transactionRules(guild, to, amount);
 
     // 6. Verify that sender and recipient are not the same user.
     if (from.id === to.id) throw new Error("You can't transfer to yourself.");
