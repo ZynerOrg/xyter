@@ -4,7 +4,7 @@ import checkDirectory from "../../helpers/checkDirectory";
 import { IEvent } from "../../interfaces/Event";
 import logger from "../../middlewares/logger";
 
-// Registers all available events
+// Registers all available events.
 export const register = async (client: Client) => {
   logger.info("📡 Started event management");
 
@@ -16,9 +16,11 @@ export const register = async (client: Client) => {
 
   logger.info(`📡 Loading ${totalEvents} events`);
 
+  // Import an event.
   const importEvent = async (name: string) => {
     const event: IEvent = await import(`../../events/${name}`);
 
+    // Create a new event execute function.
     const eventExecutor = async (...args: Promise<void>[]) => {
       await event.execute(...args);
     };

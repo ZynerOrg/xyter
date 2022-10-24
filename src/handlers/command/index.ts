@@ -4,6 +4,7 @@ import checkDirectory from "../../helpers/checkDirectory";
 import { ICommand } from "../../interfaces/Command";
 import logger from "../../middlewares/logger";
 
+// Register the commands.
 export const register = async (client: Client) => {
   logger.info("🔧 Started command management");
 
@@ -15,6 +16,7 @@ export const register = async (client: Client) => {
 
   logger.info(`🔧 Loading ${totalCommands} commands`);
 
+  // Import an command.
   const importCommand = async (name: string) => {
     const command: ICommand = await import(`../../commands/${name}`);
 
