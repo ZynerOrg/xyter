@@ -1,96 +1,52 @@
 /* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
-import listDir from "../../helpers/checkDirectory";
+import checkDirectory from "../../helpers/checkDirectory";
 import { IEvent } from "../../interfaces/Event";
 import logger from "../../middlewares/logger";
 
-// Registers all available events
+// Registers all available events.
 export const register = async (client: Client) => {
-  const eventNames = await listDir("events");
-  if (!eventNames) throw new Error("📦 No events available");
+  logger.info("📡 Started event management");
 
-  const amountOfEvents = eventNames.length;
-  let importedEventAmount = 0;
-  logger.info(`📦 Trying to load ${amountOfEvents} events`);
+  const eventNames = await checkDirectory("events");
+  if (!eventNames) return logger.warn("No available events found");
 
-  const importEvent = async (eventName: string) => {
-    // Import event from events
-    const event: IEvent = await import(`../../events/${eventName}`);
-    if (!event)
-      throw new Error(`📦 No event found while importing "${eventName}"`);
-    if (!event.options)
-      throw new Error(
-        `📦 No event options found while importing "${eventName}"`
-      );
-    if (!event.execute)
-      throw new Error(
-        `📦 No event execute found while importing "${eventName}"`
-      );
+  const totalEvents = eventNames.length;
+  let loadedEvents = 0;
 
-    // Register event
+  logger.info(`📡 Loading ${totalEvents} events`);
+
+  // Import an event.
+  const importEvent = async (name: string) => {
+    const event: IEvent = await import(`../../events/${name}`);
+
+    // Create a new event execute function.
     const eventExecutor = async (...args: Promise<void>[]) => {
-      await event.execute(...args).catch((err) => {
-        logger.error(`${err}`);
-      });
+      await event.execute(...args);
     };
-
-    if (!event.options?.type)
-      throw new Error(`📦 No event type found while importing "${eventName}"`);
 
     switch (event.options.type) {
       case "once":
-        client.once(eventName, eventExecutor);
+        client.once(name, eventExecutor);
         break;
 
       case "on":
-        client.on(eventName, eventExecutor);
+        client.on(name, eventExecutor);
         break;
       default:
-        logger.error(`${eventName} does not have a valid type`);
-    }
-    importedEventAmount += 1;
-  };
-
-  // Send log message when it's done loading events
-  const doneImporting = () => {
-    if (importedEventAmount !== amountOfEvents) {
-      return logger.warn(
-        `📦 Failed importing ${
-          amountOfEvents - importedEventAmount
-        } of ${amountOfEvents} events`
-      );
+        throw new Error(`📡 Invalid event type for event: ${name}`);
     }
 
-    return logger.info(`📦 Managed to load all events`);
+    loadedEvents++;
   };
 
-  eventNames.forEach(async (eventName: string, index: number) => {
+  for await (const eventName of eventNames) {
     await importEvent(eventName).then(() => {
-      logger.debug(`📦 Imported the "${eventName}" event`);
+      logger.verbose(`📡 Loaded event "${eventName}"`);
     });
 
-    // If done importing
-    if (index + 1 === amountOfEvents) {
-      await doneImporting();
+    if (loadedEvents === totalEvents) {
+      logger.info("📡 All events loaded");
     }
-  });
-
-  // for await (const eventName of eventNames) {
-  //   const event: IEvent = await import(`../../events/${eventName}`);
-  //   const eventExecutor = async (...args: Promise<void>[]) =>
-  //     event.execute(...args).catch(async (err) => {
-  //       logger.error(`${err}`);
-  //     });
-  //   if (!event.options?.type) return;
-
-  //   switch (event.options.type) {
-  //     case "once":
-  //       client.once(eventName, eventExecutor);
-  //       break;
-
-  //     case "on":
-  //       client.on(eventName, eventExecutor);
-  //       break;
-  //   }
-  // }
+  }
 };

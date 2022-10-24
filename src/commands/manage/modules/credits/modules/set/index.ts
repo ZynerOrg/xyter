@@ -1,21 +1,14 @@
-// Dependencies
-// Helpers
-// Models
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
-  EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
-// Configurations
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
-// Handlers
-import prisma from "../../../../../../handlers/database";
-import deferReply from "../../../../../../handlers/deferReply";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import logger from "../../../../../../middlewares/logger";
 
-// Function
+import deferReply from "../../../../../../handlers/deferReply";
+import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
+import checkPermission from "../../../../../../helpers/checkPermission";
+import creditsSet from "../../../../../../helpers/credits/set";
+
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
@@ -35,107 +28,35 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    // 1. Defer reply as ephemeral.
     await deferReply(interaction, true);
 
+    // 2. Check if the user has the permission to manage the guild.
     checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
+    // 3. Destructure interaction object.
     const { options, guild } = interaction;
+    if (!guild) throw new Error(`We could not find this guild.`);
+    if (!options) throw new Error(`We could not find the options.`);
 
+    // 4. Get the user and amount from the options.
     const discordUser = options.getUser("user");
     const creditAmount = options.getInteger("amount");
+    if (typeof creditAmount !== "number") throw new Error("Amount is not set.");
+    if (!discordUser) throw new Error("User is not specified");
 
-    // If amount is null
-    if (creditAmount === null) {
-      logger?.silly(`Amount is null`);
+    // 5. Set the credits.
+    await creditsSet(guild, discordUser, creditAmount);
 
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Set)")
-            .setDescription(`You must provide an amount.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
+    // 6. Create base embeds.
+    const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Set");
 
-    if (discordUser === null) {
-      logger?.silly(`User is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Set)")
-            .setDescription(`You must provide a user.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-    if (guild === null) {
-      logger?.silly(`Guild is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Set)")
-            .setDescription(`You must provide a guild.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    const createGuildMember = await prisma.guildMember.upsert({
-      where: {
-        userId_guildId: {
-          userId: discordUser.id,
-          guildId: guild.id,
-        },
-      },
-      update: { creditsEarned: creditAmount },
-      create: {
-        creditsEarned: creditAmount,
-        user: {
-          connectOrCreate: {
-            create: {
-              id: discordUser.id,
-            },
-            where: {
-              id: discordUser.id,
-            },
-          },
-        },
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
-          },
-        },
-      },
-    });
-
-    logger.silly(createGuildMember);
-
-    return interaction?.editReply({
+    // 7. Send embed.
+    return await interaction.editReply({
       embeds: [
-        new EmbedBuilder()
-          .setTitle("[:toolbox:] Manage - Credits (Set)")
-          .setDescription(
-            `Set **${discordUser}**'s credits to **${creditAmount}**.`
-          )
-          .setTimestamp(new Date())
-          .setColor(successColor)
-          .setFooter({ text: footerText, iconURL: footerIcon }),
+        embedSuccess.setDescription(
+          `Set **${discordUser}**'s credits to **${creditAmount}**.`
+        ),
       ],
     });
   },

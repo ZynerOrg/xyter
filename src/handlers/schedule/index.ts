@@ -9,7 +9,7 @@ export const start = async (client: Client) => {
   logger.info("⏰ Started job management");
 
   const jobNames = await checkDirectory("schedules");
-  if (!jobNames) return logger.warn("No available jobs found");
+  if (!jobNames) return logger.warn("⏰ No available jobs found");
 
   await Promise.all(
     jobNames.map(async (jobName) => {

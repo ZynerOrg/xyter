@@ -1,38 +1,39 @@
-import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
-import { Client } from "discord.js";
+import { Client, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
 import { ICommand } from "../../interfaces/Command";
 import logger from "../../middlewares/logger";
 
 export default async (client: Client) => {
-  const commandList: Array<RESTPostAPIApplicationCommandsJSONBody> = [];
+  // 1. Destructure the client.
+  const { application } = client;
+  if (!application) throw new Error("No application found");
 
-  if (!client.commands) {
-    throw new Error("client.commands is not defined");
-  }
+  // 2. Log that we are starting the command management.
+  logger.info("🔧 Started command deployment");
 
-  logger.info("Gathering command list");
+  // 3. Get the commands.
+  const commands: Array<RESTPostAPIApplicationCommandsJSONBody> = [];
+  client.commands.forEach((command: ICommand) => {
+    commands.push(command.builder.toJSON());
 
-  await Promise.all(
-    client.commands.map((commandData: ICommand) => {
-      commandList.push(commandData.builder.toJSON());
-
-      logger.verbose(`${commandData.builder.name} pushed to list`);
-    })
-  )
-    .then(() => {
-      logger.info(`Finished gathering command list.`);
-    })
-    .catch((error) => {
-      throw new Error(`Could not gather command list: ${error}`);
-    });
-
-  await client.application?.commands.set(commandList).then(() => {
-    logger.info(`Finished updating command list.`);
+    logger.verbose(`🔧 Loaded command "${command.builder.name}"`);
   });
 
-  if (process.env.NODE_ENV !== "production") {
-    await client.application?.commands
-      .set(commandList, process.env.DISCORD_GUILD_ID)
-      .then(() => logger.info(`Finished updating guild command list.`));
+  // 4. Set the commands.
+  await application.commands.set(commands).then(() => {
+    logger.info("🔧 Deployed commands globally");
+  });
+
+  // 5. Tell the user that development mode is enabled.
+  if (process.env.NODE_ENV === "development") {
+    logger.info("🔧 Development mode enabled");
+
+    await application.commands
+      .set(commands, process.env.DISCORD_GUILD_ID)
+      .then(() => {
+        logger.info(`🔧 Deployed commands to guild`);
+      });
   }
+
+  // 6. Log that we are done with the command management.
+  logger.info("🔧 Finished command deployment");
 };
