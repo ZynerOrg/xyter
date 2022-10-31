@@ -1,6 +1,7 @@
 import { ChannelType, Message } from "discord.js";
-import { message as CooldownMessage } from "../../../../handlers/cooldown";
 import prisma from "../../../../handlers/database";
+import creditsGive from "../../../../helpers/credits/give";
+import cooldown from "../../../../middlewares/cooldown";
 import logger from "../../../../middlewares/logger";
 
 export default {
@@ -51,30 +52,14 @@ export default {
 
     if (content.length < createGuildMember.guild.creditsMinimumLength) return;
 
-    const isOnCooldown = await CooldownMessage(
-      message,
+    await cooldown(
+      guild,
+      author,
+      "event-messageCreate-credits",
       createGuildMember.guild.creditsTimeout,
-      "messageCreate-credits"
+      true
     );
-    if (isOnCooldown) return;
 
-    const updateGuildMember = await prisma.guildMember.update({
-      where: {
-        userId_guildId: {
-          userId: author.id,
-          guildId: guild.id,
-        },
-      },
-      data: {
-        creditsEarned: {
-          increment: createGuildMember.guild.creditsRate,
-        },
-      },
-    });
-
-    logger.silly(updateGuildMember);
-
-    if (!updateGuildMember)
-      throw new Error("Failed to update guildMember object");
+    await creditsGive(guild, author, createGuildMember.guild.creditsRate);
   },
 };

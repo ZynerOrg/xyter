@@ -1,9 +1,9 @@
 import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
-import { command as CooldownCommand } from "../../../../handlers/cooldown";
 import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
+import cooldown from "../../../../middlewares/cooldown";
 
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -13,9 +13,11 @@ export default {
   execute: async (interaction: CommandInteraction) => {
     await deferReply(interaction, false);
 
-    await CooldownCommand(interaction, 15);
+    const { guild, user, commandId } = interaction;
+    if (!guild) throw new Error("Guild not found");
+    if (!user) throw new Error("User not found");
 
-    const { guild } = interaction;
+    await cooldown(guild, user, commandId, 15);
 
     const embedConfig = await getEmbedConfig(guild);
 

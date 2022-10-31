@@ -1,22 +1,15 @@
-// Dependencies
-// Models
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
-  EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
-// Configurations
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
-// Helpers../../../../../../../helpers/userData
-import pluralize from "../../../../../../helpers/pluralize";
-// Handlers
-import prisma from "../../../../../../handlers/database";
-import deferReply from "../../../../../../handlers/deferReply";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import logger from "../../../../../../middlewares/logger";
 
-// Function
+import deferReply from "../../../../../../handlers/deferReply";
+import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
+import checkPermission from "../../../../../../helpers/checkPermission";
+import creditsTake from "../../../../../../helpers/credits/take";
+import pluralize from "../../../../../../helpers/pluralize";
+
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
@@ -36,127 +29,36 @@ export default {
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
+    // 1. Defer reply as ephemeral.
     await deferReply(interaction, true);
 
+    // 2. Check if the user has the MANAGE_GUILD permission.
     checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-    const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild); // Destructure
+    // 3. Destructure interaction object.
     const { guild, options } = interaction;
+    if (!guild) throw new Error("Invalid guild.");
+    if (!options) throw new Error("Invalid options.");
 
-    // User option
-    const discordReceiver = options?.getUser("user");
+    // 4. Get the user and amount from the options.
+    const discordReceiver = options.getUser("user");
+    const optionAmount = options.getInteger("amount");
+    if (typeof optionAmount !== "number") throw new Error("Invalid amount.");
+    if (!discordReceiver) throw new Error("Invalid user.");
 
-    // Amount option
-    const optionAmount = options?.getInteger("amount");
+    // 5. Create base embeds.
+    const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Take");
 
-    // If amount is null
-    if (optionAmount === null) {
-      logger?.silly(`Amount is null`);
+    // 6. Take the credits.
+    await creditsTake(guild, discordReceiver, optionAmount);
 
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(`You must provide an amount.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    // If amount is zero or below
-    if (optionAmount <= 0) {
-      logger?.silly(`Amount is zero or below`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(`You must provide an amount greater than zero.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    if (discordReceiver === null) {
-      logger?.silly(`Discord receiver is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(`You must provide a user.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-    if (guild === null) {
-      logger?.silly(`Guild is null`);
-
-      return interaction?.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:toolbox:] Manage - Credits (Take)")
-            .setDescription(`You must be in a guild.`)
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon }),
-        ],
-      });
-    }
-
-    const createGuildMember = await prisma.guildMember.upsert({
-      where: {
-        userId_guildId: {
-          userId: discordReceiver.id,
-          guildId: guild.id,
-        },
-      },
-      update: { creditsEarned: { decrement: optionAmount } },
-      create: {
-        creditsEarned: -optionAmount,
-        user: {
-          connectOrCreate: {
-            create: {
-              id: discordReceiver.id,
-            },
-            where: {
-              id: discordReceiver.id,
-            },
-          },
-        },
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
-          },
-        },
-      },
-    });
-
-    logger.silly(createGuildMember);
-    await interaction?.editReply({
+    // 7. Send embed.
+    return await interaction.editReply({
       embeds: [
-        new EmbedBuilder()
-          .setTitle("[:toolbox:] Manage - Credits (Take)")
-          .setDescription(
-            `Took ${pluralize(optionAmount, "credit")} from ${discordReceiver}.`
-          )
-          .setTimestamp(new Date())
-          .setColor(successColor)
-          .setFooter({ text: footerText, iconURL: footerIcon }),
+        embedSuccess.setDescription(
+          `Took ${pluralize(optionAmount, "credit")} from ${discordReceiver}.`
+        ),
       ],
     });
-    return;
   },
 };

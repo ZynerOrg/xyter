@@ -1,54 +1,36 @@
+/* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
-import listDir from "../../helpers/checkDirectory";
+import checkDirectory from "../../helpers/checkDirectory";
 import { ICommand } from "../../interfaces/Command";
 import logger from "../../middlewares/logger";
 
+// Register the commands.
 export const register = async (client: Client) => {
-  // Get name of directories containing commands
-  const commandNames = await listDir("commands");
-  if (!commandNames) throw new Error("📦 No commands available");
+  logger.info("🔧 Started command management");
 
-  const amountOfCommands = commandNames.length;
-  let importedCommandAmount = 0;
-  logger.info(`📦 Trying to load ${amountOfCommands} commands`);
+  const commandNames = await checkDirectory("commands");
+  if (!commandNames) return logger.warn("No available commands found");
 
-  const importCommand = async (commandName: string) => {
-    // Import command from commands
-    const command: ICommand = await import(`../../commands/${commandName}`);
-    if (!command)
-      throw new Error(`📦 No command found while importing "${commandName}"`);
-    if (!command.builder)
-      throw new Error(
-        `📦 No command builder found while importing "${commandName}"`
-      );
+  const totalCommands = commandNames.length;
+  let loadedCommands = 0;
 
-    // Add command to collection
+  logger.info(`🔧 Loading ${totalCommands} commands`);
+
+  // Import an command.
+  const importCommand = async (name: string) => {
+    const command: ICommand = await import(`../../commands/${name}`);
+
     client.commands.set(command.builder.name, command);
-    importedCommandAmount += 1;
+    loadedCommands++;
   };
 
-  // Send log message when it's done loading commands
-  const doneImporting = () => {
-    if (importedCommandAmount !== amountOfCommands) {
-      return logger.warn(
-        `📦 Failed importing ${
-          amountOfCommands - importedCommandAmount
-        } of ${amountOfCommands} commands`
-      );
-    }
-
-    return logger.info(`📦 Managed to load all commands`);
-  };
-
-  // Start importing commands
-  commandNames.forEach(async (commandName: string, index: number) => {
+  for await (const commandName of commandNames) {
     await importCommand(commandName).then(() => {
-      logger.debug(`📦 Imported the "${commandName}" command`);
+      logger.verbose(`🔧 Loaded command "${commandName}"`);
     });
 
-    // If done importing
-    if (index + 1 === amountOfCommands) {
-      await doneImporting();
+    if (loadedCommands === totalCommands) {
+      logger.info("🔧 All commands loaded");
     }
-  });
+  }
 };
