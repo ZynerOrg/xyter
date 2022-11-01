@@ -1,9 +1,9 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { ChannelType } from "discord-api-types/v10";
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";

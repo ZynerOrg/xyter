@@ -1,13 +1,14 @@
 // Dependencies
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
-import { ButtonStyle, ChannelType } from "discord-api-types/v10";
 import {
   ActionRowBuilder,
   ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import encryption from "../../../../../../helpers/encryption";

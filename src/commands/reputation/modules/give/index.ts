@@ -1,5 +1,8 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandSubcommandBuilder
+} from "discord.js";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";

@@ -1,11 +1,11 @@
 // Dependencies
 // Helpers
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   ColorResolvable,
   EmbedBuilder,
   GuildMemberRoleManager,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../../../../handlers/deferReply";
 import getEmbedData from "../../../../../../helpers/getEmbedData";

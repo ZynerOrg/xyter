@@ -1,6 +1,5 @@
 //Dependencies
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 // Modules
 import moduleCounters from "./modules/counters";

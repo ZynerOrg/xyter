@@ -1,10 +1,10 @@
 // Dependencies
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../../handlers/deferReply";
 import checkPermission from "../../../../helpers/checkPermission";
