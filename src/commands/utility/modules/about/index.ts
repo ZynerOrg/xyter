@@ -1,11 +1,11 @@
 // Dependencies
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
   CommandInteraction,
   EmbedBuilder,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../../handlers/deferReply";
 // Configurations

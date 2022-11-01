@@ -1,6 +1,9 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
-import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandSubcommandBuilder,
+} from "discord.js";
 import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
