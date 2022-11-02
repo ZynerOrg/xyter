@@ -1,6 +1,6 @@
 {
   "name": "xyter",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Earn credits while chatting! And more",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,8 @@
     "start:migrate:prod": "prisma migrate deploy && npm run start",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint . --ext .ts",
-    "commit": "cz"
+    "commit": "cz",
+    "release": "standard-version"
   },
   "husky": {
     "hooks": {
