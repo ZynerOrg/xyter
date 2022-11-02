@@ -12,9 +12,9 @@ export default async (guild?: Guild | null) => {
   } = process.env
 
   const defaultEmbedConfig = {
-    successColor: EMBED_COLOR_SUCCESS,
-    waitColor: EMBED_COLOR_WAIT,
-    errorColor: EMBED_COLOR_ERROR,
+    successColor: <ColorResolvable>EMBED_COLOR_SUCCESS,
+    waitColor: <ColorResolvable>EMBED_COLOR_WAIT,
+    errorColor: <ColorResolvable>EMBED_COLOR_ERROR,
     footerText: EMBED_FOOTER_TEXT,
     footerIcon: EMBED_FOOTER_ICON,
   }
