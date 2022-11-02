@@ -12,7 +12,8 @@
     "start": "node dist",
     "start:migrate:prod": "prisma migrate deploy && npm run start",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "commit": "cz"
   },
   "husky": {
     "hooks": {
@@ -57,6 +58,8 @@
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
@@ -71,9 +74,15 @@
     "nodemon": "2.0.20",
     "prettier": "2.7.1",
     "prisma": "4.5.0",
+    "standard-version": "^9.5.0",
     "typescript": "^4.8.4"
   },
   "lint-staged": {
     "*.ts": "eslint --cache --fix"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
