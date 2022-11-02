@@ -4,17 +4,17 @@ import {
   ChatInputCommandInteraction,
   CommandInteraction,
   EmbedBuilder,
-} from "discord.js";
-import capitalizeFirstLetter from "../../../helpers/capitalizeFirstLetter";
-import getEmbedConfig from "../../../helpers/getEmbedData";
-import button from "./button";
-import command from "./command";
+} from 'discord.js'
+import capitalizeFirstLetter from '../../../helpers/capitalizeFirstLetter'
+import getEmbedConfig from '../../../helpers/getEmbedData'
+import button from './button'
+import command from './command'
 
 // Send interactions to all available handlers
 export const execute = async (interaction: BaseInteraction) => {
-  await button(<ButtonInteraction>interaction);
-  await command(<ChatInputCommandInteraction>interaction);
-};
+  await button(<ButtonInteraction>interaction)
+  await command(<ChatInputCommandInteraction>interaction)
+}
 
 // Handle interactions from commands
 export const handleCommandInteraction = async (
@@ -22,7 +22,7 @@ export const handleCommandInteraction = async (
 ) => {
   const { errorColor, footerText, footerIcon } = await getEmbedConfig(
     interaction.guild
-  );
+  )
 
   await command(<ChatInputCommandInteraction>interaction).catch((err) => {
     return interaction.editReply({
@@ -34,6 +34,6 @@ export const handleCommandInteraction = async (
           .setTimestamp(new Date())
           .setFooter({ text: footerText, iconURL: footerIcon }),
       ],
-    });
-  });
-};
+    })
+  })
+}

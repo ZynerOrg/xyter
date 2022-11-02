@@ -1,40 +1,40 @@
-import axios from "axios";
+import axios from 'axios'
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
-} from "discord.js";
-import deferReply from "../../../../handlers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+} from 'discord.js'
+import deferReply from '../../../../handlers/deferReply'
+import getEmbedConfig from '../../../../helpers/getEmbedData'
 
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("lookup")
+      .setName('lookup')
       .setDescription(
-        "Lookup a domain or ip. (Request sent over HTTP, proceed with caution!)"
+        'Lookup a domain or ip. (Request sent over HTTP, proceed with caution!)'
       )
       .addStringOption((option) =>
         option
-          .setName("query")
-          .setDescription("The query you want to look up.")
+          .setName('query')
+          .setDescription('The query you want to look up.')
           .setRequired(true)
-      );
+      )
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    await deferReply(interaction, false);
+    await deferReply(interaction, false)
 
     const { errorColor, successColor, footerText, footerIcon } =
-      await getEmbedConfig(interaction.guild);
-    const embedTitle = "[:hammer:] Utility (Lookup)";
+      await getEmbedConfig(interaction.guild)
+    const embedTitle = '[:hammer:] Utility (Lookup)'
 
-    const { options } = interaction;
-    const query = options.getString("query");
+    const { options } = interaction
+    const query = options.getString('query')
 
     await axios
       .get(`http://ip-api.com/json/${query}`)
       .then(async (response) => {
-        if (response.data.status !== "success") {
+        if (response.data.status !== 'success') {
           await interaction.editReply({
             embeds: [
               new EmbedBuilder()
@@ -50,8 +50,8 @@ export default {
                   `${response?.data?.message}: ${response?.data?.query}`
                 ),
             ],
-          });
-          return;
+          })
+          return
         }
 
         await interaction.editReply({
@@ -66,68 +66,68 @@ export default {
               .setColor(successColor)
               .setFields([
                 {
-                  name: ":classical_building: AS",
-                  value: `${response.data.as || "Unknown"}`,
+                  name: ':classical_building: AS',
+                  value: `${response.data.as || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":classical_building: ISP",
-                  value: `${response.data.isp || "Unknown"}`,
+                  name: ':classical_building: ISP',
+                  value: `${response.data.isp || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":classical_building: Organization",
-                  value: `${response.data.org || "Unknown"}`,
+                  name: ':classical_building: Organization',
+                  value: `${response.data.org || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":compass: Latitude",
-                  value: `${response.data.lat || "Unknown"}`,
+                  name: ':compass: Latitude',
+                  value: `${response.data.lat || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":compass: Longitude",
-                  value: `${response.data.lon || "Unknown"}`,
+                  name: ':compass: Longitude',
+                  value: `${response.data.lon || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":clock4: Timezone",
-                  value: `${response.data.timezone || "Unknown"}`,
+                  name: ':clock4: Timezone',
+                  value: `${response.data.timezone || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":globe_with_meridians: Country",
-                  value: `${response.data.country || "Unknown"}`,
+                  name: ':globe_with_meridians: Country',
+                  value: `${response.data.country || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":globe_with_meridians: Region",
-                  value: `${response.data.regionName || "Unknown"}`,
+                  name: ':globe_with_meridians: Region',
+                  value: `${response.data.regionName || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":globe_with_meridians: City",
-                  value: `${response.data.city || "Unknown"}`,
+                  name: ':globe_with_meridians: City',
+                  value: `${response.data.city || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":globe_with_meridians: Country Code",
-                  value: `${response.data.countryCode || "Unknown"}`,
+                  name: ':globe_with_meridians: Country Code',
+                  value: `${response.data.countryCode || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":globe_with_meridians: Region Code",
-                  value: `${response.data.region || "Unknown"}`,
+                  name: ':globe_with_meridians: Region Code',
+                  value: `${response.data.region || 'Unknown'}`,
                   inline: true,
                 },
                 {
-                  name: ":globe_with_meridians: ZIP",
-                  value: `${response.data.zip || "Unknown"}`,
+                  name: ':globe_with_meridians: ZIP',
+                  value: `${response.data.zip || 'Unknown'}`,
                   inline: true,
                 },
               ]),
           ],
-        });
-      });
+        })
+      })
   },
-};
+}

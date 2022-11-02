@@ -6,48 +6,48 @@ import {
   EmbedBuilder,
   GuildMemberRoleManager,
   SlashCommandSubcommandBuilder,
-} from "discord.js";
-import deferReply from "../../../../../../handlers/deferReply";
-import getEmbedData from "../../../../../../helpers/getEmbedData";
-import logger from "../../../../../../middlewares/logger";
+} from 'discord.js'
+import deferReply from '../../../../../../handlers/deferReply'
+import getEmbedData from '../../../../../../helpers/getEmbedData'
+import logger from '../../../../../../middlewares/logger'
 // Configurations
 // import fetchUser from "../../../../../../helpers/userData";
 // Models
 
-import prisma from "../../../../../../handlers/database";
-import pluralize from "../../../../../../helpers/pluralize";
+import prisma from '../../../../../../handlers/database'
+import pluralize from '../../../../../../helpers/pluralize'
 
 // Function
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("buy")
-      .setDescription("Buy a custom role.")
+      .setName('buy')
+      .setDescription('Buy a custom role.')
       .addStringOption((option) =>
         option
-          .setName("name")
-          .setDescription("Name of the role you wish to buy.")
+          .setName('name')
+          .setDescription('Name of the role you wish to buy.')
           .setRequired(true)
       )
       .addStringOption((option) =>
         option
-          .setName("color")
-          .setDescription("Color of the role you wish to buy.")
+          .setName('color')
+          .setDescription('Color of the role you wish to buy.')
           .setRequired(true)
-      );
+      )
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    await deferReply(interaction, true);
+    await deferReply(interaction, true)
 
     const { successColor, footerText, footerIcon } = await getEmbedData(
       interaction.guild
-    );
-    const { options, guild, user, member } = interaction;
-    const optionName = options?.getString("name");
-    const optionColor = options?.getString("color");
+    )
+    const { options, guild, user, member } = interaction
+    const optionName = options?.getString('name')
+    const optionColor = options?.getString('color')
     // If amount is null
     if (optionName === null)
-      throw new Error("We could not read your requested name");
+      throw new Error('We could not read your requested name')
     await guild?.roles
       .create({
         name: optionName,
@@ -55,8 +55,8 @@ export default {
         reason: `${user?.id} bought from shop`,
       })
       .then(async (role) => {
-        const userId = "SNOWFLKAE";
-        const guildId = "SNOWFLAKE";
+        const userId = 'SNOWFLKAE'
+        const guildId = 'SNOWFLAKE'
 
         const createGuildMember = await prisma.guildMember.upsert({
           where: {
@@ -92,12 +92,12 @@ export default {
             user: true,
             guild: true,
           },
-        });
+        })
 
-        logger.silly(createGuildMember);
+        logger.silly(createGuildMember)
 
         // Get guild object
-        const pricePerHour = createGuildMember.guild.shopRolesPricePerHour;
+        const pricePerHour = createGuildMember.guild.shopRolesPricePerHour
 
         const updateGuildMember = await prisma.guildMember.update({
           where: {
@@ -109,9 +109,9 @@ export default {
           data: {
             creditsEarned: { decrement: pricePerHour },
           },
-        });
+        })
 
-        logger.silly(updateGuildMember);
+        logger.silly(updateGuildMember)
 
         const createShopRole = await prisma.guildShopRoles.upsert({
           where: {
@@ -150,29 +150,29 @@ export default {
             user: true,
             guild: true,
           },
-        });
+        })
 
-        logger.silly(createShopRole);
+        logger.silly(createShopRole)
 
-        await (member?.roles as GuildMemberRoleManager)?.add(role?.id);
-        logger?.silly(`Role ${role?.name} was bought by ${user?.tag}`);
+        await (member?.roles as GuildMemberRoleManager)?.add(role?.id)
+        logger?.silly(`Role ${role?.name} was bought by ${user?.tag}`)
         const interactionEmbed = new EmbedBuilder()
-          .setTitle("[:shopping_cart:] Buy")
+          .setTitle('[:shopping_cart:] Buy')
           .setDescription(
             `You bought **${optionName}** for **${pluralize(
               pricePerHour,
-              "credit"
+              'credit'
             )}**.`
           )
           .setTimestamp()
           .setColor(successColor)
-          .setFooter({ text: footerText, iconURL: footerIcon });
+          .setFooter({ text: footerText, iconURL: footerIcon })
         return interaction?.editReply({
           embeds: [interactionEmbed],
-        });
+        })
       })
       .catch(() => {
-        throw new Error("Failed creating role.");
-      });
+        throw new Error('Failed creating role.')
+      })
   },
-};
+}

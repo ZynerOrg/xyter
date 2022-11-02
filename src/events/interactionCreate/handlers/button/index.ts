@@ -1,14 +1,14 @@
 // Dependencies
-import { BaseInteraction } from "discord.js";
+import { BaseInteraction } from 'discord.js'
 
 export default async (interaction: BaseInteraction) => {
-  if (!interaction.isButton()) return;
+  if (!interaction.isButton()) return
 
-  const { customId } = interaction;
+  const { customId } = interaction
 
-  const currentButton = await import(`../../../buttons/${customId}`);
+  const currentButton = await import(`../../../buttons/${customId}`)
 
-  if (!currentButton) throw new Error(`Unknown button ${customId}`);
+  if (!currentButton) throw new Error(`Unknown button ${customId}`)
 
-  await currentButton.execute(interaction);
-};
+  await currentButton.execute(interaction)
+}

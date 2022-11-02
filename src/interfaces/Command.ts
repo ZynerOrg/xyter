@@ -1,6 +1,6 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from 'discord.js'
 
 export interface ICommand {
-  builder: SlashCommandBuilder;
-  execute: Promise<void>;
+  builder: SlashCommandBuilder
+  execute: Promise<void>
 }

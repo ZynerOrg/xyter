@@ -1,52 +1,52 @@
 /* eslint-disable no-loops/no-loops */
-import { Client } from "discord.js";
-import checkDirectory from "../../helpers/checkDirectory";
-import { IEvent } from "../../interfaces/Event";
-import logger from "../../middlewares/logger";
+import { Client } from 'discord.js'
+import checkDirectory from '../../helpers/checkDirectory'
+import { IEvent } from '../../interfaces/Event'
+import logger from '../../middlewares/logger'
 
 // Registers all available events.
 export const register = async (client: Client) => {
-  logger.info("📡 Started event management");
+  logger.info('📡 Started event management')
 
-  const eventNames = await checkDirectory("events");
-  if (!eventNames) return logger.warn("No available events found");
+  const eventNames = await checkDirectory('events')
+  if (!eventNames) return logger.warn('No available events found')
 
-  const totalEvents = eventNames.length;
-  let loadedEvents = 0;
+  const totalEvents = eventNames.length
+  let loadedEvents = 0
 
-  logger.info(`📡 Loading ${totalEvents} events`);
+  logger.info(`📡 Loading ${totalEvents} events`)
 
   // Import an event.
   const importEvent = async (name: string) => {
-    const event: IEvent = await import(`../../events/${name}`);
+    const event: IEvent = await import(`../../events/${name}`)
 
     // Create a new event execute function.
     const eventExecutor = async (...args: Promise<void>[]) => {
-      await event.execute(...args);
-    };
-
-    switch (event.options.type) {
-      case "once":
-        client.once(name, eventExecutor);
-        break;
-
-      case "on":
-        client.on(name, eventExecutor);
-        break;
-      default:
-        throw new Error(`📡 Invalid event type for event: ${name}`);
+      await event.execute(...args)
     }
 
-    loadedEvents++;
-  };
+    switch (event.options.type) {
+      case 'once':
+        client.once(name, eventExecutor)
+        break
+
+      case 'on':
+        client.on(name, eventExecutor)
+        break
+      default:
+        throw new Error(`📡 Invalid event type for event: ${name}`)
+    }
+
+    loadedEvents++
+  }
 
   for await (const eventName of eventNames) {
     await importEvent(eventName).then(() => {
-      logger.verbose(`📡 Loaded event "${eventName}"`);
-    });
+      logger.verbose(`📡 Loaded event "${eventName}"`)
+    })
 
     if (loadedEvents === totalEvents) {
-      logger.info("📡 All events loaded");
+      logger.info('📡 All events loaded')
     }
   }
-};
+}

@@ -1,58 +1,56 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  SlashCommandSubcommandBuilder
-} from "discord.js";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
-import logger from "../../../../middlewares/logger";
-import noSelfReputation from "./components/noSelfReputation";
+  SlashCommandSubcommandBuilder,
+} from 'discord.js'
+import getEmbedConfig from '../../../../helpers/getEmbedData'
+import logger from '../../../../middlewares/logger'
+import noSelfReputation from './components/noSelfReputation'
 
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
-import cooldown from "../../../../middlewares/cooldown";
+import prisma from '../../../../handlers/database'
+import deferReply from '../../../../handlers/deferReply'
+import cooldown from '../../../../middlewares/cooldown'
 
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("give")
-      .setDescription("Give reputation to a user")
+      .setName('give')
+      .setDescription('Give reputation to a user')
       .addUserOption((option) =>
         option
-          .setName("target")
-          .setDescription("The user you want to repute.")
+          .setName('target')
+          .setDescription('The user you want to repute.')
           .setRequired(true)
       )
       .addStringOption((option) =>
         option
-          .setName("type")
-          .setDescription("What type of reputation you want to repute")
+          .setName('type')
+          .setDescription('What type of reputation you want to repute')
           .setRequired(true)
           .addChoices(
-            { name: "Positive", value: "positive" },
+            { name: 'Positive', value: 'positive' },
             {
-              name: "Negative",
-              value: "negative",
+              name: 'Negative',
+              value: 'negative',
             }
           )
-      );
+      )
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    await deferReply(interaction, true);
+    await deferReply(interaction, true)
 
-    const { options, user, guild, commandId } = interaction;
+    const { options, user, guild, commandId } = interaction
 
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
-      guild
-    );
+    const { successColor, footerText, footerIcon } = await getEmbedConfig(guild)
 
-    const optionTarget = options?.getUser("target");
-    const optionType = options?.getString("type");
+    const optionTarget = options?.getUser('target')
+    const optionType = options?.getString('type')
 
-    if (!guild) throw new Error("Guild is undefined");
-    if (!optionTarget) throw new Error("Target is not defined");
+    if (!guild) throw new Error('Guild is undefined')
+    if (!optionTarget) throw new Error('Target is not defined')
 
     // Pre-checks
-    noSelfReputation(optionTarget, user);
+    noSelfReputation(optionTarget, user)
 
     // Check if user is on cooldown otherwise create one
     await cooldown(
@@ -60,10 +58,10 @@ export default {
       user,
       commandId,
       parseInt(process.env.REPUTATION_TIMEOUT)
-    );
+    )
 
     switch (optionType) {
-      case "positive": {
+      case 'positive': {
         const createUser = await prisma.user.upsert({
           where: {
             id: optionTarget.id,
@@ -77,12 +75,12 @@ export default {
             id: optionTarget.id,
             reputationsEarned: 1,
           },
-        });
+        })
 
-        logger.silly(createUser);
-        break;
+        logger.silly(createUser)
+        break
       }
-      case "negative": {
+      case 'negative': {
         const createUser = await prisma.user.upsert({
           where: {
             id: optionTarget.id,
@@ -96,27 +94,27 @@ export default {
             id: optionTarget.id,
             reputationsEarned: -1,
           },
-        });
+        })
 
-        logger.silly(createUser);
-        break;
+        logger.silly(createUser)
+        break
       }
       default: {
-        throw new Error("Invalid reputation type");
+        throw new Error('Invalid reputation type')
       }
     }
 
     const interactionEmbed = new EmbedBuilder()
-      .setTitle("[:loudspeaker:] Give")
+      .setTitle('[:loudspeaker:] Give')
       .setDescription(
         `You have given a ${optionType} repute to ${optionTarget}`
       )
       .setTimestamp()
       .setColor(successColor)
-      .setFooter({ text: footerText, iconURL: footerIcon });
+      .setFooter({ text: footerText, iconURL: footerIcon })
 
     await interaction.editReply({
       embeds: [interactionEmbed],
-    });
+    })
   },
-};
+}

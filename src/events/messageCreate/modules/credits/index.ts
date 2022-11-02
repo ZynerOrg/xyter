@@ -1,16 +1,16 @@
-import { ChannelType, Message } from "discord.js";
-import prisma from "../../../../handlers/database";
-import creditsGive from "../../../../helpers/credits/give";
-import cooldown from "../../../../middlewares/cooldown";
-import logger from "../../../../middlewares/logger";
+import { ChannelType, Message } from 'discord.js'
+import prisma from '../../../../handlers/database'
+import creditsGive from '../../../../helpers/credits/give'
+import cooldown from '../../../../middlewares/cooldown'
+import logger from '../../../../middlewares/logger'
 
 export default {
   execute: async (message: Message) => {
-    const { guild, author, content, channel } = message;
+    const { guild, author, content, channel } = message
 
-    if (!guild) return;
-    if (author.bot) return;
-    if (channel.type !== ChannelType.GuildText) return;
+    if (!guild) return
+    if (author.bot) return
+    if (channel.type !== ChannelType.GuildText) return
 
     const createGuildMember = await prisma.guildMember.upsert({
       where: {
@@ -46,20 +46,20 @@ export default {
         user: true,
         guild: true,
       },
-    });
+    })
 
-    logger.silly(createGuildMember);
+    logger.silly(createGuildMember)
 
-    if (content.length < createGuildMember.guild.creditsMinimumLength) return;
+    if (content.length < createGuildMember.guild.creditsMinimumLength) return
 
     await cooldown(
       guild,
       author,
-      "event-messageCreate-credits",
+      'event-messageCreate-credits',
       createGuildMember.guild.creditsTimeout,
       true
-    );
+    )
 
-    await creditsGive(guild, author, createGuildMember.guild.creditsRate);
+    await creditsGive(guild, author, createGuildMember.guild.creditsRate)
   },
-};
+}

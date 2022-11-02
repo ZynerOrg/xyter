@@ -5,43 +5,43 @@ import {
   EmbedBuilder,
   GuildMemberRoleManager,
   SlashCommandSubcommandBuilder,
-} from "discord.js";
+} from 'discord.js'
 // Configurations
 // Models
-import deferReply from "../../../../../../handlers/deferReply";
-import logger from "../../../../../../middlewares/logger";
+import deferReply from '../../../../../../handlers/deferReply'
+import logger from '../../../../../../middlewares/logger'
 // Configurations
 // Models
 
-import prisma from "../../../../../../handlers/database";
-import getEmbedData from "../../../../../../helpers/getEmbedData";
-import pluralize from "../../../../../../helpers/pluralize";
+import prisma from '../../../../../../handlers/database'
+import getEmbedData from '../../../../../../helpers/getEmbedData'
+import pluralize from '../../../../../../helpers/pluralize'
 
 // Function
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("cancel")
-      .setDescription("Cancel a purchase.")
+      .setName('cancel')
+      .setDescription('Cancel a purchase.')
       .addRoleOption((option) =>
         option
-          .setName("role")
-          .setDescription("Role you wish to cancel.")
+          .setName('role')
+          .setDescription('Role you wish to cancel.')
           .setRequired(true)
-      );
+      )
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    await deferReply(interaction, true);
+    await deferReply(interaction, true)
 
     const { successColor, footerText, footerIcon } = await getEmbedData(
       interaction.guild
-    );
-    const { options, guild, user, member } = interaction;
-    const optionRole = options.getRole("role");
+    )
+    const { options, guild, user, member } = interaction
+    const optionRole = options.getRole('role')
     if (optionRole === null)
-      throw new Error("We could not read your requested role.");
-    if (!guild) throw new Error("No guild specified");
-    if (!user) throw new Error("No user specified");
+      throw new Error('We could not read your requested role.')
+    if (!guild) throw new Error('No guild specified')
+    if (!user) throw new Error('No user specified')
 
     const roleExist = await prisma.guildShopRoles.findUnique({
       where: {
@@ -51,9 +51,9 @@ export default {
           roleId: optionRole.id,
         },
       },
-    });
-    if (roleExist === null) return;
-    await (member?.roles as GuildMemberRoleManager)?.remove(optionRole?.id);
+    })
+    if (roleExist === null) return
+    await (member?.roles as GuildMemberRoleManager)?.remove(optionRole?.id)
     await guild?.roles
       .delete(optionRole?.id, `${user?.id} canceled from shop`)
       .then(async () => {
@@ -91,11 +91,11 @@ export default {
             user: true,
             guild: true,
           },
-        });
+        })
 
-        logger.silly(createGuildMember);
+        logger.silly(createGuildMember)
 
-        if (!createGuildMember) throw new Error("Guild member not created");
+        if (!createGuildMember) throw new Error('Guild member not created')
 
         const deleteShopRole = await prisma.guildShopRoles.delete({
           where: {
@@ -105,23 +105,23 @@ export default {
               roleId: optionRole?.id,
             },
           },
-        });
+        })
 
-        logger.silly(deleteShopRole);
+        logger.silly(deleteShopRole)
 
         const interactionEmbed = new EmbedBuilder()
-          .setTitle("[:shopping_cart:] Cancel")
+          .setTitle('[:shopping_cart:] Cancel')
           .setDescription(`You have canceled ${optionRole.name}.`)
           .setTimestamp()
           .setColor(successColor)
           .addFields({
-            name: "Your balance",
-            value: `${pluralize(createGuildMember.creditsEarned, "credit")}`,
+            name: 'Your balance',
+            value: `${pluralize(createGuildMember.creditsEarned, 'credit')}`,
           })
-          .setFooter({ text: footerText, iconURL: footerIcon });
+          .setFooter({ text: footerText, iconURL: footerIcon })
         return interaction?.editReply({
           embeds: [interactionEmbed],
-        });
-      });
+        })
+      })
   },
-};
+}

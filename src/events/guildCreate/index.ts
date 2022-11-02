@@ -1,18 +1,18 @@
-import { Guild } from "discord.js";
-import prisma from "../../handlers/database";
-import updatePresence from "../../handlers/updatePresence";
-import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
+import { Guild } from 'discord.js'
+import prisma from '../../handlers/database'
+import updatePresence from '../../handlers/updatePresence'
+import { IEventOptions } from '../../interfaces/EventOptions'
+import logger from '../../middlewares/logger'
 
 export const options: IEventOptions = {
-  type: "on",
-};
+  type: 'on',
+}
 
 // Execute the function
 export const execute = async (guild: Guild) => {
-  const { client } = guild;
+  const { client } = guild
 
-  updatePresence(client);
+  updatePresence(client)
 
   // Create guildMember object
   const createGuildMember = await prisma.guildMember.upsert({
@@ -45,7 +45,7 @@ export const execute = async (guild: Guild) => {
         },
       },
     },
-  });
+  })
 
-  logger.silly(createGuildMember);
-};
+  logger.silly(createGuildMember)
+}

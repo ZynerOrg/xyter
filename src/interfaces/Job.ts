@@ -1,8 +1,8 @@
-import { Client } from "discord.js";
+import { Client } from 'discord.js'
 
 export interface IJob {
   options: {
-    schedule: string;
-  };
-  execute: (client: Client) => Promise<void>;
+    schedule: string
+  }
+  execute: (client: Client) => Promise<void>
 }

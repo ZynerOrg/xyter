@@ -1,3 +1,3 @@
 export interface IEventOptions {
-  type: "on" | "once";
+  type: 'on' | 'once'
 }

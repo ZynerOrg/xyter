@@ -1,14 +1,14 @@
 // Dependencies
-import { Client } from "discord.js";
+import { Client } from 'discord.js'
 // Helpers
-import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
+import { IEventOptions } from '../../interfaces/EventOptions'
+import logger from '../../middlewares/logger'
 
 export const options: IEventOptions = {
-  type: "on",
-};
+  type: 'on',
+}
 
 // Function to execute the event
 export const execute = (client: Client) => {
-  logger.warn(`Discord's API client (${client?.user?.tag}) is rate-limited!`);
-};
+  logger.warn(`Discord's API client (${client?.user?.tag}) is rate-limited!`)
+}

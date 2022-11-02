@@ -1,34 +1,34 @@
-import { ChannelType, EmbedBuilder, Message } from "discord.js";
-import prisma from "../../handlers/database";
-import getEmbedConfig from "../../helpers/getEmbedData";
-import logger from "../../middlewares/logger";
+import { ChannelType, EmbedBuilder, Message } from 'discord.js'
+import prisma from '../../handlers/database'
+import getEmbedConfig from '../../helpers/getEmbedData'
+import logger from '../../middlewares/logger'
 
 export default {
   execute: async (message: Message) => {
-    if (message === null) return;
+    if (message === null) return
 
-    if (message.guild === null) return;
+    if (message.guild === null) return
 
     const { footerText, footerIcon, successColor } = await getEmbedConfig(
       message.guild
-    );
+    )
 
     const getGuild = await prisma.guild.findUnique({
       where: { id: message.guild.id },
-    });
-    if (!getGuild) throw new Error("Guild not found");
+    })
+    if (!getGuild) throw new Error('Guild not found')
 
-    const { client } = message;
+    const { client } = message
 
-    if (!getGuild) throw new Error("Guild not found");
+    if (!getGuild) throw new Error('Guild not found')
 
-    if (getGuild.auditsEnabled !== true) return;
-    if (!getGuild.auditsChannelId) return;
+    if (getGuild.auditsEnabled !== true) return
+    if (!getGuild.auditsChannelId) return
 
-    const channel = client.channels.cache.get(`${getGuild.auditsChannelId}`);
+    const channel = client.channels.cache.get(`${getGuild.auditsChannelId}`)
 
-    if (!channel) return;
-    if (channel.type !== ChannelType.GuildText) return;
+    if (!channel) return
+    if (channel.type !== ChannelType.GuildText) return
 
     channel
       .send({
@@ -55,12 +55,12 @@ export default {
       .then(() => {
         logger.info(
           `Audit log sent for event messageDelete in guild ${message?.guild?.name} (${message?.guild?.id})`
-        );
+        )
       })
       .catch(() => {
         throw new Error(
           `Audit log failed to send for event messageDelete in guild ${message?.guild?.name} (${message?.guild?.id})`
-        );
-      });
+        )
+      })
   },
-};
+}
