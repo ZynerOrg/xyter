@@ -21,6 +21,13 @@
       "pre-commit": "npm run prettier-format && npm run lint"
     }
   },
+  "release": {
+    "branches": [
+      "master",
+      "dev",
+      "next"
+    ]
+  },
   "keywords": [
     "Zyner",
     "xyter",
