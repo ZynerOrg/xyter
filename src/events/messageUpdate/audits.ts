@@ -1,4 +1,3 @@
-/* eslint-disable no-loops/no-loops */
 import { ChannelType, EmbedBuilder, Message } from 'discord.js'
 import prisma from '../../handlers/database'
 import getEmbedConfig from '../../helpers/getEmbedData'

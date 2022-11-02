@@ -1,4 +1,3 @@
-/* eslint-disable no-loops/no-loops */
 import { Client } from 'discord.js'
 import prisma from '../../../../handlers/database'
 

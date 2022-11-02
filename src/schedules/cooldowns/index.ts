@@ -1,4 +1,3 @@
-/* eslint-disable no-loops/no-loops */
 import { add, formatDuration, intervalToDuration, isPast } from 'date-fns'
 
 import prisma from '../../handlers/database'
