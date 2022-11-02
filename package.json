@@ -65,6 +65,7 @@
     "eslint-plugin-no-loops": "0.3.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-promise": "^6.1.1",
+    "git-commit-msg-linter": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "13.0.3",
     "nodemon": "2.0.20",
