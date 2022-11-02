@@ -1,11 +1,11 @@
-import { Guild, User } from "discord.js";
-import prisma from "../../handlers/database";
-import transactionRules from "./transactionRules";
+import { Guild, User } from 'discord.js'
+import prisma from '../../handlers/database'
+import transactionRules from './transactionRules'
 
 export default async (guild: Guild, user: User, amount: number) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Check if the transaction is valid.
-    transactionRules(guild, user, amount);
+    transactionRules(guild, user, amount)
 
     // 2. Make the transaction.
     const recipient = await tx.guildMember.upsert({
@@ -41,12 +41,12 @@ export default async (guild: Guild, user: User, amount: number) => {
           guildId: guild.id,
         },
       },
-    });
+    })
 
     // 3. Verify that the recipient actually is created.
-    if (!recipient) throw new Error("No recipient available");
+    if (!recipient) throw new Error('No recipient available')
 
     // 4. Return the recipient.
-    return recipient;
-  });
-};
+    return recipient
+  })
+}

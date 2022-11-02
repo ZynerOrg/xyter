@@ -1,17 +1,17 @@
-import { ChannelType, Message } from "discord.js";
-import prisma from "../../../../handlers/database";
-import logger from "../../../../middlewares/logger";
+import { ChannelType, Message } from 'discord.js'
+import prisma from '../../../../handlers/database'
+import logger from '../../../../middlewares/logger'
 
 export default {
   execute: async (message: Message) => {
-    const { guild, author, content, channel } = message;
+    const { guild, author, content, channel } = message
 
-    if (!guild) return;
-    if (author.bot) return;
-    if (channel?.type !== ChannelType.GuildText) return;
+    if (!guild) return
+    if (author.bot) return
+    if (channel?.type !== ChannelType.GuildText) return
 
-    const messages = await message.channel.messages.fetch({ limit: 2 });
-    const lastMessage = messages.last();
+    const messages = await message.channel.messages.fetch({ limit: 2 })
+    const lastMessage = messages.last()
 
     const channelCounter = await prisma.guildCounter.findUnique({
       where: {
@@ -20,9 +20,9 @@ export default {
           channelId: channel.id,
         },
       },
-    });
+    })
 
-    if (!channelCounter) return logger.debug("No counters found in channel.");
+    if (!channelCounter) return logger.debug('No counters found in channel.')
 
     if (
       lastMessage?.author.id === author.id &&
@@ -30,18 +30,18 @@ export default {
     ) {
       logger.silly(
         `${author.username} sent the last message therefor not allowing again.`
-      );
-      await message.delete();
-      return;
+      )
+      await message.delete()
+      return
     }
 
     if (content !== channelCounter.triggerWord) {
       logger.silly(
         `Counter word ${channelCounter.triggerWord} does not match message ${content}`
-      );
+      )
 
-      await message.delete();
-      return;
+      await message.delete()
+      return
     }
 
     const updateGuildCounter = await prisma.guildCounter.update({
@@ -56,11 +56,11 @@ export default {
           increment: 1,
         },
       },
-    });
+    })
 
-    logger.silly(updateGuildCounter);
+    logger.silly(updateGuildCounter)
 
     if (!updateGuildCounter)
-      logger.error(`Failed to update counter - ${updateGuildCounter}`);
+      logger.error(`Failed to update counter - ${updateGuildCounter}`)
   },
-};
+}

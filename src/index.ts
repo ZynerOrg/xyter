@@ -1,12 +1,12 @@
-import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
-import "dotenv/config";
+import { Client, Collection, GatewayIntentBits } from 'discord.js'
+import 'dotenv/config'
 
-import { register as commandRegister } from "./handlers/command";
-import { register as eventRegister } from "./handlers/event";
-import { start as scheduleStart } from "./handlers/schedule";
-// Main process that starts all other sub processes
+import { register as commandRegister } from './handlers/command'
+import { register as eventRegister } from './handlers/event'
+import { start as scheduleStart } from './handlers/schedule'
+
+// Main process
 const main = async () => {
-  // Initiate client object
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -14,19 +14,15 @@ const main = async () => {
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent,
     ],
-  });
+  })
 
-  // Create command collection
-  client.commands = new Collection();
+  client.commands = new Collection()
 
-  // Start critical handlers
-  await scheduleStart(client);
-  await eventRegister(client);
-  await commandRegister(client);
+  await scheduleStart(client)
+  await eventRegister(client)
+  await commandRegister(client)
 
-  // Authorize with Discord's API
-  await client.login(process.env.DISCORD_TOKEN);
-};
+  await client.login(process.env.DISCORD_TOKEN)
+}
 
-// Start main process
-main();
+main()

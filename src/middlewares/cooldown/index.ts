@@ -1,7 +1,7 @@
-import { add, formatDuration, intervalToDuration, isPast } from "date-fns";
-import { Guild, User } from "discord.js";
-import prisma from "../../handlers/database";
-import logger from "../logger";
+import { add, formatDuration, intervalToDuration, isPast } from 'date-fns'
+import { Guild, User } from 'discord.js'
+import prisma from '../../handlers/database'
+import logger from '../logger'
 
 export default async (
   guild: Guild,
@@ -19,19 +19,19 @@ export default async (
         timeoutId: id,
       },
     },
-  });
-  logger.silly(isOnCooldown);
+  })
+  logger.silly(isOnCooldown)
 
   if (isOnCooldown) {
-    const { userId, timeoutId, createdAt } = isOnCooldown;
-    const dueDate = add(createdAt, { seconds: cooldown });
+    const { userId, timeoutId, createdAt } = isOnCooldown
+    const dueDate = add(createdAt, { seconds: cooldown })
 
     const duration = formatDuration(
       intervalToDuration({
         start: new Date(),
         end: dueDate,
       })
-    );
+    )
 
     if (isPast(dueDate)) {
       return await prisma.cooldown.delete({
@@ -42,16 +42,16 @@ export default async (
             timeoutId: id,
           },
         },
-      });
+      })
     }
 
     if (silent) {
       return logger.verbose(
         `User ${userId} is on cooldown for ${timeoutId}, it ends in ${duration}.`
-      );
+      )
     }
 
-    throw new Error(`You are still on cooldown for ${duration}`);
+    throw new Error(`You are still on cooldown for ${duration}`)
   }
 
   const createCooldown = await prisma.cooldown.upsert({
@@ -87,9 +87,9 @@ export default async (
       timeoutId: id,
       cooldown,
     },
-  });
+  })
 
-  logger.silly(createCooldown);
+  logger.silly(createCooldown)
 
-  return createCooldown;
-};
+  return createCooldown
+}

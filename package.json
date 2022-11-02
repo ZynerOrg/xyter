@@ -1,17 +1,32 @@
 {
   "name": "xyter",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Earn credits while chatting! And more",
   "main": "dist/index.js",
   "scripts": {
+    "prepare": "husky install",
     "dev": "tsc --watch & NODE_ENV=development nodemon dist",
     "build": "tsc -p .",
     "prisma:generate": "prisma generate",
     "test": "jest",
     "start": "node dist",
     "start:migrate:prod": "prisma migrate deploy && npm run start",
-    "prettier-format": "prettier \"src/**/*.ts\" --write",
-    "lint": "eslint ./src --ext .ts"
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "lint": "eslint . --ext .ts",
+    "commit": "cz",
+    "release": "standard-version"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier-format && npm run lint"
+    }
+  },
+  "release": {
+    "branches": [
+      "master",
+      "dev",
+      "next"
+    ]
   },
   "keywords": [
     "Zyner",
@@ -37,10 +52,10 @@
     "@types/i18next-fs-backend": "^1.1.2",
     "axios": "^1.0.0",
     "chance": "^1.1.8",
+    "date-fns": "^2.29.3",
     "discord.js": "^14.0.0",
     "dotenv": "^16.0.1",
     "node-schedule": "^2.1.0",
-    "typescript": "^4.8.4",
     "uuid": "^9.0.0",
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.6.1"
@@ -51,17 +66,31 @@
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-import": "2.26.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.4.0",
     "eslint-plugin-no-loops": "0.3.0",
     "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "git-commit-msg-linter": "^4.2.1",
+    "husky": "^8.0.1",
     "lint-staged": "13.0.3",
     "nodemon": "2.0.20",
     "prettier": "2.7.1",
-    "prisma": "4.5.0"
+    "prisma": "4.5.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^4.8.4"
   },
   "lint-staged": {
     "*.ts": "eslint --cache --fix"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

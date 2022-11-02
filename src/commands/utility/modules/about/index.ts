@@ -6,54 +6,54 @@ import {
   CommandInteraction,
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
-} from "discord.js";
-import deferReply from "../../../../handlers/deferReply";
+} from 'discord.js'
+import deferReply from '../../../../handlers/deferReply'
 // Configurations
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import getEmbedConfig from '../../../../helpers/getEmbedData'
 
 // Function
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
-    return command.setName("about").setDescription("About this bot!)");
+    return command.setName('about').setDescription('About this bot!)')
   },
   execute: async (interaction: CommandInteraction) => {
-    await deferReply(interaction, false);
+    await deferReply(interaction, false)
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
-    );
+    )
 
     const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setLabel("Source Code")
+        .setLabel('Source Code')
         .setStyle(ButtonStyle.Link)
-        .setEmoji("📄")
-        .setURL("https://github.com/ZynerOrg/xyter"),
+        .setEmoji('📄')
+        .setURL('https://github.com/ZynerOrg/xyter'),
       new ButtonBuilder()
-        .setLabel("Documentation")
+        .setLabel('Documentation')
         .setStyle(ButtonStyle.Link)
-        .setEmoji("📚")
-        .setURL("https://xyter.zyner.org"),
+        .setEmoji('📚')
+        .setURL('https://xyter.zyner.org'),
       new ButtonBuilder()
-        .setLabel("Website")
+        .setLabel('Website')
         .setStyle(ButtonStyle.Link)
-        .setEmoji("🌐")
-        .setURL("https://zyner.org"),
+        .setEmoji('🌐')
+        .setURL('https://zyner.org'),
       new ButtonBuilder()
-        .setLabel("Get Help")
+        .setLabel('Get Help')
         .setStyle(ButtonStyle.Link)
-        .setEmoji("💬")
-        .setURL("https://discord.zyner.org"),
+        .setEmoji('💬')
+        .setURL('https://discord.zyner.org'),
       new ButtonBuilder()
         .setLabel(`Hosted by ${process.env.BOT_HOSTER_NAME}`)
         .setStyle(ButtonStyle.Link)
-        .setEmoji("⚒️")
+        .setEmoji('⚒️')
         .setURL(`${process.env.BOT_HOSTER_URL}`)
-    );
+    )
 
     const interactionEmbed = new EmbedBuilder()
       .setColor(successColor)
-      .setTitle("[:tools:] About")
+      .setTitle('[:tools:] About')
       .setDescription(
         `
 **Xyter**'s goal is to provide a __privacy-friendly__ discord bot.
@@ -65,11 +65,11 @@ Developed with ❤️ by **Zyner**, a non-profit project by teens.
         `
       )
       .setTimestamp()
-      .setFooter({ text: footerText, iconURL: footerIcon });
+      .setFooter({ text: footerText, iconURL: footerIcon })
 
     await interaction.editReply({
       embeds: [interactionEmbed],
       components: [buttons],
-    });
+    })
   },
-};
+}

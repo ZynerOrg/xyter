@@ -1,22 +1,22 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import logger from "../../middlewares/logger";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js'
+import logger from '../../middlewares/logger'
 
 // Modules
-import moduleMeme from "./modules/meme";
+import moduleMeme from './modules/meme'
 
 export const builder = new SlashCommandBuilder()
-  .setName("fun")
-  .setDescription("Fun commands.")
+  .setName('fun')
+  .setDescription('Fun commands.')
 
-  .addSubcommand(moduleMeme.builder);
+  .addSubcommand(moduleMeme.builder)
 
 // Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  const { options } = interaction;
+  const { options } = interaction
 
-  if (options.getSubcommand() === "meme") {
-    await moduleMeme.execute(interaction);
+  if (options.getSubcommand() === 'meme') {
+    await moduleMeme.execute(interaction)
   } else {
-    logger.silly(`Unknown subcommand ${options.getSubcommand()}`);
+    logger.silly(`Unknown subcommand ${options.getSubcommand()}`)
   }
-};
+}

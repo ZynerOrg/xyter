@@ -1,29 +1,28 @@
-/* eslint-disable no-loops/no-loops */
-import { add, formatDuration, intervalToDuration, isPast } from "date-fns";
+import { add, formatDuration, intervalToDuration, isPast } from 'date-fns'
 
-import prisma from "../../handlers/database";
-import logger from "../../middlewares/logger";
+import prisma from '../../handlers/database'
+import logger from '../../middlewares/logger'
 
 export const options = {
-  schedule: "*/30 * * * *", // https://crontab.guru/
-};
+  schedule: '*/30 * * * *', // https://crontab.guru/
+}
 
 // Execute the job
 export const execute = async () => {
-  const cooldownsObj = await prisma.cooldown.findMany();
+  const cooldownsObj = await prisma.cooldown.findMany()
 
   for await (const cooldownObj of cooldownsObj) {
-    const { guildId, userId, timeoutId, cooldown, createdAt } = cooldownObj;
+    const { guildId, userId, timeoutId, cooldown, createdAt } = cooldownObj
 
-    const dueDate = add(createdAt, { seconds: cooldown });
-    if (!isPast(dueDate)) return;
+    const dueDate = add(createdAt, { seconds: cooldown })
+    if (!isPast(dueDate)) return
 
     const duration = formatDuration(
       intervalToDuration({
         start: new Date(),
         end: dueDate,
       })
-    );
+    )
 
     const deleteCooldown = await prisma.cooldown.delete({
       where: {
@@ -33,11 +32,11 @@ export const execute = async () => {
           timeoutId,
         },
       },
-    });
-    logger.silly(deleteCooldown);
+    })
+    logger.silly(deleteCooldown)
 
     logger.verbose(
       `User ${userId} is on cooldown for ${timeoutId}, it ends in ${duration}.`
-    );
+    )
   }
-};
+}

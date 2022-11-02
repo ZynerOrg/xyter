@@ -1,15 +1,15 @@
-import { ChannelType, Message } from "discord.js";
-import prisma from "../../../../handlers/database";
-import cooldown from "../../../../middlewares/cooldown";
-import logger from "../../../../middlewares/logger";
+import { ChannelType, Message } from 'discord.js'
+import prisma from '../../../../handlers/database'
+import cooldown from '../../../../middlewares/cooldown'
+import logger from '../../../../middlewares/logger'
 
 export default {
   execute: async (message: Message) => {
-    const { guild, author, content, channel } = message;
+    const { guild, author, content, channel } = message
 
-    if (!guild) return;
-    if (author.bot) return;
-    if (channel.type !== ChannelType.GuildText) return;
+    if (!guild) return
+    if (author.bot) return
+    if (channel.type !== ChannelType.GuildText) return
 
     const createGuildMember = await prisma.guildMember.upsert({
       where: {
@@ -45,19 +45,19 @@ export default {
         user: true,
         guild: true,
       },
-    });
+    })
 
-    logger.silly(createGuildMember);
+    logger.silly(createGuildMember)
 
-    if (content.length < createGuildMember.guild.pointsMinimumLength) return;
+    if (content.length < createGuildMember.guild.pointsMinimumLength) return
 
     await cooldown(
       guild,
       author,
-      "event-messageCreate-points",
+      'event-messageCreate-points',
       createGuildMember.guild.pointsTimeout,
       true
-    );
+    )
 
     const updateGuildMember = await prisma.guildMember.update({
       where: {
@@ -71,11 +71,11 @@ export default {
           increment: createGuildMember.guild.pointsRate,
         },
       },
-    });
+    })
 
-    logger.silly(updateGuildMember);
+    logger.silly(updateGuildMember)
 
     if (!updateGuildMember)
-      throw new Error("Failed to update guildMember object");
+      throw new Error('Failed to update guildMember object')
   },
-};
+}

@@ -1,6 +1,6 @@
-import { IEventOptions } from "./EventOptions";
+import { IEventOptions } from './EventOptions'
 
 export interface IEvent {
-  options: IEventOptions;
-  execute: (...args: Promise<void>[]) => Promise<void>;
+  options: IEventOptions
+  execute: (...args: Promise<void>[]) => Promise<void>
 }

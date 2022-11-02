@@ -1,5 +1,5 @@
 // Dependencies
-import axios from "axios";
+import axios from 'axios'
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -9,66 +9,66 @@ import {
   EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
-} from "discord.js";
-import { v4 as uuidv4 } from "uuid";
-import encryption from "../../../../../../helpers/encryption";
+} from 'discord.js'
+import { v4 as uuidv4 } from 'uuid'
+import encryption from '../../../../../../helpers/encryption'
 // Configurations
-import prisma from "../../../../../../handlers/database";
-import deferReply from "../../../../../../handlers/deferReply";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
-import logger from "../../../../../../middlewares/logger";
+import prisma from '../../../../../../handlers/database'
+import deferReply from '../../../../../../handlers/deferReply'
+import checkPermission from '../../../../../../helpers/checkPermission'
+import getEmbedConfig from '../../../../../../helpers/getEmbedData'
+import logger from '../../../../../../middlewares/logger'
 
 // Function
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("giveaway")
-      .setDescription("Giveaway some credits for specified amount of users.")
+      .setName('giveaway')
+      .setDescription('Giveaway some credits for specified amount of users.')
       .addIntegerOption((option) =>
         option
-          .setName("uses")
-          .setDescription("How many users should be able to use this.")
+          .setName('uses')
+          .setDescription('How many users should be able to use this.')
           .setRequired(true)
       )
       .addIntegerOption((option) =>
         option
-          .setName("credit")
+          .setName('credit')
           .setDescription(`How much credits provided per use.`)
           .setRequired(true)
       )
       .addChannelOption((option) =>
         option
-          .setName("channel")
-          .setDescription("The channel to send the message to.")
+          .setName('channel')
+          .setDescription('The channel to send the message to.')
           .setRequired(true)
           .addChannelTypes(ChannelType.GuildText)
-      );
+      )
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
-    await deferReply(interaction, true);
+    await deferReply(interaction, true)
 
-    checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+    checkPermission(interaction, PermissionsBitField.Flags.ManageGuild)
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
-    ); // Destructure
-    const { guild, user, options } = interaction;
+    ) // Destructure
+    const { guild, user, options } = interaction
 
-    const uses = options?.getInteger("uses");
-    const creditAmount = options?.getInteger("credit");
-    const channel = options?.getChannel("channel");
+    const uses = options?.getInteger('uses')
+    const creditAmount = options?.getInteger('credit')
+    const channel = options?.getChannel('channel')
 
-    if (!uses) throw new Error("Amount of uses is required.");
-    if (!creditAmount) throw new Error("Amount of credits is required.");
-    if (!channel) throw new Error("Channel is required.");
-    if (!guild) throw new Error("Guild is required.");
+    if (!uses) throw new Error('Amount of uses is required.')
+    if (!creditAmount) throw new Error('Amount of credits is required.')
+    if (!channel) throw new Error('Channel is required.')
+    if (!guild) throw new Error('Guild is required.')
 
     const embed = new EmbedBuilder()
-      .setTitle("[:toolbox:] Giveaway")
-      .setFooter({ text: footerText, iconURL: footerIcon });
+      .setTitle('[:toolbox:] Giveaway')
+      .setFooter({ text: footerText, iconURL: footerIcon })
 
-    const code = uuidv4();
+    const code = uuidv4()
 
     const createGuildMember = await prisma.guildMember.upsert({
       where: {
@@ -104,26 +104,26 @@ export default {
         user: true,
         guild: true,
       },
-    });
+    })
 
-    logger.silly(createGuildMember);
+    logger.silly(createGuildMember)
 
     if (
       !createGuildMember.guild.apiCpggUrlIv ||
       !createGuildMember.guild.apiCpggUrlContent
     )
-      throw new Error("No API url available");
+      throw new Error('No API url available')
 
     if (
       !createGuildMember.guild.apiCpggTokenIv ||
       !createGuildMember.guild.apiCpggTokenContent
     )
-      throw new Error("No API token available");
+      throw new Error('No API token available')
 
     const url = encryption.decrypt({
       iv: createGuildMember.guild.apiCpggUrlIv,
       content: createGuildMember.guild.apiCpggUrlContent,
-    });
+    })
     const api = axios?.create({
       baseURL: `${url}/api/`,
       headers: {
@@ -132,12 +132,12 @@ export default {
           content: createGuildMember.guild.apiCpggTokenContent,
         })}`,
       },
-    });
+    })
 
-    const shopUrl = `${url}/store`;
+    const shopUrl = `${url}/store`
 
     await api
-      .post("vouchers", {
+      .post('vouchers', {
         uses,
         code,
         credits: creditAmount,
@@ -150,29 +150,29 @@ export default {
               .setColor(successColor)
               .setDescription(`Successfully created code: ${code}`),
           ],
-        });
+        })
 
         const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
           new ButtonBuilder()
-            .setLabel("Redeem it here")
+            .setLabel('Redeem it here')
             .setStyle(ButtonStyle.Link)
-            .setEmoji("🏦")
+            .setEmoji('🏦')
             .setURL(`${shopUrl}?voucher=${code}`)
-        );
+        )
 
-        const discordChannel = guild?.channels.cache.get(channel.id);
+        const discordChannel = guild?.channels.cache.get(channel.id)
 
-        if (!discordChannel) return;
+        if (!discordChannel) return
 
-        if (discordChannel.type !== ChannelType.GuildText) return;
+        if (discordChannel.type !== ChannelType.GuildText) return
 
         discordChannel.send({
           embeds: [
             new EmbedBuilder()
-              .setTitle("[:parachute:] Credits!")
+              .setTitle('[:parachute:] Credits!')
               .addFields([
                 {
-                  name: "💶 Credits",
+                  name: '💶 Credits',
                   value: `${creditAmount}`,
                   inline: true,
                 },
@@ -183,7 +183,7 @@ export default {
               .setColor(successColor),
           ],
           components: [buttons],
-        });
-      });
+        })
+      })
   },
-};
+}

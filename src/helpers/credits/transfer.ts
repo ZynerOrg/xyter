@@ -1,6 +1,6 @@
-import { Guild, User } from "discord.js";
-import prisma from "../../handlers/database";
-import transactionRules from "./transactionRules";
+import { Guild, User } from 'discord.js'
+import prisma from '../../handlers/database'
+import transactionRules from './transactionRules'
 
 export default async (guild: Guild, from: User, to: User, amount: number) => {
   return await prisma.$transaction(async (tx) => {
@@ -40,19 +40,19 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
           guildId: guild.id,
         },
       },
-    });
+    })
 
     // 4. Verify that the sender's balance didn't go below zero.
     if (sender.creditsEarned < 0) {
-      throw new Error(`${from} doesn't have enough to send ${amount}`);
+      throw new Error(`${from} doesn't have enough to send ${amount}`)
     }
 
     // 5. Check if the transactions is valid.
-    transactionRules(guild, from, amount);
-    transactionRules(guild, to, amount);
+    transactionRules(guild, from, amount)
+    transactionRules(guild, to, amount)
 
     // 6. Verify that sender and recipient are not the same user.
-    if (from.id === to.id) throw new Error("You can't transfer to yourself.");
+    if (from.id === to.id) throw new Error("You can't transfer to yourself.")
 
     // 7. Increment the recipient's balance by amount.
     const recipient = await tx.guildMember.upsert({
@@ -90,8 +90,8 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
           guildId: guild.id,
         },
       },
-    });
+    })
 
-    return recipient;
-  });
-};
+    return recipient
+  })
+}

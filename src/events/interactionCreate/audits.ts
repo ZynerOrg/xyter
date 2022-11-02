@@ -1,32 +1,32 @@
-import { BaseInteraction, ChannelType, EmbedBuilder } from "discord.js";
-import prisma from "../../handlers/database";
-import getEmbedConfig from "../../helpers/getEmbedData";
-import logger from "../../middlewares/logger";
+import { BaseInteraction, ChannelType, EmbedBuilder } from 'discord.js'
+import prisma from '../../handlers/database'
+import getEmbedConfig from '../../helpers/getEmbedData'
+import logger from '../../middlewares/logger'
 
 export default {
   execute: async (interaction: BaseInteraction) => {
-    if (interaction === null) return;
+    if (interaction === null) return
 
-    if (interaction.guild === null) return;
+    if (interaction.guild === null) return
 
     const getGuild = await prisma.guild.findUnique({
       where: { id: interaction.guild.id },
-    });
-    if (!getGuild) throw new Error("Guild not found");
+    })
+    if (!getGuild) throw new Error('Guild not found')
 
     const { footerText, footerIcon, successColor } = await getEmbedConfig(
       interaction.guild
-    );
+    )
 
-    const { client } = interaction;
+    const { client } = interaction
 
-    if (getGuild.auditsEnabled !== true) return;
-    if (!getGuild.auditsChannelId) return;
+    if (getGuild.auditsEnabled !== true) return
+    if (!getGuild.auditsChannelId) return
 
-    const channel = client.channels.cache.get(`${getGuild.auditsChannelId}`);
+    const channel = client.channels.cache.get(`${getGuild.auditsChannelId}`)
 
-    if (!channel) return;
-    if (channel.type !== ChannelType.GuildText) return;
+    if (!channel) return
+    if (channel.type !== ChannelType.GuildText) return
 
     channel
       .send({
@@ -52,10 +52,10 @@ export default {
       .then(() => {
         logger.debug(
           `Audit log sent for event interactionCreate in guild ${interaction?.guild?.name} (${interaction?.guild?.id})`
-        );
+        )
       })
       .catch(() => {
-        logger.silly("Failed to send audit log for event interactionCreate");
-      });
+        logger.silly('Failed to send audit log for event interactionCreate')
+      })
   },
-};
+}

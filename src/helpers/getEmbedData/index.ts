@@ -1,6 +1,6 @@
-import { ColorResolvable, Guild } from "discord.js";
-import prisma from "../../handlers/database";
-import logger from "../../middlewares/logger";
+import { ColorResolvable, Guild } from 'discord.js'
+import prisma from '../../handlers/database'
+import logger from '../../middlewares/logger'
 
 export default async (guild?: Guild | null) => {
   const {
@@ -9,7 +9,7 @@ export default async (guild?: Guild | null) => {
     EMBED_COLOR_ERROR,
     EMBED_FOOTER_TEXT,
     EMBED_FOOTER_ICON,
-  } = process.env;
+  } = process.env
 
   const defaultEmbedConfig = {
     successColor: EMBED_COLOR_SUCCESS,
@@ -17,10 +17,10 @@ export default async (guild?: Guild | null) => {
     errorColor: EMBED_COLOR_ERROR,
     footerText: EMBED_FOOTER_TEXT,
     footerIcon: EMBED_FOOTER_ICON,
-  };
+  }
 
   if (!guild) {
-    return defaultEmbedConfig;
+    return defaultEmbedConfig
   }
 
   const createGuildMember = await prisma.guildMember.upsert({
@@ -57,12 +57,12 @@ export default async (guild?: Guild | null) => {
       user: true,
       guild: true,
     },
-  });
+  })
 
-  logger.silly(createGuildMember);
+  logger.silly(createGuildMember)
 
   if (!createGuildMember) {
-    return defaultEmbedConfig;
+    return defaultEmbedConfig
   }
 
   return {
@@ -71,5 +71,5 @@ export default async (guild?: Guild | null) => {
     errorColor: <ColorResolvable>createGuildMember.guild.embedColorError,
     footerText: createGuildMember.guild.embedFooterText,
     footerIcon: createGuildMember.guild.embedFooterIcon,
-  };
-};
+  }
+}

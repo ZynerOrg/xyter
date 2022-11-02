@@ -1,15 +1,15 @@
-import { BaseInteraction, EmbedBuilder } from "discord.js";
-import getEmbedConfig from "../../helpers/getEmbedData";
+import { BaseInteraction, EmbedBuilder } from 'discord.js'
+import getEmbedConfig from '../../helpers/getEmbedData'
 
 export default async (interaction: BaseInteraction, ephemeral: boolean) => {
   if (!interaction.isRepliable())
-    throw new Error(`Cannot reply to an interaction that is not repliable`);
+    throw new Error(`Cannot reply to an interaction that is not repliable`)
 
   await interaction.deferReply({
     ephemeral,
-  });
+  })
 
-  const embedConfig = await getEmbedConfig(interaction.guild);
+  const embedConfig = await getEmbedConfig(interaction.guild)
 
   await interaction.editReply({
     embeds: [
@@ -19,9 +19,9 @@ export default async (interaction: BaseInteraction, ephemeral: boolean) => {
           iconURL: embedConfig.footerIcon,
         })
         .setTimestamp(new Date())
-        .setTitle("Processing your request")
+        .setTitle('Processing your request')
         .setColor(embedConfig.waitColor)
-        .setDescription("Please wait..."),
+        .setDescription('Please wait...'),
     ],
-  });
-};
+  })
+}

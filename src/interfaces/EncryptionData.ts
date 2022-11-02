@@ -1,4 +1,4 @@
 export interface IEncryptionData {
-  iv: string;
-  content: string;
+  iv: string
+  content: string
 }
