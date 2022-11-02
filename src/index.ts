@@ -5,6 +5,7 @@ import { register as commandRegister } from './handlers/command'
 import { register as eventRegister } from './handlers/event'
 import { start as scheduleStart } from './handlers/schedule'
 
+// Main process
 const main = async () => {
   const client = new Client({
     intents: [
