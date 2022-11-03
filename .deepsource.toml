@@ -1,16 +1,13 @@
 version = 1
 
 [[analyzers]]
-name = "javascript"
+name = "docker"
 enabled = true
 
 [[analyzers]]
-name = "shell"
-enabled = true
-
-[[transformers]]
-name = "standardjs"
+name = "javascript"
 enabled = true
 
 [[transformers]]
 name = "prettier"
+enabled = true
