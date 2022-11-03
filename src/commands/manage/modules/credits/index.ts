@@ -1,5 +1,7 @@
-import { SlashCommandSubcommandGroupBuilder } from "@discordjs/builders";
-import { ChatInputCommandInteraction } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  SlashCommandSubcommandGroupBuilder,
+} from "discord.js";
 
 // Modules
 import moduleGive from "./modules/give";

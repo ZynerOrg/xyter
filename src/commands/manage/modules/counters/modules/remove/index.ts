@@ -1,11 +1,11 @@
 // Dependencies
 // Models
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { ChannelType } from "discord-api-types/v10";
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../../../../handlers/deferReply";
 import checkPermission from "../../../../../../helpers/checkPermission";

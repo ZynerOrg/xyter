@@ -1,10 +1,10 @@
 // Dependencies
 // Models
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import creditsTransfer from "../../../../../../helpers/credits/transfer";
 // Configurations

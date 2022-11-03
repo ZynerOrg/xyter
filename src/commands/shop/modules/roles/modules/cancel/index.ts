@@ -1,10 +1,10 @@
 // Dependencies
 // Helpers
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   GuildMemberRoleManager,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 // Configurations
 // Models

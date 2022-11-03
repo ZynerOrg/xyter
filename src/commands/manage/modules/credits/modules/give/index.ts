@@ -1,11 +1,17 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
-import { ChatInputCommandInteraction, PermissionsBitField } from "discord.js";
-
+// Dependencies
+import {
+  ChatInputCommandInteraction, PermissionsBitField,
+  SlashCommandSubcommandBuilder
+} from "discord.js";
+// Configurations
+// Helpers../../../../../../../helpers/userData
+import pluralize from "../../../../../../helpers/pluralize";
+// Models
+// Handlers
 import deferReply from "../../../../../../handlers/deferReply";
 import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../../../helpers/checkPermission";
 import creditsGive from "../../../../../../helpers/credits/give";
-import pluralize from "../../../../../../helpers/pluralize";
 
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {

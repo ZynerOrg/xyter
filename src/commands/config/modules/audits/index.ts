@@ -1,5 +1,5 @@
-import { ChannelType } from "discord-api-types/v10";
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,

@@ -2,9 +2,9 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import deferReply from "../../../../handlers/deferReply";
 import checkPermission from "../../../../helpers/checkPermission";
 import getValues from "./components/getValues";
