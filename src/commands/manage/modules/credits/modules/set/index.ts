@@ -1,7 +1,10 @@
+// Dependencies
+// Helpers
+// Models
 import {
   ChatInputCommandInteraction,
   PermissionsBitField,
-  SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandBuilder
 } from "discord.js";
 
 import deferReply from "../../../../../../handlers/deferReply";

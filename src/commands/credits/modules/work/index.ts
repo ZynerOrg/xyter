@@ -1,6 +1,5 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import Chance from "chance";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";

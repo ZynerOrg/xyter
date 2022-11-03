@@ -1,4 +1,3 @@
-import { SlashCommandSubcommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import {
   ActionRowBuilder,
@@ -7,6 +6,7 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   Message,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "../../../../handlers/database";
