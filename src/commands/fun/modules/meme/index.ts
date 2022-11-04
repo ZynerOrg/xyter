@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   CommandInteraction,
   EmbedBuilder,
-  SlashCommandSubcommandBuilder
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";

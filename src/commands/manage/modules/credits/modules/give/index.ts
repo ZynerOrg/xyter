@@ -1,7 +1,8 @@
 // Dependencies
 import {
-  ChatInputCommandInteraction, PermissionsBitField,
-  SlashCommandSubcommandBuilder
+  ChatInputCommandInteraction,
+  PermissionsBitField,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 // Configurations
 // Helpers../../../../../../../helpers/userData

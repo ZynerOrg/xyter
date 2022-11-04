@@ -1,7 +1,7 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  SlashCommandSubcommandBuilder
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
