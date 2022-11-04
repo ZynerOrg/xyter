@@ -1,6 +1,5 @@
 {
   "editor.bracketPairColorization.enabled": true,
-  "editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint"],
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -11,11 +10,14 @@
   "editor.minimap.renderCharacters": false,
   "editor.minimap.showSlider": "always",
   "editor.tabSize": 2,
+  "git.enableCommitSigning": true,
   "editor.wordWrapColumn": 100,
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": true,
+    "source.formatDocument": true,
+    "source.fixAll.eslint": true
   },
   "cSpell.customDictionaries": {
     "custom-dictionary-workspace": {
@@ -26,9 +28,10 @@
     }
   },
   "[dotenv]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+    "editor.defaultFormatter": "IronGeek.vscode-env"
   },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  }
+  },
+  "conventionalCommits.scopes": ["git", "github"]
 }

@@ -17,7 +17,6 @@
     "donjayamanne.githistory",
     "github.github-vscode-theme",
     "eamodio.gitlens",
-    "vtrois.gitmoji-vscode",
     "xabikos.javascriptsnippets",
     "christian-kohler.npm-intellisense",
     "christian-kohler.path-intellisense",
@@ -26,7 +25,9 @@
     "wayou.vscode-todo-highlight",
     "gruntfuggly.todo-tree",
     "pflannery.vscode-versionlens",
-    "vscode-icons-team.vscode-icons"
+    "vscode-icons-team.vscode-icons",
+    "vivaxy.vscode-conventional-commits",
+    "prisma.prisma"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []
