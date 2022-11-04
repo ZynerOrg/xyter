@@ -1,5 +1,5 @@
 branches:
-  - master
+  - main
   - name: next
     prerelease: true
 debug: true
