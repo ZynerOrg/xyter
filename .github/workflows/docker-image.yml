@@ -1,11 +1,16 @@
 name: Docker Image CI
 
 on:
+  schedule:
+    - cron: "0 10 * * *"
   push:
     branches:
-      - "main"
+      - "**"
     tags:
-      - "*.*.*"
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - "**"
 
 jobs:
   docker:
@@ -44,3 +49,4 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
