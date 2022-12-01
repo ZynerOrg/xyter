@@ -58,7 +58,7 @@ If after reading the guide you are still experiencing issues, feel free to join 
 
 **Xyter** is in continuous development, and is currently still in **beta**!
 
-Join us on our [Official Discord Server](https://discord.gg/red)!
+Join us on our [Official Discord Server](https://discord.zyner.org)!
 
 # License
 
