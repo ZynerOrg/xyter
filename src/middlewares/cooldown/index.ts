@@ -51,7 +51,9 @@ export default async (
       );
     }
 
-    throw new Error(`You are still on cooldown for ${duration}`);
+    throw new Error(
+      `You need to wait for ${duration} before you can do that again`
+    );
   }
 
   const createCooldown = await prisma.cooldown.upsert({
