@@ -1,3 +1,4 @@
+/* eslint-disable no-loops/no-loops */
 import {
   CommandInteraction,
   EmbedBuilder,
@@ -5,6 +6,7 @@ import {
 } from "discord.js";
 import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
+import cooldown from "../../../../middlewares/cooldown";
 
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
@@ -12,6 +14,15 @@ export default {
   },
   execute: async (interaction: CommandInteraction) => {
     await deferReply(interaction, false);
+
+    if (!interaction.guild) throw new Error("You need to be in a guild");
+
+    await cooldown(
+      interaction.guild,
+      interaction.user,
+      interaction.commandId,
+      3600
+    );
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       interaction.guild
@@ -29,10 +40,29 @@ export default {
 
     const uptime = `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`;
 
+    // Initialize a storage for the user ids
+    const userIds = new Set();
+    // Iterate over all guilds (always cached)
+    for (const guild of client.guilds.cache.values()) {
+      // Fetch all guild members and iterate over them
+      for (const member of (await guild.members.fetch()).values()) {
+        // Fetch the user, if user already cached, returns value from cache
+        // Will probably always return from cache
+        const user = await client.users.fetch(member.id);
+        // Check if user id is not already in set and user is not a bot
+        if (!userIds.has(user.id) && !user.bot) {
+          // Add unique user id to our set
+          userIds.add(user.id);
+        }
+      }
+    }
+
     const interactionEmbed = new EmbedBuilder()
       .setColor(successColor)
       .setTitle("[:hammer:] Stats")
-      .setDescription("Below you can see a list of statistics about the bot.")
+      .setDescription(
+        "Below you can see a list of statistics about this bot instance."
+      )
       .setTimestamp()
       .addFields(
         {
@@ -56,11 +86,13 @@ export default {
           inline: true,
         },
         {
-          name: "📈 Users (non-unique)",
-          value: `${client?.guilds?.cache?.reduce(
-            (acc, guild) => acc + guild?.memberCount,
-            0
-          )}`,
+          name: "📈 Users (unique)",
+          value: `${userIds.size}`,
+          inline: true,
+        },
+        {
+          name: "🤖 Running Version",
+          value: `[${process.env.npm_package_version}](https://github.com/ZynerOrg/xyter/releases/tag/${process.env.npm_package_version})`,
           inline: true,
         }
       )
