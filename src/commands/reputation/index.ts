@@ -2,8 +2,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 // Modules
+import moduleCheck from "./modules/check";
 import moduleGive from "./modules/give";
-import moduleView from "./modules/view";
 
 // Function
 export const builder = new SlashCommandBuilder()
@@ -13,7 +13,7 @@ export const builder = new SlashCommandBuilder()
 
   // Modules
   .addSubcommand(moduleGive.builder)
-  .addSubcommand(moduleView.builder);
+  .addSubcommand(moduleCheck.builder);
 
 // Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
@@ -21,8 +21,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await moduleGive.execute(interaction);
     return;
   }
-  if (interaction.options.getSubcommand() === "view") {
-    await moduleView.execute(interaction);
+  if (interaction.options.getSubcommand() === "check") {
+    await moduleCheck.execute(interaction);
     return;
   }
 };
