@@ -11,33 +11,33 @@ import logger from "../../../../middlewares/logger";
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("view")
-      .setDescription("View a user's reputation value")
+      .setName("check")
+      .setDescription("Check reputation")
       .addUserOption((option) =>
         option
-          .setName("target")
-          .setDescription("The user you want to check.")
-          .setRequired(true)
+          .setName("account")
+          .setDescription("The account you checking")
+          .setRequired(false)
       );
   },
   execute: async (interaction: ChatInputCommandInteraction) => {
     await deferReply(interaction, true);
 
-    const { options, guild } = interaction;
+    const { options, guild, user } = interaction;
 
     const { successColor, footerText, footerIcon } = await getEmbedConfig(
       guild
     );
 
-    const optionTarget = options?.getUser("target");
+    const optionAccount = options?.getUser("account");
 
-    if (!guild) throw new Error("Guild is undefined");
-    if (!optionTarget) throw new Error("Target is not defined");
+    if (!guild) throw new Error("Server unavailable");
+    if (!user) throw new Error("User unavailable");
 
     const createGuildMember = await prisma.guildMember.upsert({
       where: {
         userId_guildId: {
-          userId: optionTarget.id,
+          userId: (optionAccount || user).id,
           guildId: guild.id,
         },
       },
@@ -46,10 +46,10 @@ export default {
         user: {
           connectOrCreate: {
             create: {
-              id: optionTarget.id,
+              id: (optionAccount || user).id,
             },
             where: {
-              id: optionTarget.id,
+              id: (optionAccount || user).id,
             },
           },
         },
@@ -72,10 +72,26 @@ export default {
 
     logger.silly(createGuildMember);
 
+    const reputationType = async (reputation: number) => {
+      if (reputation > 0) return `negative reputation of ${reputation}`;
+      if (reputation < 0) return `positive reputation of ${reputation}`;
+      return "neutral reputation";
+    };
+
     const interactionEmbed = new EmbedBuilder()
-      .setTitle("[:loudspeaker:] View")
+      .setTitle(
+        optionAccount
+          ? `:loudspeaker:︱Showing ${optionAccount.username}'s reputation`
+          : ":loudspeaker:︱Showing your reputation"
+      )
       .setDescription(
-        `${optionTarget} has ${createGuildMember.user.reputationsEarned}.`
+        optionAccount
+          ? `${optionAccount} have a ${await reputationType(
+              createGuildMember.user.reputationsEarned
+            )}`
+          : `You have a ${await reputationType(
+              createGuildMember.user.reputationsEarned
+            )}`
       )
       .setTimestamp()
       .setColor(successColor)

@@ -28,15 +28,21 @@ export default {
     const targetUser = userOption || interaction.user;
 
     const embed = new EmbedBuilder()
-      .setTitle("[:tools:] Avatar")
+      .setTitle(":toolbox:︱Avatar")
       .setTimestamp(new Date())
       .setFooter({ text: footerText, iconURL: footerIcon });
+
+    const avatarUrl = targetUser.displayAvatarURL();
 
     return interaction.editReply({
       embeds: [
         embed
-          .setDescription(`${targetUser.username}'s avatar:`)
-          .setThumbnail(targetUser.displayAvatarURL())
+          .setDescription(
+            userOption
+              ? `You can also [download it here](${avatarUrl})!`
+              : `Your avatar is available to [download here](${avatarUrl}).`
+          )
+          .setThumbnail(avatarUrl)
           .setColor(successColor),
       ],
     });
