@@ -14,18 +14,18 @@ import cooldown from "../../../../middlewares/cooldown";
 export default {
   builder: (command: SlashCommandSubcommandBuilder) => {
     return command
-      .setName("give")
-      .setDescription("Give reputation to a user")
+      .setName("repute")
+      .setDescription("Repute an account")
       .addUserOption((option) =>
         option
-          .setName("target")
-          .setDescription("The user you want to repute.")
+          .setName("account")
+          .setDescription("The account you repute")
           .setRequired(true)
       )
       .addStringOption((option) =>
         option
           .setName("type")
-          .setDescription("What type of reputation you want to repute")
+          .setDescription("Type of reputation")
           .setRequired(true)
           .addChoices(
             { name: "Positive", value: "positive" },
@@ -45,14 +45,14 @@ export default {
       guild
     );
 
-    const optionTarget = options?.getUser("target");
+    const optionAccount = options?.getUser("account");
     const optionType = options?.getString("type");
 
-    if (!guild) throw new Error("Guild is undefined");
-    if (!optionTarget) throw new Error("Target is not defined");
+    if (!guild) throw new Error("Server unavailable");
+    if (!optionAccount) throw new Error("User unavailable");
 
     // Pre-checks
-    noSelfReputation(optionTarget, user);
+    noSelfReputation(optionAccount, user);
 
     // Check if user is on cooldown otherwise create one
     await cooldown(
@@ -66,7 +66,7 @@ export default {
       case "positive": {
         const createUser = await prisma.user.upsert({
           where: {
-            id: optionTarget.id,
+            id: optionAccount.id,
           },
           update: {
             reputationsEarned: {
@@ -74,7 +74,7 @@ export default {
             },
           },
           create: {
-            id: optionTarget.id,
+            id: optionAccount.id,
             reputationsEarned: 1,
           },
         });
@@ -85,7 +85,7 @@ export default {
       case "negative": {
         const createUser = await prisma.user.upsert({
           where: {
-            id: optionTarget.id,
+            id: optionAccount.id,
           },
           update: {
             reputationsEarned: {
@@ -93,7 +93,7 @@ export default {
             },
           },
           create: {
-            id: optionTarget.id,
+            id: optionAccount.id,
             reputationsEarned: -1,
           },
         });
@@ -107,9 +107,9 @@ export default {
     }
 
     const interactionEmbed = new EmbedBuilder()
-      .setTitle("[:loudspeaker:] Give")
+      .setTitle(`:loudspeaker:︱Reputing ${optionAccount.username}`)
       .setDescription(
-        `You have given a ${optionType} repute to ${optionTarget}`
+        `You have given a ${optionType} repute to ${optionAccount}!`
       )
       .setTimestamp()
       .setColor(successColor)
