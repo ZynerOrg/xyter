@@ -7,7 +7,7 @@ import modulePing from "./modules/ping";
 import moduleStats from "./modules/stats";
 
 export const builder = new SlashCommandBuilder()
-  .setName("utility")
+  .setName("utils")
   .setDescription("Common utility.")
 
   // Modules
