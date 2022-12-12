@@ -73,8 +73,8 @@ export default {
     logger.silly(createGuildMember);
 
     const reputationType = async (reputation: number) => {
-      if (reputation > 0) return `negative reputation of ${reputation}`;
-      if (reputation < 0) return `positive reputation of ${reputation}`;
+      if (reputation < 0) return `negative reputation of ${reputation}`;
+      if (reputation > 0) return `positive reputation of ${reputation}`;
       return "neutral reputation";
     };
 
