@@ -1,7 +1,7 @@
 {
   "name": "xyter",
   "version": "v1.3.0",
-  "description": "Earn credits while chatting! And more",
+  "description": "A multi purpose Discord bot written in TypeScript with Discord.js",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsc --watch & NODE_ENV=development nodemon dist",
