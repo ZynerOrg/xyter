@@ -1,0 +1,18 @@
+{
+   "branches": [
+      "main",
+      {
+         "name": "next",
+         "prerelease": true
+      }
+   ],
+   "debug": true,
+   "ci": true,
+   "dryRun": false,
+   "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/git",
+      "@semantic-release/github"
+   ]
+}
