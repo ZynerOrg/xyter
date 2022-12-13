@@ -25,6 +25,8 @@ export default {
 
     if (!interaction.guild) throw new Error("You need to be in a guild");
 
+    const { client } = interaction;
+
     // await cooldown(
     //   interaction.guild,
     //   interaction.user,
