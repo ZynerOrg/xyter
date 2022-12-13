@@ -1,6 +1,5 @@
 {
   "name": "xyter",
-  "version": "v1.1.1",
   "description": "Earn credits while chatting! And more",
   "main": "dist/index.js",
   "scripts": {
@@ -10,7 +9,7 @@
     "test": "jest",
     "start": "node dist",
     "start:migrate:prod": "prisma migrate deploy && npm run start",
-    "prettier-format": "prettier \"src/**/*.ts\" --write",
+    "prettier-format": "prettier 'src/**/*.ts' --write",
     "lint": "eslint ./src --ext .ts"
   },
   "keywords": [
@@ -61,7 +60,8 @@
     "nodemon": "2.0.20",
     "prettier": "2.8.0",
     "prisma": "^4.7.1",
-    "semantic-release": "^19.0.5"
+    "semantic-release": "^19.0.5",
+    "@semantic-release/git": "^10.0.1"
   },
   "lint-staged": {
     "*.ts": "eslint --cache --fix"
