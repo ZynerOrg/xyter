@@ -61,7 +61,8 @@
     "nodemon": "2.0.20",
     "prettier": "2.8.0",
     "prisma": "^4.7.1",
-    "semantic-release": "^19.0.5"
+    "semantic-release": "^19.0.5",
+    "@semantic-release/git": "^10.0.1",
   },
   "lint-staged": {
     "*.ts": "eslint --cache --fix"
