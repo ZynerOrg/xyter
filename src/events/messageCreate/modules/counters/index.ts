@@ -23,7 +23,8 @@ export default {
     });
 
     if (!channelCounter) {
-      return logger.debug("No counters found in channel.");
+      logger.debug("No counters found in channel.");
+      return false;
     }
 
     if (

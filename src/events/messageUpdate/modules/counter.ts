@@ -38,4 +38,6 @@ export default async (message: Message) => {
     .catch((error) => {
       return logger.error(error);
     });
+
+  return true;
 };
