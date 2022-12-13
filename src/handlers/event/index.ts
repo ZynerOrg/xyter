@@ -37,7 +37,7 @@ export const register = async (client: Client) => {
         throw new Error(`📡 Invalid event type for event: ${name}`);
     }
 
-    loadedEvents++;
+    return loadedEvents++;
   };
 
   for await (const eventName of eventNames) {
