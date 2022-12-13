@@ -15,11 +15,10 @@ export const start = async (client: Client) => {
     jobNames.map(async (jobName) => {
       const job: IJob = await import(`../../schedules/${jobName}`);
 
-      schedule.scheduleJob(job.options.schedule, async () => {
+      return schedule.scheduleJob(job.options.schedule, async () => {
         logger.verbose(`⏰ Performed the job "${jobName}"`);
         await job.execute(client);
       });
     })
   );
-  return;
 };
