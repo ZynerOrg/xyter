@@ -21,17 +21,17 @@ export const register = async (client: Client) => {
     const command: ICommand = await import(`../../commands/${name}`);
 
     client.commands.set(command.builder.name, command);
-    loadedCommands++;
+    return loadedCommands++;
   };
 
   for await (const commandName of commandNames) {
     await importCommand(commandName).then(() => {
-      logger.verbose(`🔧 Loaded command "${commandName}"`);
+      return logger.verbose(`🔧 Loaded command "${commandName}"`);
     });
 
     if (loadedCommands === totalCommands) {
-      logger.info("🔧 All commands loaded");
+      return logger.info("🔧 All commands loaded");
     }
   }
-  return;
+  return true;
 };
