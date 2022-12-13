@@ -33,4 +33,5 @@ export const register = async (client: Client) => {
       logger.info("🔧 All commands loaded");
     }
   }
+  return;
 };

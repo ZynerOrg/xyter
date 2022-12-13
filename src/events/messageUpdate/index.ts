@@ -25,5 +25,4 @@ export const execute = async (oldMessage: Message, newMessage: Message) => {
   if (author?.bot) return logger?.silly(`Message update event fired by bot`);
 
   await counter(newMessage);
-  return;
 };
