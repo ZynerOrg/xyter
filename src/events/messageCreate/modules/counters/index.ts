@@ -35,7 +35,6 @@ export default {
         `${author.username} sent the last message therefor not allowing again.`
       );
       await message.delete();
-      return false;
     }
 
     if (content !== channelCounter.triggerWord) {
@@ -44,7 +43,6 @@ export default {
       );
 
       await message.delete();
-      return false;
     }
 
     const updateGuildCounter = await prisma.guildCounter.update({
