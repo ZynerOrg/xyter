@@ -49,4 +49,6 @@ export const register = async (client: Client) => {
       return logger.info("📡 All events loaded");
     }
   }
+
+  return true;
 };
