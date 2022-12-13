@@ -1,9 +1,3 @@
-{
-  "release": {
-    "branches": ["master", "next"]
-  }
-}
-
 branches:
   - main
   - name: next
