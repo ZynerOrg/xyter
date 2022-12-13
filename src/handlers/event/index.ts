@@ -42,12 +42,11 @@ export const register = async (client: Client) => {
 
   for await (const eventName of eventNames) {
     await importEvent(eventName).then(() => {
-      logger.verbose(`📡 Loaded event "${eventName}"`);
+      return logger.verbose(`📡 Loaded event "${eventName}"`);
     });
 
     if (loadedEvents === totalEvents) {
-      logger.info("📡 All events loaded");
+      return logger.info("📡 All events loaded");
     }
   }
-  return;
 };
