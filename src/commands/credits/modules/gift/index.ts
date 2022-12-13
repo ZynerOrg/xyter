@@ -2,32 +2,36 @@ import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
+import prisma from "../../../../handlers/database";
 
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import creditsTransfer from "../../../../helpers/credits/transfer";
+import logger from "../../../../middlewares/logger";
 
 // 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("gift")
-    .setDescription(`Gift a user credits`)
+    .setDescription(`Gift credits to an account`)
     .addUserOption((option) =>
       option
-        .setName("target")
-        .setDescription("The user you want to gift credits to.")
+        .setName("account")
+        .setDescription("The account you gift to")
         .setRequired(true)
     )
     .addIntegerOption((option) =>
       option
         .setName("credits")
-        .setDescription("The amount of credits you want to gift.")
+        .setDescription("How much you gift")
         .setRequired(true)
         .setMinValue(1)
         .setMaxValue(100000000)
     )
     .addStringOption((option) =>
-      option.setName("reason").setDescription("Your reason.")
+      option
+        .setName("message")
+        .setDescription("Your personalized message to the account")
     );
 };
 
@@ -37,44 +41,124 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await deferReply(interaction, true);
 
   // 2. Destructure interaction object.
-  const { options, user, guild, client } = interaction;
-  if (!guild) throw new Error("Guild not found");
-  if (!user) throw new Error("User not found");
-  if (!client) throw new Error("Client not found");
-  if (!options) throw new Error("Options not found");
+  const { options, user, guild } = interaction;
+  if (!guild) throw new Error("Server unavailable");
+  if (!user) throw new Error("User unavailable");
 
   // 3. Get options from interaction.
-  const target = options.getUser("target");
+  const account = options.getUser("account");
   const credits = options.getInteger("credits");
-  const reason = options.getString("reason");
-  if (!target) throw new Error("Target user not found");
+  const message = options.getString("message");
+  if (!account) throw new Error("Account unavailable");
   if (typeof credits !== "number")
-    throw new Error("You need to specify a number of credits you want to gift");
+    throw new Error("You need to enter a valid number of credits to gift");
 
   // 4. Create base embeds.
-  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Gift");
+  const receiverEmbed = await BaseEmbedSuccess(
+    guild,
+    `:credit_card:︱You received a gift from ${user.username}`
+  );
 
   // 5. Start an transaction of the credits.
-  await creditsTransfer(guild, user, target, credits);
+  await creditsTransfer(guild, user, account, credits);
+
+  const receiverGuildMember = await prisma.guildMember.upsert({
+    where: {
+      userId_guildId: {
+        userId: account.id,
+        guildId: guild.id,
+      },
+    },
+    update: {},
+    create: {
+      user: {
+        connectOrCreate: {
+          create: {
+            id: account.id,
+          },
+          where: {
+            id: account.id,
+          },
+        },
+      },
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guild.id,
+          },
+          where: {
+            id: guild.id,
+          },
+        },
+      },
+    },
+    include: {
+      user: true,
+      guild: true,
+    },
+  });
+  logger.silly(receiverGuildMember);
+
+  if (message) receiverEmbed.setFields({ name: "Message", value: message });
 
   // 6. Tell the target that they have been gifted credits.
-  await target.send({
+  await account.send({
     embeds: [
-      EmbedSuccess.setDescription(
-        reason
-          ? `You received ${credits} credits from ${user} for the reason: ${reason}.`
-          : `You received ${credits} credits from ${user}.`
+      receiverEmbed.setDescription(
+        `You received a gift containing ${credits} coins from ${user}! You now have ${receiverGuildMember.creditsEarned} coins in balance!`
       ),
     ],
   });
 
+  const senderGuildMember = await prisma.guildMember.upsert({
+    where: {
+      userId_guildId: {
+        userId: user.id,
+        guildId: guild.id,
+      },
+    },
+    update: {},
+    create: {
+      user: {
+        connectOrCreate: {
+          create: {
+            id: user.id,
+          },
+          where: {
+            id: user.id,
+          },
+        },
+      },
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guild.id,
+          },
+          where: {
+            id: guild.id,
+          },
+        },
+      },
+    },
+    include: {
+      user: true,
+      guild: true,
+    },
+  });
+  logger.silly(senderGuildMember);
+
+  const senderEmbed = await BaseEmbedSuccess(
+    guild,
+    ":credit_card:︱Send a gift"
+  );
+
+  if (message) senderEmbed.setFields({ name: "Message", value: message });
+
   // 7. Tell the sender that they have gifted the credits.
   await interaction.editReply({
     embeds: [
-      EmbedSuccess.setDescription(
-        reason
-          ? `You have successfully gifted ${credits} credits to ${target} with reason: ${reason}.`
-          : `You have successfully gifted ${credits} credits to ${target}.`
+      senderEmbed.setDescription(
+        `Your gift has been sent to ${account}. You now have ${senderGuildMember.creditsEarned} coins in balance!`
       ),
     ],
   });
