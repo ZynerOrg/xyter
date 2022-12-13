@@ -1,4 +1,4 @@
-FROM node:19-alpine3.16 AS builder
+FROM node:19 AS builder
 
 # Create app directory
 WORKDIR /app
@@ -10,16 +10,15 @@ COPY prisma ./prisma/
 # Install app dependencies
 RUN npm install
 
-
 COPY . .
 
 RUN npm run build
 
-FROM node:19-alpine3.16
+FROM node:19
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-CMD [  "npm", "run", "start:migrate:prod" ]
+CMD [ "npm", "run", "start:migrate:prod" ]
