@@ -19,9 +19,9 @@ export default async (interaction: BaseInteraction, ephemeral: boolean) => {
           iconURL: embedConfig.footerIcon,
         })
         .setTimestamp(new Date())
-        .setTitle("Processing your request")
+        .setTitle("⏳︱Your request are being processed")
         .setColor(embedConfig.waitColor)
-        .setDescription("Please wait..."),
+        .setDescription("This might take a while, please wait..."),
     ],
   });
 };

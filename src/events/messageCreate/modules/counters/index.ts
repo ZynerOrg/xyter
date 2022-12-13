@@ -22,7 +22,10 @@ export default {
       },
     });
 
-    if (!channelCounter) return logger.debug("No counters found in channel.");
+    if (!channelCounter) {
+      logger.debug("No counters found in channel.");
+      return;
+    }
 
     if (
       lastMessage?.author.id === author.id &&
@@ -32,7 +35,6 @@ export default {
         `${author.username} sent the last message therefor not allowing again.`
       );
       await message.delete();
-      return;
     }
 
     if (content !== channelCounter.triggerWord) {
@@ -41,7 +43,6 @@ export default {
       );
 
       await message.delete();
-      return;
     }
 
     const updateGuildCounter = await prisma.guildCounter.update({

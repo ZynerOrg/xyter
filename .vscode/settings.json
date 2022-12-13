@@ -33,5 +33,5 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "conventionalCommits.scopes": ["git", "github"]
+  "conventionalCommits.scopes": ["git", "github", "prisma"]
 }

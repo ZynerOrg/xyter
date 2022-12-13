@@ -72,7 +72,7 @@ export default {
 
     logger.silly(createGuildMember);
 
-    const reputationType = async (reputation: number) => {
+    const reputationType = (reputation: number) => {
       if (reputation < 0) return `negative reputation of ${reputation}`;
       if (reputation > 0) return `positive reputation of ${reputation}`;
       return "neutral reputation";
@@ -86,10 +86,10 @@ export default {
       )
       .setDescription(
         optionAccount
-          ? `${optionAccount} have a ${await reputationType(
+          ? `${optionAccount} have a ${reputationType(
               createGuildMember.user.reputationsEarned
             )}`
-          : `You have a ${await reputationType(
+          : `You have a ${reputationType(
               createGuildMember.user.reputationsEarned
             )}`
       )
