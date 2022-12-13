@@ -33,8 +33,5 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "conventionalCommits.scopes": ["git", "github", "prisma"],
-  "[dockerfile]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  }
+  "conventionalCommits.scopes": ["git", "github", "npm"]
 }
