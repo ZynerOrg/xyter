@@ -38,16 +38,6 @@ export default {
       interaction.guild
     );
 
-    const { client } = interaction;
-    if (client?.uptime === null) return;
-    let totalSeconds = client?.uptime / 1000;
-    const days = Math?.floor(totalSeconds / 86400);
-    totalSeconds %= 86400;
-    const hours = Math?.floor(totalSeconds / 3600);
-    totalSeconds %= 3600;
-    const minutes = Math?.floor(totalSeconds / 60);
-    const seconds = Math?.floor(totalSeconds % 60);
-
     // // Initialize a storage for the user ids
     // const userIds = new Set();
     // // Iterate over all guilds (always cached)
