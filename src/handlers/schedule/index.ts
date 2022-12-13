@@ -21,4 +21,5 @@ export const start = async (client: Client) => {
       });
     })
   );
+  return;
 };
