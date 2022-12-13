@@ -11,12 +11,14 @@ export const start = async (client: Client) => {
   const jobNames = await checkDirectory("schedules");
   if (!jobNames) return logger.warn("⏰ No available jobs found");
 
-  jobNames.map(async (jobName) => {
-    const job: IJob = await import(`../../schedules/${jobName}`);
+  return await Promise.all(
+    jobNames.map(async (jobName) => {
+      const job: IJob = await import(`../../schedules/${jobName}`);
 
-    return schedule.scheduleJob(job.options.schedule, async () => {
-      logger.verbose(`⏰ Performed the job "${jobName}"`);
-      await job.execute(client);
-    });
-  });
+      return schedule.scheduleJob(job.options.schedule, async () => {
+        logger.verbose(`⏰ Performed the job "${jobName}"`);
+        await job.execute(client);
+      });
+    })
+  );
 };
