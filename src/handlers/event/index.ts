@@ -37,16 +37,18 @@ export const register = async (client: Client) => {
         throw new Error(`📡 Invalid event type for event: ${name}`);
     }
 
-    loadedEvents++;
+    return loadedEvents++;
   };
 
   for await (const eventName of eventNames) {
     await importEvent(eventName).then(() => {
-      logger.verbose(`📡 Loaded event "${eventName}"`);
+      return logger.verbose(`📡 Loaded event "${eventName}"`);
     });
 
     if (loadedEvents === totalEvents) {
-      logger.info("📡 All events loaded");
+      return logger.info("📡 All events loaded");
     }
   }
+
+  return true;
 };

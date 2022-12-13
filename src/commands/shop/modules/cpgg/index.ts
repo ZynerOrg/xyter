@@ -190,5 +190,6 @@ export default {
             });
           });
       });
+    return true;
   },
 };

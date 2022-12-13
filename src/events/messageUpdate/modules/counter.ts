@@ -1,4 +1,4 @@
-1; // Dependencies
+// Dependencies
 import { Message } from "discord.js";
 // Models
 import prisma from "../../../handlers/database";
@@ -30,13 +30,14 @@ export default async (message: Message) => {
   await message
     .delete()
     .then(async () => {
-      await channel?.send(`${author} said **${channelCounter.triggerWord}**.`);
       logger?.silly(
         `${author} said ${channelCounter.triggerWord} in ${channel}`
       );
+      await channel?.send(`${author} said **${channelCounter.triggerWord}**.`);
     })
     .catch((error) => {
-      logger.error(error);
+      return logger.error(error);
     });
-  return;
+
+  return true;
 };
