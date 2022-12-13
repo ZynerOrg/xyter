@@ -1,4 +1,4 @@
-1; // Dependencies
+// Dependencies
 import { Message } from "discord.js";
 // Models
 import prisma from "../../../handlers/database";
