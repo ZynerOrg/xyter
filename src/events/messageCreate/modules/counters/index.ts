@@ -24,7 +24,7 @@ export default {
 
     if (!channelCounter) {
       logger.debug("No counters found in channel.");
-      return false;
+      return;
     }
 
     if (
