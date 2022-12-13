@@ -46,8 +46,6 @@ export default {
     const minutes = Math?.floor(totalSeconds / 60);
     const seconds = Math?.floor(totalSeconds % 60);
 
-    const uptime = `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`;
-
     // // Initialize a storage for the user ids
     // const userIds = new Set();
     // // Iterate over all guilds (always cached)
