@@ -32,7 +32,7 @@ export default async (message: Message) => {
 
   channel?.send(`${author} said **${channelCounter.triggerWord}**.`);
   logger?.silly(`${author} said ${channelCounter.triggerWord} in ${channel}`);
-  return logger?.silly(
+  logger?.silly(
     `User: ${author?.tag} (${author?.id}) in guild: ${guild?.name} (${guild?.id}) said the counter word: ${channelCounter.triggerWord}`
   );
 };

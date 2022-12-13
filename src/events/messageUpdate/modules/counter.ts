@@ -1,4 +1,4 @@
-// Dependencies
+1; // Dependencies
 import { Message } from "discord.js";
 // Models
 import prisma from "../../../handlers/database";
@@ -38,4 +38,5 @@ export default async (message: Message) => {
     .catch((error) => {
       logger.error(error);
     });
+  return;
 };
