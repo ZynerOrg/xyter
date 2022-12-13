@@ -1,5 +1,6 @@
 {
   "name": "xyter",
+  "version": "v1.3.0",
   "description": "Earn credits while chatting! And more",
   "main": "dist/index.js",
   "scripts": {
