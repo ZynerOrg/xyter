@@ -1,6 +1,6 @@
 {
   "name": "xyter",
-  "version": "v1.3.2",
+  "version": "v1.3.3",
   "private": true,
   "description": "A multi purpose Discord bot written in TypeScript with Discord.js",
   "main": "dist/index.js",
