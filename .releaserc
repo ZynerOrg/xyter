@@ -1,18 +1,33 @@
 {
-   "branches": [
-      "main",
+  "branches": [
+    "main",
+    {
+      "name": "next",
+      "prerelease": true
+    }
+  ],
+  "debug": true,
+  "ci": true,
+  "dryRun": false,
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
       {
-         "name": "next",
-         "prerelease": true
+        "changelogFile": "docs/CHANGELOG.md"
       }
-   ],
-   "debug": true,
-   "ci": true,
-   "dryRun": false,
-   "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/npm",
+    ],
+    [
       "@semantic-release/git",
-      "@semantic-release/github"
-   ]
+      {
+        "assets": [
+          "docs/CHANGELOG.md"
+        ]
+      }
+    ],
+    "@semantic-release/npm",
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ]
 }
