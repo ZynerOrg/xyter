@@ -1,13 +1,22 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
-// Modules
+// Subcommands
 import {
   builder as BalanceBuilder,
   execute as BalanceExecute,
-} from "./modules/balance";
-import { builder as GiftBuilder, execute as GiftExecute } from "./modules/gift";
-import { builder as TopBuilder, execute as TopExecute } from "./modules/top";
-import { builder as WorkBuilder, execute as WorkExecute } from "./modules/work";
+} from "./subcommands/balance";
+import {
+  builder as GiftBuilder,
+  execute as GiftExecute,
+} from "./subcommands/gift";
+import {
+  builder as TopBuilder,
+  execute as TopExecute,
+} from "./subcommands/top";
+import {
+  builder as WorkBuilder,
+  execute as WorkExecute,
+} from "./subcommands/work";
 
 // 1. Export a builder function.
 export const builder = new SlashCommandBuilder()
