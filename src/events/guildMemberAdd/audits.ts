@@ -1,5 +1,7 @@
+import { formatDistanceToNow } from "date-fns";
 import { EmbedBuilder, GuildMember } from "discord.js";
 import auditLogger from "../../helpers/auditLogger";
+import capitalizeFirstLetter from "../../helpers/capitalizeFirstLetter";
 
 export default {
   execute: async (member: GuildMember) => {
@@ -10,12 +12,18 @@ export default {
         name: "Member Joined",
         iconURL: member.displayAvatarURL(),
       })
-
-      .setDescription(`${member.user} - (${member.user.tag})`)
       .addFields([
         {
-          name: "Account Age",
-          value: `${member.user.createdAt}`,
+          name: "User",
+          value: `${member.user} (${member.user.tag})`,
+          inline: true,
+        },
+        {
+          name: "Created",
+          value: `${capitalizeFirstLetter(
+            formatDistanceToNow(member.user.createdAt, { addSuffix: true })
+          )}`,
+          inline: true,
         },
       ]);
 
