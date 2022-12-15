@@ -1,22 +1,52 @@
+import { formatDistanceToNow } from "date-fns";
 import { EmbedBuilder, Message } from "discord.js";
 import auditLogger from "../../helpers/auditLogger";
+import capitalizeFirstLetter from "../../helpers/capitalizeFirstLetter";
 
 export default {
   execute: async (message: Message) => {
-    const { guild } = message;
+    const { guild, member } = message;
     if (!guild) throw new Error("Guild unavailable");
+    if (!member) throw new Error("Member unavailable");
+
+    if (!member.joinedAt) throw new Error("Can not find member joined at");
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: message.author.username,
+        name: "Message Deleted",
         iconURL: message.author.displayAvatarURL(),
       })
-      .setDescription(
-        `
-    **Message sent by** ${message.author} **deleted in** ${message.channel}
-    ${message.content}
-    `
-      );
+      .addFields([
+        {
+          name: "User",
+          value: `${message.author} (${message.author.tag})`,
+          inline: true,
+        },
+        {
+          name: "Member since",
+          value: `${capitalizeFirstLetter(
+            formatDistanceToNow(member.joinedAt, {
+              addSuffix: true,
+            })
+          )}`,
+          inline: true,
+        },
+        {
+          name: "Created",
+          value: `${capitalizeFirstLetter(
+            formatDistanceToNow(message.author.createdAt, { addSuffix: true })
+          )}`,
+          inline: true,
+        },
+        {
+          name: "Content",
+          value: `${
+            message.content.length <= 1024
+              ? message.content
+              : "Length is above 1024, this is a [limit by Discord](https://discord.com/developers/docs/resources/channel#embed-object-embed-limits), we are working on an solution to this problem."
+          }`,
+        },
+      ]);
 
     await auditLogger(guild, embed);
   },
