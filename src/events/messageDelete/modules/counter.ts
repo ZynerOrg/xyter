@@ -19,20 +19,24 @@ export default async (message: Message) => {
     },
   });
 
-  if (!channelCounter) throw new Error("No counter found in channel.");
+  if (!channelCounter) return logger.debug("No counter found in channel.");
 
   const messages = await message.channel.messages.fetch({ limit: 1 });
   const lastMessage = messages.last();
 
-  if (!lastMessage) return;
+  if (!lastMessage) return false;
 
-  if (content !== channelCounter.triggerWord) return;
+  if (content !== channelCounter.triggerWord)
+    return logger.silly("Message do not include the trigger word");
 
-  if (lastMessage.author.id === message.author.id) return;
+  if (lastMessage.author.id === message.author.id)
+    return logger.debug("Same author as last message");
 
-  channel?.send(`${author} said **${channelCounter.triggerWord}**.`);
   logger?.silly(`${author} said ${channelCounter.triggerWord} in ${channel}`);
   logger?.silly(
     `User: ${author?.tag} (${author?.id}) in guild: ${guild?.name} (${guild?.id}) said the counter word: ${channelCounter.triggerWord}`
+  );
+  return await channel.send(
+    `${author} said **${channelCounter.triggerWord}**.`
   );
 };
