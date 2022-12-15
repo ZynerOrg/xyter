@@ -14,107 +14,103 @@ import deferReply from "../../../../handlers/deferReply";
 import getEmbedConfig from "../../../../helpers/getEmbedData";
 
 // Function
-export default {
-  builder: (command: SlashCommandSubcommandBuilder) => {
-    return command
-      .setName("about")
-      .setDescription("Check information about this instance");
-  },
-  execute: async (interaction: CommandInteraction) => {
-    await deferReply(interaction, false);
+export const builder = (command: SlashCommandSubcommandBuilder) => {
+  return command
+    .setName("about")
+    .setDescription("Check information about this instance");
+};
 
-    if (!interaction.guild) throw new Error("You need to be in a guild");
+export const execute = async (interaction: CommandInteraction) => {
+  await deferReply(interaction, false);
 
-    const { client } = interaction;
+  if (!interaction.guild) throw new Error("You need to be in a guild");
 
-    // await cooldown(
-    //   interaction.guild,
-    //   interaction.user,
-    //   interaction.commandId,
-    //   3600
-    // );
+  const { client } = interaction;
 
-    const { successColor, footerText, footerIcon } = await getEmbedConfig(
-      interaction.guild
-    );
+  // await cooldown(
+  //   interaction.guild,
+  //   interaction.user,
+  //   interaction.commandId,
+  //   3600
+  // );
 
-    // // Initialize a storage for the user ids
-    // const userIds = new Set();
-    // // Iterate over all guilds (always cached)
-    // for await (const guild of client.guilds.cache.values()) {
-    //   // Fetch all guild members and iterate over them
-    //   for await (const member of (await guild.members.fetch()).values()) {
-    //     // Fetch the user, if user already cached, returns value from cache
-    //     // Will probably always return from cache
-    //     const user = await client.users.fetch(member.id);
-    //     // Check if user id is not already in set and user is not a bot
-    //     if (!userIds.has(user.id) && !user.bot) {
-    //       // Add unique user id to our set
-    //       userIds.add(user.id);
-    //     }
-    //   }
-    // }
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(
+    interaction.guild
+  );
 
-    const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder()
-        .setLabel("Support")
-        .setStyle(ButtonStyle.Link)
-        .setEmoji("💬")
-        .setURL("https://discord.zyner.org"),
-      new ButtonBuilder()
-        .setLabel("Documentation")
-        .setStyle(ButtonStyle.Link)
-        .setEmoji("📚")
-        .setURL("https://xyter.zyner.org")
-    );
+  // // Initialize a storage for the user ids
+  // const userIds = new Set();
+  // // Iterate over all guilds (always cached)
+  // for await (const guild of client.guilds.cache.values()) {
+  //   // Fetch all guild members and iterate over them
+  //   for await (const member of (await guild.members.fetch()).values()) {
+  //     // Fetch the user, if user already cached, returns value from cache
+  //     // Will probably always return from cache
+  //     const user = await client.users.fetch(member.id);
+  //     // Check if user id is not already in set and user is not a bot
+  //     if (!userIds.has(user.id) && !user.bot) {
+  //       // Add unique user id to our set
+  //       userIds.add(user.id);
+  //     }
+  //   }
+  // }
 
-    const interactionEmbed = new EmbedBuilder()
-      .setColor(successColor)
-      .setTitle(":toolbox:︱About this instance")
-      .setDescription(
-        `This bot instance is hosted by [${process.env.BOT_HOSTER_NAME}](${process.env.BOT_HOSTER_URL}) who might have modified the [source code](https://github.com/ZynerOrg/xyter).`
-      )
-      .setFields(
-        {
-          name: "Latency",
-          value: `${Math.round(client.ws.ping)} ms`,
-          inline: true,
-        },
-        {
-          name: "Servers (cached)",
-          value: `${client.guilds.cache.size}`,
-          inline: true,
-        },
-        {
-          name: "Users (cached)",
-          value: `${client.guilds.cache.reduce(
-            (a, g) => a + g.memberCount,
-            0
-          )}`,
-          inline: true,
-        },
-        {
-          name: "Version",
-          value: `[${process.env.npm_package_version}](https://github.com/ZynerOrg/xyter/releases/tag/${process.env.npm_package_version})`,
-          inline: true,
-        },
-        {
-          name: "Since last restart",
-          value: `${formatDuration(
-            intervalToDuration({
-              start: subMilliseconds(new Date(), client.uptime),
-              end: new Date(),
-            })
-          )}`,
-          inline: true,
-        }
-      )
-      .setTimestamp()
-      .setFooter({ text: footerText, iconURL: footerIcon });
+  const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setLabel("Support")
+      .setStyle(ButtonStyle.Link)
+      .setEmoji("💬")
+      .setURL("https://discord.zyner.org"),
+    new ButtonBuilder()
+      .setLabel("Documentation")
+      .setStyle(ButtonStyle.Link)
+      .setEmoji("📚")
+      .setURL("https://xyter.zyner.org")
+  );
 
-    await interaction.editReply({
-      embeds: [interactionEmbed],
-      components: [buttons],
-    });
-  },
+  const interactionEmbed = new EmbedBuilder()
+    .setColor(successColor)
+    .setTitle(":toolbox:︱About this instance")
+    .setDescription(
+      `This bot instance is hosted by [${process.env.BOT_HOSTER_NAME}](${process.env.BOT_HOSTER_URL}) who might have modified the [source code](https://github.com/ZynerOrg/xyter).`
+    )
+    .setFields(
+      {
+        name: "Latency",
+        value: `${Math.round(client.ws.ping)} ms`,
+        inline: true,
+      },
+      {
+        name: "Servers (cached)",
+        value: `${client.guilds.cache.size}`,
+        inline: true,
+      },
+      {
+        name: "Users (cached)",
+        value: `${client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)}`,
+        inline: true,
+      },
+      {
+        name: "Version",
+        value: `[${process.env.npm_package_version}](https://github.com/ZynerOrg/xyter/releases/tag/${process.env.npm_package_version})`,
+        inline: true,
+      },
+      {
+        name: "Since last restart",
+        value: `${formatDuration(
+          intervalToDuration({
+            start: subMilliseconds(new Date(), client.uptime),
+            end: new Date(),
+          })
+        )}`,
+        inline: true,
+      }
+    )
+    .setTimestamp()
+    .setFooter({ text: footerText, iconURL: footerIcon });
+
+  await interaction.editReply({
+    embeds: [interactionEmbed],
+    components: [buttons],
+  });
 };
