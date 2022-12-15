@@ -2,8 +2,14 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 // Modules
-import moduleCounters from "./modules/counters";
-import moduleCredits from "./modules/credits";
+import {
+  builder as CountersBuilder,
+  execute as CountersExecute,
+} from "./groups/counters";
+import {
+  builder as CreditsBuilder,
+  execute as CreditsExecute,
+} from "./groups/credits";
 
 // Function
 export const builder = new SlashCommandBuilder()
@@ -12,8 +18,8 @@ export const builder = new SlashCommandBuilder()
   .setDMPermission(false)
 
   // Modules
-  .addSubcommandGroup(moduleCounters.builder)
-  .addSubcommandGroup(moduleCredits.builder);
+  .addSubcommandGroup(CountersBuilder)
+  .addSubcommandGroup(CreditsBuilder);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   // Destructure
@@ -21,11 +27,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   switch (options.getSubcommandGroup()) {
     case "credits": {
-      await moduleCredits.execute(interaction);
+      await CreditsExecute(interaction);
       break;
     }
     case "counters": {
-      await moduleCounters.execute(interaction);
+      await CountersExecute(interaction);
       break;
     }
     default: {
