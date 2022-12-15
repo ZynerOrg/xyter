@@ -2,8 +2,14 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 // Modules
-import moduleCheck from "./modules/check";
-import moduleRepute from "./modules/repute";
+import {
+  builder as CheckBuilder,
+  execute as CheckExecute,
+} from "./subcommands/check";
+import {
+  builder as ReputeBuilder,
+  execute as ReputeExecute,
+} from "./subcommands/repute";
 
 // Function
 export const builder = new SlashCommandBuilder()
@@ -12,17 +18,17 @@ export const builder = new SlashCommandBuilder()
   .setDMPermission(false)
 
   // Modules
-  .addSubcommand(moduleRepute.builder)
-  .addSubcommand(moduleCheck.builder);
+  .addSubcommand(ReputeBuilder)
+  .addSubcommand(CheckBuilder);
 
 // Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.options.getSubcommand() === "repute") {
-    await moduleRepute.execute(interaction);
+    await ReputeExecute(interaction);
     return;
   }
   if (interaction.options.getSubcommand() === "check") {
-    await moduleCheck.execute(interaction);
+    await CheckExecute(interaction);
     return;
   }
 };

@@ -1,7 +1,10 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
-// Modules
-import { builder as ViewBuilder, execute as ViewExecute } from "./modules/view";
+// Subcommands
+import {
+  builder as ViewBuilder,
+  execute as ViewExecute,
+} from "./subcommands/view";
 
 //
 export const builder = new SlashCommandBuilder()
@@ -9,7 +12,7 @@ export const builder = new SlashCommandBuilder()
   .setDescription("View guild counters")
   .setDMPermission(false)
 
-  // Modules
+  // Subcommands
   .addSubcommand(ViewBuilder);
 
 // Execute function
