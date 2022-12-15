@@ -2,8 +2,14 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 // Modules
-import moduleCpgg from "./modules/cpgg";
-import moduleRoles from "./modules/roles";
+import {
+  builder as RolesBuilder,
+  execute as RolesExecute,
+} from "./groups/roles";
+import {
+  builder as CpggBuilder,
+  execute as CpggExecute,
+} from "./subcommands/cpgg";
 
 // Function
 export const builder = new SlashCommandBuilder()
@@ -12,8 +18,8 @@ export const builder = new SlashCommandBuilder()
   .setDMPermission(false)
 
   // Modules
-  .addSubcommand(moduleCpgg.builder)
-  .addSubcommandGroup(moduleRoles.builder);
+  .addSubcommand(CpggBuilder)
+  .addSubcommandGroup(RolesBuilder);
 
 // Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
@@ -21,7 +27,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   switch (options.getSubcommand()) {
     case "cpgg": {
-      await moduleCpgg.execute(interaction);
+      await CpggExecute(interaction);
       break;
     }
     default: {
@@ -31,7 +37,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   switch (options.getSubcommandGroup()) {
     case "roles": {
-      await moduleRoles.execute(interaction);
+      await RolesExecute(interaction);
       break;
     }
     default: {
