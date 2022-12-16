@@ -14,6 +14,9 @@ export const options: IEventOptions = {
 
 // Execute the function
 export const execute = async (oldMessage: Message, newMessage: Message) => {
+  if (oldMessage.partial) oldMessage = await oldMessage.fetch();
+  if (newMessage.partial) newMessage = await newMessage.fetch();
+
   const { author, guild } = newMessage;
 
   await audits.execute(oldMessage, newMessage);

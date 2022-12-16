@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits } from "discord.js"; // discord.js
+import { Client, Collection, GatewayIntentBits, Partials } from "discord.js"; // discord.js
 import "dotenv/config";
 
 import { register as commandRegister } from "./handlers/command";
@@ -14,6 +14,7 @@ const main = async () => {
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent,
     ],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   });
 
   // Create command collection

@@ -9,6 +9,8 @@ export const options: IEventOptions = {
 
 // Execute the function
 export const execute = async (message: Message) => {
+  if (message.partial) message = await message.fetch();
+
   await audits.execute(message);
   await counter(message);
 };

@@ -13,6 +13,8 @@ export const options: IEventOptions = {
 
 // Execute the function
 export const execute = async (member: GuildMember) => {
+  if (member.partial) member = await member.fetch();
+
   const { client, user, guild } = member;
 
   logger?.silly(
