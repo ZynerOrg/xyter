@@ -12,6 +12,9 @@ export default {
 
     if (!member.joinedAt) throw new Error("Can not find member joined at");
 
+    // Do not send audit log when an message contains an link and that links creates an embed
+    if (!newMessage.editedTimestamp) return;
+
     const embed = new EmbedBuilder()
       .setAuthor({
         name: "Message Updated",
