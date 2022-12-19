@@ -20,7 +20,21 @@ export const execute = async (client: Client, role: GuildShopRoles) => {
 
   logger.debug(`Shop role ${roleId} is due for payment.`);
 
-  const getGuildMember = await prisma.guildMember.findUnique({
+  const getGuildConfigShopRoles = await prisma.guildConfigShopRoles.findUnique({
+    where: {
+      id: guildId,
+    },
+    include: {
+      guild: true,
+    },
+  });
+
+  logger.silly(getGuildConfigShopRoles);
+
+  if (!getGuildConfigShopRoles)
+    throw new Error("Could not find guild config shop roles.");
+
+  const getGuildMemberCredits = await prisma.guildMemberCredits.findUnique({
     where: {
       userId_guildId: {
         userId,
@@ -28,18 +42,17 @@ export const execute = async (client: Client, role: GuildShopRoles) => {
       },
     },
     include: {
-      user: true,
-      guild: true,
+      GuildMember: true,
     },
   });
 
-  logger.silly(getGuildMember);
+  logger.silly(getGuildMemberCredits);
 
-  if (!getGuildMember) throw new Error("Could not find guild member.");
+  if (!getGuildMemberCredits) throw new Error("Could not find guild member.");
 
-  const pricePerHour = getGuildMember.guild.shopRolesPricePerHour;
+  const pricePerHour = getGuildConfigShopRoles.pricePerHour;
 
-  if (getGuildMember.creditsEarned < pricePerHour) {
+  if (getGuildMemberCredits.balance < pricePerHour) {
     await rMember.roles
       .remove(roleId)
       .then(async () => {
@@ -66,40 +79,33 @@ export const execute = async (client: Client, role: GuildShopRoles) => {
     throw new Error("User does not have enough credits.");
   }
 
-  const createGuildMember = await prisma.guildMember.upsert({
+  const createGuildMember = await prisma.guildMemberCredits.upsert({
     where: {
       userId_guildId: {
         userId,
         guildId,
       },
     },
-    update: { creditsEarned: { decrement: pricePerHour } },
+    update: { balance: { decrement: pricePerHour } },
     create: {
-      creditsEarned: -pricePerHour,
-      user: {
+      balance: -pricePerHour,
+      GuildMember: {
         connectOrCreate: {
           create: {
-            id: userId,
+            userId,
+            guildId,
           },
           where: {
-            id: userId,
-          },
-        },
-      },
-      guild: {
-        connectOrCreate: {
-          create: {
-            id: guildId,
-          },
-          where: {
-            id: guildId,
+            userId_guildId: {
+              userId,
+              guildId,
+            },
           },
         },
       },
     },
     include: {
-      user: true,
-      guild: true,
+      GuildMember: true,
     },
   });
 
