@@ -57,7 +57,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await guild?.roles
     .delete(optionRole?.id, `${user?.id} canceled from shop`)
     .then(async () => {
-      const createGuildMember = await prisma.guildMember.upsert({
+      const createGuildMember = await prisma.guildMemberCredits.upsert({
         where: {
           userId_guildId: {
             userId: user.id,
@@ -66,30 +66,23 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         },
         update: {},
         create: {
-          user: {
+          GuildMember: {
             connectOrCreate: {
               create: {
-                id: user.id,
+                userId: user.id,
+                guildId: guild.id,
               },
               where: {
-                id: user.id,
-              },
-            },
-          },
-          guild: {
-            connectOrCreate: {
-              create: {
-                id: guild.id,
-              },
-              where: {
-                id: guild.id,
+                userId_guildId: {
+                  userId: user.id,
+                  guildId: guild.id,
+                },
               },
             },
           },
         },
         include: {
-          user: true,
-          guild: true,
+          GuildMember: true,
         },
       });
 
@@ -116,7 +109,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         .setColor(successColor)
         .addFields({
           name: "Your balance",
-          value: `${pluralize(createGuildMember.creditsEarned, "credit")}`,
+          value: `${pluralize(createGuildMember.balance, "credit")}`,
         })
         .setFooter({ text: footerText, iconURL: footerIcon });
       return interaction?.editReply({

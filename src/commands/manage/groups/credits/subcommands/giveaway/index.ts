@@ -70,25 +70,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   const code = uuidv4();
 
-  const createGuildMember = await prisma.guildMember.upsert({
+  const createGuildMember = await prisma.guildConfigApisCpgg.upsert({
     where: {
-      userId_guildId: {
-        userId: user.id,
-        guildId: guild.id,
-      },
+      id: guild.id,
     },
     update: {},
     create: {
-      user: {
-        connectOrCreate: {
-          create: {
-            id: user.id,
-          },
-          where: {
-            id: user.id,
-          },
-        },
-      },
       guild: {
         connectOrCreate: {
           create: {
@@ -101,35 +88,28 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       },
     },
     include: {
-      user: true,
       guild: true,
     },
   });
 
   logger.silly(createGuildMember);
 
-  if (
-    !createGuildMember.guild.apiCpggUrlIv ||
-    !createGuildMember.guild.apiCpggUrlContent
-  )
+  if (!createGuildMember.urlIv || !createGuildMember.urlContent)
     throw new Error("No API url available");
 
-  if (
-    !createGuildMember.guild.apiCpggTokenIv ||
-    !createGuildMember.guild.apiCpggTokenContent
-  )
+  if (!createGuildMember.tokenIv || !createGuildMember.tokenContent)
     throw new Error("No API token available");
 
   const url = encryption.decrypt({
-    iv: createGuildMember.guild.apiCpggUrlIv,
-    content: createGuildMember.guild.apiCpggUrlContent,
+    iv: createGuildMember.urlIv,
+    content: createGuildMember.urlContent,
   });
   const api = axios?.create({
     baseURL: `${url}/api/`,
     headers: {
       Authorization: `Bearer ${encryption.decrypt({
-        iv: createGuildMember.guild.apiCpggTokenIv,
-        content: createGuildMember.guild.apiCpggTokenContent,
+        iv: createGuildMember.tokenIv,
+        content: createGuildMember.tokenContent,
       })}`,
     },
   });

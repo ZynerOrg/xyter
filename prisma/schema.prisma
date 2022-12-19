@@ -11,56 +11,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//
+
 model Guild {
-  id           String        @unique
-  guildMembers GuildMember[]
-  cooldowns    Cooldown[]
+  id        String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // Settings
-  embedColorSuccess String @default("#22bb33")
-  embedColorWait    String @default("#f0ad4e")
-  embedColorError   String @default("#bb2124")
-  embedFooterText   String @default("https://github.com/ZynerOrg/xyter")
-  embedFooterIcon   String @default("https://github.com/ZynerOrg.png")
-
-  // Modules
-  creditsEnabled       Boolean @default(false)
-  creditsRate          Int     @default(1)
-  creditsTimeout       Int     @default(5)
-  creditsWorkRate      Int     @default(25)
-  creditsWorkTimeout   Int     @default(86400)
-  creditsMinimumLength Int     @default(5)
-
-  pointsEnabled       Boolean @default(false)
-  pointsRate          Int     @default(1)
-  pointsTimeout       Int     @default(5)
-  pointsMinimumLength Int     @default(5)
-
-  reputationsEnabled Boolean @default(false)
-
-  countersEnabled Boolean        @default(false)
-  counters        GuildCounter[]
-
-  apiCpggUrlIv        String?
-  apiCpggUrlContent   String?
-  apiCpggTokenIv      String?
-  apiCpggTokenContent String?
-
-  auditsEnabled   Boolean @default(false)
-  auditsChannelId String?
-
-  shopRolesEnabled      Boolean @default(false)
-  shopRolesPricePerHour Int     @default(5)
-
-  welcomeEnabled             Boolean @default(false)
-  welcomeJoinChannelId       String?
-  welcomeJoinChannelMessage  String?
-  welcomeLeaveChannelId      String?
-  welcomeLeaveChannelMessage String?
-
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  GuildShopRoles GuildShopRoles[]
+  GuildConfigEmbeds     GuildConfigEmbeds?
+  GuildConfigCredits    GuildConfigCredits?
+  GuildConfigPoints     GuildConfigPoints?
+  GuildConfigReputation GuildConfigReputation?
+  GuildConfigCounters   GuildConfigCounters?
+  GuildConfigApisCpgg   GuildConfigApisCpgg?
+  GuildConfigAudits     GuildConfigAudits?
+  GuildConfigShop       GuildConfigShop?
+  GuildConfigShopRoles  GuildConfigShopRoles?
+  GuildConfigWelcome    GuildConfigWelcome?
+  GuildShopRoles        GuildShopRoles[]
+  GuildMember           GuildMember[]
+  Cooldown              Cooldown[]
+  GuildCounters         GuildCounters[]
 }
 
 model User {
@@ -87,19 +58,150 @@ model GuildMember {
 
   // Settings
 
-  // Modules
-  creditsEarned Int @default(0)
-  pointsEarned  Int @default(0)
+  pointsEarned Int @default(0)
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  GuildShopRoles GuildShopRoles[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  GuildShopRoles     GuildShopRoles[]
+  GuildMemberCredits GuildMemberCredits?
 
   // Unique Identifier
   @@unique([userId, guildId])
 }
 
-model GuildCounter {
+//
+
+model GuildConfigEmbeds {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  successColor String @default("#22bb33")
+  waitColor    String @default("#f0ad4e")
+  errorColor   String @default("#bb2124")
+  footerText   String @default("https://github.com/ZynerOrg/xyter")
+  footerIcon   String @default("https://github.com/ZynerOrg.png")
+}
+
+model GuildConfigCredits {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status        Boolean @default(false)
+  rate          Int     @default(1)
+  timeout       Int     @default(5)
+  workRate      Int     @default(25)
+  workTimeout   Int     @default(86400)
+  minimumLength Int     @default(5)
+}
+
+model GuildConfigPoints {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status        Boolean @default(false)
+  rate          Int     @default(1)
+  timeout       Int     @default(5)
+  minimumLength Int     @default(5)
+}
+
+model GuildConfigReputation {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status Boolean @default(false)
+}
+
+model GuildConfigCounters {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status Boolean @default(false)
+}
+
+model GuildConfigApisCpgg {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  urlIv        String?
+  urlContent   String?
+  tokenIv      String?
+  tokenContent String?
+}
+
+model GuildConfigAudits {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status    Boolean @default(false)
+  channelId String
+}
+
+model GuildConfigShop {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status                 Boolean               @default(false)
+  roles                  GuildConfigShopRoles? @relation(fields: [guildConfigShopRolesId], references: [id])
+  guildConfigShopRolesId String?
+}
+
+model GuildConfigShopRoles {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status          Boolean           @default(false)
+  pricePerHour    Int               @default(5)
+  GuildConfigShop GuildConfigShop[]
+}
+
+model GuildConfigWelcome {
+  id    String @unique
+  guild Guild  @relation(fields: [id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status              Boolean @default(false)
+  joinChannelId       String?
+  joinChannelMessage  String?
+  leaveChannelId      String?
+  leaveChannelMessage String?
+}
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+
+model GuildCounters {
   guildId     String
   channelId   String
   triggerWord String
@@ -110,6 +212,17 @@ model GuildCounter {
   updatedAt DateTime @updatedAt
 
   @@unique([guildId, channelId])
+}
+
+model GuildMemberCredits {
+  userId  String
+  guildId String
+
+  GuildMember GuildMember @relation(fields: [userId, guildId], references: [userId, guildId])
+
+  balance Int @default(0)
+
+  @@unique([userId, guildId])
 }
 
 model Cooldown {

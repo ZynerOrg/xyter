@@ -44,18 +44,18 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!channel) throw new Error("Channel not found.");
   if (status === null) throw new Error("Status not found.");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigAudits.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      auditsEnabled: status,
-      auditsChannelId: channel.id,
+      status: status,
+      channelId: channel.id,
     },
     create: {
       id: guild.id,
-      auditsEnabled: status,
-      auditsChannelId: channel.id,
+      status: status,
+      channelId: channel.id,
     },
   });
 
@@ -69,15 +69,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       {
         name: "🤖 Status",
         value: `${
-          createGuild.auditsEnabled
-            ? ":white_check_mark: Enabled"
-            : ":x: Disabled"
+          createGuild.status ? ":white_check_mark: Enabled" : ":x: Disabled"
         }`,
         inline: true,
       },
       {
         name: "🌊 Channel",
-        value: `<#${createGuild.auditsChannelId}>`,
+        value: `<#${createGuild.channelId}>`,
         inline: true,
       }
     )

@@ -59,22 +59,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!token) throw new Error("Token not found");
   if (!url) throw new Error("URL not found");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigApisCpgg.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      apiCpggTokenIv: token.iv,
-      apiCpggTokenContent: token.content,
-      apiCpggUrlIv: url.iv,
-      apiCpggUrlContent: url.content,
+      tokenIv: token.iv,
+      tokenContent: token.content,
+      urlIv: url.iv,
+      urlContent: url.content,
     },
     create: {
       id: guild.id,
-      apiCpggTokenIv: token.iv,
-      apiCpggTokenContent: token.content,
-      apiCpggUrlIv: url.iv,
-      apiCpggUrlContent: url.content,
+      tokenIv: token.iv,
+      tokenContent: token.content,
+      urlIv: url.iv,
+      urlContent: url.content,
     },
   });
 

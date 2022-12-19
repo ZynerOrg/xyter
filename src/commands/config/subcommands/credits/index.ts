@@ -89,26 +89,26 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (typeof minimumLength !== "number")
     throw new Error("Minimum length is not a number.");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigCredits.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      creditsEnabled: enabled,
-      creditsRate: rate,
-      creditsTimeout: timeout,
-      creditsWorkRate: workRate,
-      creditsWorkTimeout: workTimeout,
-      creditsMinimumLength: minimumLength,
+      status: enabled,
+      rate: rate,
+      timeout: timeout,
+      workRate: workRate,
+      workTimeout: workTimeout,
+      minimumLength: minimumLength,
     },
     create: {
       id: guild.id,
-      creditsEnabled: enabled,
-      creditsRate: rate,
-      creditsTimeout: timeout,
-      creditsWorkRate: workRate,
-      creditsWorkTimeout: workTimeout,
-      creditsMinimumLength: minimumLength,
+      status: enabled,
+      rate: rate,
+      timeout: timeout,
+      workRate: workRate,
+      workTimeout: workTimeout,
+      minimumLength: minimumLength,
     },
   });
 
@@ -121,32 +121,32 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     .addFields(
       {
         name: "🤖 Enabled?",
-        value: `${createGuild.creditsEnabled}`,
+        value: `${createGuild.status}`,
         inline: true,
       },
       {
         name: "📈 Rate",
-        value: `${createGuild.creditsRate}`,
+        value: `${createGuild.rate}`,
         inline: true,
       },
       {
         name: "📈 Work Rate",
-        value: `${createGuild.creditsWorkRate}`,
+        value: `${createGuild.workRate}`,
         inline: true,
       },
       {
         name: "🔨 Minimum Length",
-        value: `${createGuild.creditsMinimumLength}`,
+        value: `${createGuild.minimumLength}`,
         inline: true,
       },
       {
         name: "⏰ Timeout",
-        value: `${createGuild.creditsTimeout}`,
+        value: `${createGuild.timeout}`,
         inline: true,
       },
       {
         name: "⏰ Work Timeout",
-        value: `${createGuild.creditsWorkTimeout}`,
+        value: `${createGuild.workTimeout}`,
         inline: true,
       }
     )

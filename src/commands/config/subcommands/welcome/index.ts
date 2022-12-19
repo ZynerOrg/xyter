@@ -76,24 +76,24 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!leaveChannelMessage)
     throw new Error("Leave channel message not specified");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigWelcome.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      welcomeEnabled: status,
-      welcomeJoinChannelId: joinChannel.id,
-      welcomeJoinChannelMessage: joinChannelMessage,
-      welcomeLeaveChannelId: leaveChannel.id,
-      welcomeLeaveChannelMessage: leaveChannelMessage,
+      status: status,
+      joinChannelId: joinChannel.id,
+      joinChannelMessage: joinChannelMessage,
+      leaveChannelId: leaveChannel.id,
+      leaveChannelMessage: leaveChannelMessage,
     },
     create: {
       id: guild.id,
-      welcomeEnabled: status,
-      welcomeJoinChannelId: joinChannel.id,
-      welcomeJoinChannelMessage: joinChannelMessage,
-      welcomeLeaveChannelId: leaveChannel.id,
-      welcomeLeaveChannelMessage: leaveChannelMessage,
+      status: status,
+      joinChannelId: joinChannel.id,
+      joinChannelMessage: joinChannelMessage,
+      leaveChannelId: leaveChannel.id,
+      leaveChannelMessage: leaveChannelMessage,
     },
   });
 
@@ -111,7 +111,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       text: footerText,
     });
 
-  if (!createGuild.welcomeEnabled) {
+  if (!createGuild.status) {
     return interaction?.editReply({
       embeds: [interactionEmbedDisabled],
     });
@@ -124,13 +124,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
         [👋] **Welcome**
 
-        ㅤ**Channel**: <#${createGuild.welcomeJoinChannelId}>
-        ㅤ**Message**: ${createGuild.welcomeJoinChannelMessage}
+        ㅤ**Channel**: <#${createGuild.joinChannelId}>
+        ㅤ**Message**: ${createGuild.joinChannelMessage}
 
         [🚪] **Leave**
 
-        ㅤ**Channel**: <#${createGuild.welcomeLeaveChannelId}>
-        ㅤ**Message**: ${createGuild.welcomeLeaveChannelMessage}`
+        ㅤ**Channel**: <#${createGuild.leaveChannelId}>
+        ㅤ**Message**: ${createGuild.leaveChannelMessage}`
     )
     .setColor(successColor)
     .setTimestamp()

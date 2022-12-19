@@ -33,7 +33,7 @@ export const execute = async (interaction: CommandInteraction) => {
   const EmbedSuccess = await BaseEmbedSuccess(guild, ":credit_card:︱Balance");
 
   // 5. Upsert the user in the database.
-  const createGuildMember = await prisma.guildMember.upsert({
+  const createGuildMember = await prisma.guildMemberCredits.upsert({
     where: {
       userId_guildId: {
         userId: (target || user).id,
@@ -42,32 +42,24 @@ export const execute = async (interaction: CommandInteraction) => {
     },
     update: {},
     create: {
-      user: {
+      GuildMember: {
         connectOrCreate: {
           create: {
-            id: (target || user).id,
+            userId: (target || user).id,
+            guildId: guild.id,
           },
           where: {
-            id: (target || user).id,
-          },
-        },
-      },
-      guild: {
-        connectOrCreate: {
-          create: {
-            id: guild.id,
-          },
-          where: {
-            id: guild.id,
+            userId_guildId: {
+              userId: (target || user).id,
+              guildId: guild.id,
+            },
           },
         },
       },
     },
-    include: {
-      user: true,
-      guild: true,
-    },
+    include: { GuildMember: true },
   });
+
   logger.silly(createGuildMember);
 
   // 6. Send embed.
@@ -75,8 +67,8 @@ export const execute = async (interaction: CommandInteraction) => {
     embeds: [
       EmbedSuccess.setDescription(
         target
-          ? `${target} has ${createGuildMember.creditsEarned} coins in his account.`
-          : `You have ${createGuildMember.creditsEarned} coins in your account.`
+          ? `${target} has ${createGuildMember.balance} coins in his account.`
+          : `You have ${createGuildMember.balance} coins in your account.`
       ),
     ],
   });

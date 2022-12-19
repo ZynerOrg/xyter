@@ -47,7 +47,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     .setTimestamp(new Date())
     .setFooter({ text: footerText, iconURL: footerIcon });
 
-  const channelCounter = await prisma.guildCounter.findUnique({
+  const channelCounter = await prisma.guildCounters.findUnique({
     where: {
       guildId_channelId: {
         guildId: guild.id,
@@ -61,7 +61,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       "There is no counter sin this channel, please add one first."
     );
 
-  const deleteGuildCounter = await prisma.guildCounter.deleteMany({
+  const deleteGuildCounter = await prisma.guildCounters.deleteMany({
     where: {
       guildId: guild.id,
       channelId: discordChannel.id,

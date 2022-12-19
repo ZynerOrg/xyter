@@ -23,34 +23,34 @@ export default async (interaction: ChatInputCommandInteraction) => {
   if (!newFooterIcon) throw new Error("Footer icon not found");
   if (!newFooterText) throw new Error("Footer text not found");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigEmbeds.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      embedColorSuccess: <string>newSuccessColor,
-      embedColorWait: <string>newWaitColor,
-      embedColorError: <string>newErrorColor,
-      embedFooterIcon: newFooterIcon,
-      embedFooterText: newFooterText,
+      successColor: <string>newSuccessColor,
+      waitColor: <string>newWaitColor,
+      errorColor: <string>newErrorColor,
+      footerIcon: newFooterIcon,
+      footerText: newFooterText,
     },
     create: {
       id: guild.id,
-      embedColorSuccess: <string>newSuccessColor,
-      embedColorWait: <string>newWaitColor,
-      embedColorError: <string>newErrorColor,
-      embedFooterIcon: newFooterIcon,
-      embedFooterText: newFooterText,
+      successColor: <string>newSuccessColor,
+      waitColor: <string>newWaitColor,
+      errorColor: <string>newErrorColor,
+      footerIcon: newFooterIcon,
+      footerText: newFooterText,
     },
   });
 
   logger.silly(createGuild);
 
-  const successColor = <ColorResolvable>createGuild.embedColorSuccess;
-  const waitColor = <ColorResolvable>createGuild.embedColorWait;
-  const errorColor = <ColorResolvable>createGuild.embedColorError;
-  const footerText = createGuild.embedFooterText;
-  const footerIcon = createGuild.embedFooterIcon;
+  const successColor = <ColorResolvable>createGuild.successColor;
+  const waitColor = <ColorResolvable>createGuild.waitColor;
+  const errorColor = <ColorResolvable>createGuild.errorColor;
+  const footerText = createGuild.footerText;
+  const footerIcon = createGuild.footerIcon;
 
   return { successColor, waitColor, errorColor, footerText, footerIcon };
 };
