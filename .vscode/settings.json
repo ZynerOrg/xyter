@@ -36,5 +36,8 @@
   "conventionalCommits.scopes": ["git", "github", "prisma"],
   "[dockerfile]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
   }
 }

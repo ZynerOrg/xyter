@@ -11,25 +11,12 @@ export default {
     if (author.bot) return;
     if (channel.type !== ChannelType.GuildText) return;
 
-    const createGuildMember = await prisma.guildMember.upsert({
+    const upsertGuildConfigPoints = await prisma.guildConfigPoints.upsert({
       where: {
-        userId_guildId: {
-          userId: author.id,
-          guildId: guild.id,
-        },
+        id: guild.id,
       },
       update: {},
       create: {
-        user: {
-          connectOrCreate: {
-            create: {
-              id: author.id,
-            },
-            where: {
-              id: author.id,
-            },
-          },
-        },
         guild: {
           connectOrCreate: {
             create: {
@@ -42,20 +29,19 @@ export default {
         },
       },
       include: {
-        user: true,
         guild: true,
       },
     });
 
-    logger.silly(createGuildMember);
+    logger.silly(upsertGuildConfigPoints);
 
-    if (content.length < createGuildMember.guild.pointsMinimumLength) return;
+    if (content.length < upsertGuildConfigPoints.minimumLength) return;
 
     await cooldown(
       guild,
       author,
       "event-messageCreate-points",
-      createGuildMember.guild.pointsTimeout,
+      upsertGuildConfigPoints.timeout,
       true
     );
 
@@ -68,7 +54,7 @@ export default {
       },
       data: {
         pointsEarned: {
-          increment: createGuildMember.guild.pointsRate,
+          increment: upsertGuildConfigPoints.rate,
         },
       },
     });

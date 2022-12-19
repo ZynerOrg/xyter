@@ -96,10 +96,35 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
       logger.silly(createGuildMember);
 
-      // Get guild object
-      const pricePerHour = createGuildMember.guild.shopRolesPricePerHour;
+      const upsertGuildConfigShopRoles =
+        await prisma.guildConfigShopRoles.upsert({
+          where: {
+            id: guildId,
+          },
+          update: {},
+          create: {
+            guild: {
+              connectOrCreate: {
+                create: {
+                  id: guildId,
+                },
+                where: {
+                  id: guildId,
+                },
+              },
+            },
+          },
+          include: {
+            guild: true,
+          },
+        });
 
-      const updateGuildMember = await prisma.guildMember.update({
+      logger.silly(upsertGuildConfigShopRoles);
+
+      // Get guild object
+      const pricePerHour = upsertGuildConfigShopRoles.pricePerHour;
+
+      const updateGuildMember = await prisma.guildMemberCredits.update({
         where: {
           userId_guildId: {
             userId,
@@ -107,7 +132,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
           },
         },
         data: {
-          creditsEarned: { decrement: pricePerHour },
+          balance: { decrement: pricePerHour },
         },
       });
 

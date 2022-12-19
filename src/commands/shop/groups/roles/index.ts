@@ -34,12 +34,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!interaction.guild) return;
   const { options, guild } = interaction;
 
-  const getGuild = await prisma.guild.findUnique({
+  const getGuildConfigShopRoles = await prisma.guildConfigShopRoles.findUnique({
     where: { id: guild.id },
   });
-  if (!getGuild) throw new Error("Guild not found");
+  if (!getGuildConfigShopRoles) throw new Error("Guild not found");
 
-  if (!getGuild.shopRolesEnabled)
+  if (!getGuildConfigShopRoles.status)
     throw new Error("This server has disabled shop roles.");
 
   if (options?.getSubcommand() === "buy") {

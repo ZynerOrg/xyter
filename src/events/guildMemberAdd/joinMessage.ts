@@ -1,6 +1,7 @@
 import { ChannelType, EmbedBuilder, GuildMember } from "discord.js";
 import prisma from "../../handlers/database";
 import getEmbedConfig from "../../helpers/getEmbedData";
+import logger from "../../middlewares/logger";
 
 export default {
   execute: async (member: GuildMember) => {
@@ -8,19 +9,19 @@ export default {
       member.guild
     );
 
-    const getGuild = await prisma.guild.findUnique({
+    const getGuildConfigWelcome = await prisma.guildConfigWelcome.findUnique({
       where: { id: member.guild.id },
     });
 
-    if (!getGuild) throw new Error("Guild not found");
+    if (!getGuildConfigWelcome) return logger.verbose("Guild not found");
 
     const { client } = member;
 
-    if (getGuild.welcomeEnabled !== true) return;
-    if (!getGuild.welcomeJoinChannelId) return;
+    if (getGuildConfigWelcome.status !== true) return;
+    if (!getGuildConfigWelcome.joinChannelId) return;
 
     const channel = client.channels.cache.get(
-      `${getGuild.welcomeJoinChannelId}`
+      `${getGuildConfigWelcome.joinChannelId}`
     );
 
     if (!channel) throw new Error("Channel not found");
@@ -34,7 +35,7 @@ export default {
           .setTitle(`${member.user.username} has joined the server!`)
           .setThumbnail(member.user.displayAvatarURL())
           .setDescription(
-            getGuild.welcomeJoinChannelMessage ||
+            getGuildConfigWelcome.joinChannelMessage ||
               "Configure a join message in the `/settings guild welcome`."
           )
           .setTimestamp()

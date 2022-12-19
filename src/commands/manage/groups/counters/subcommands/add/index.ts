@@ -56,7 +56,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!discordChannel) throw new Error("We could not find a channel");
   if (!triggerWord) throw new Error("We could not find a word");
 
-  const channelCounter = await prisma.guildCounter.findUnique({
+  const channelCounter = await prisma.guildCounters.findUnique({
     where: {
       guildId_channelId: {
         guildId: guild.id,
@@ -68,7 +68,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (channelCounter)
     throw new Error("A counter already exists for this channel.");
 
-  const createGuildCounter = await prisma.guildCounter.upsert({
+  const createGuildCounter = await prisma.guildCounters.upsert({
     where: {
       guildId_channelId: {
         guildId: guild.id,
