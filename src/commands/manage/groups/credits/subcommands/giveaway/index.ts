@@ -53,7 +53,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { successColor, footerText, footerIcon } = await getEmbedConfig(
     interaction.guild
   ); // Destructure
-  const { guild, user, options } = interaction;
+  const { guild, options } = interaction;
 
   const uses = options?.getInteger("uses");
   const creditAmount = options?.getInteger("credit");

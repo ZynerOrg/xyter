@@ -8,6 +8,7 @@ import {
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
+import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
 
 // 1. Export a builder function.
@@ -21,9 +22,11 @@ export const execute = async (interaction: CommandInteraction) => {
   await deferReply(interaction, false);
 
   // 2. Destructure interaction object.
-  const { guild, client } = interaction;
+  const { guild, client, user } = interaction;
   if (!guild) throw new Error("Guild not found");
   if (!client) throw new Error("Client not found");
+
+  await upsertGuildMember(guild, user);
 
   // 3. Create base embeds.
   const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Top");

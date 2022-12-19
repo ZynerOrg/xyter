@@ -12,7 +12,6 @@ export const execute = async (message: Message) => {
   await modules.points.execute(message);
   await modules.counters.execute(message);
 
-  const { client } = message;
   if (!message.member) return;
   if (message.author.bot) return;
 

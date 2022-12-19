@@ -67,17 +67,17 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       id: guild.id,
     },
     update: {
-      status: status,
-      rate: rate,
-      timeout: timeout,
-      minimumLength: minimumLength,
+      status,
+      rate,
+      timeout,
+      minimumLength,
     },
     create: {
       id: guild.id,
-      status: status,
-      rate: rate,
-      timeout: timeout,
-      minimumLength: minimumLength,
+      status,
+      rate,
+      timeout,
+      minimumLength,
     },
   });
 

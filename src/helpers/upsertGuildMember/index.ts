@@ -1,9 +1,7 @@
-import { GuildMember } from "discord.js";
+import { Guild, User } from "discord.js";
 import db from "../../handlers/database";
 
-export default async (guildMember: GuildMember) => {
-  const { guild, user } = guildMember;
-
+export default async (guild: Guild, user: User) => {
   return await db.guildMember.upsert({
     where: {
       userId_guildId: {
