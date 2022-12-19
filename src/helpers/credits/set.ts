@@ -8,32 +8,26 @@ export default async (guild: Guild, user: User, amount: number) => {
     transactionRules(guild, user, amount);
 
     // 2. Make the transaction.
-    const recipient = await tx.guildMember.upsert({
+    const recipient = await tx.guildMemberCredits.upsert({
       update: {
-        creditsEarned: amount,
+        balance: amount,
       },
       create: {
-        user: {
+        GuildMember: {
           connectOrCreate: {
             create: {
-              id: user.id,
+              userId: user.id,
+              guildId: guild.id,
             },
             where: {
-              id: user.id,
+              userId_guildId: {
+                userId: user.id,
+                guildId: guild.id,
+              },
             },
           },
         },
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
-          },
-        },
-        creditsEarned: amount,
+        balance: amount,
       },
       where: {
         userId_guildId: {

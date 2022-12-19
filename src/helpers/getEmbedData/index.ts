@@ -23,25 +23,12 @@ export default async (guild?: Guild | null) => {
     return defaultEmbedConfig;
   }
 
-  const createGuildMember = await prisma.guildMember.upsert({
+  const upsertGuildConfigEmbeds = await prisma.guildConfigEmbeds.upsert({
     where: {
-      userId_guildId: {
-        userId: guild?.ownerId,
-        guildId: guild.id,
-      },
+      id: guild.id,
     },
     update: {},
     create: {
-      user: {
-        connectOrCreate: {
-          create: {
-            id: guild.ownerId,
-          },
-          where: {
-            id: guild.ownerId,
-          },
-        },
-      },
       guild: {
         connectOrCreate: {
           create: {
@@ -54,22 +41,21 @@ export default async (guild?: Guild | null) => {
       },
     },
     include: {
-      user: true,
       guild: true,
     },
   });
 
-  logger.silly(createGuildMember);
+  logger.silly(upsertGuildConfigEmbeds);
 
-  if (!createGuildMember) {
+  if (!upsertGuildConfigEmbeds) {
     return defaultEmbedConfig;
   }
 
   return {
-    successColor: <ColorResolvable>createGuildMember.guild.embedColorSuccess,
-    waitColor: <ColorResolvable>createGuildMember.guild.embedColorWait,
-    errorColor: <ColorResolvable>createGuildMember.guild.embedColorError,
-    footerText: createGuildMember.guild.embedFooterText,
-    footerIcon: createGuildMember.guild.embedFooterIcon,
+    successColor: <ColorResolvable>upsertGuildConfigEmbeds.successColor,
+    waitColor: <ColorResolvable>upsertGuildConfigEmbeds.waitColor,
+    errorColor: <ColorResolvable>upsertGuildConfigEmbeds.errorColor,
+    footerText: upsertGuildConfigEmbeds.footerText,
+    footerIcon: upsertGuildConfigEmbeds.footerIcon,
   };
 };

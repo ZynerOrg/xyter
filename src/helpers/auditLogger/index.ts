@@ -4,13 +4,13 @@ import getEmbedConfig from "../../helpers/getEmbedData";
 import logger from "../../middlewares/logger";
 
 export default async (guild: Guild, embed: EmbedBuilder) => {
-  const getGuild = await prisma.guild.findUnique({
+  const getGuildConfigAudits = await prisma.guildConfigAudits.findUnique({
     where: { id: guild.id },
   });
-  if (!getGuild) throw new Error("Guild not found");
+  if (!getGuildConfigAudits) return logger.verbose("Guild not found");
 
-  if (getGuild.auditsEnabled !== true) return;
-  if (!getGuild.auditsChannelId) {
+  if (getGuildConfigAudits.status !== true) return;
+  if (!getGuildConfigAudits.channelId) {
     throw new Error("Channel not found");
   }
 
@@ -24,7 +24,9 @@ export default async (guild: Guild, embed: EmbedBuilder) => {
     })
     .setColor(embedConfig.successColor);
 
-  const channel = guild.client.channels.cache.get(getGuild.auditsChannelId);
+  const channel = guild.client.channels.cache.get(
+    getGuildConfigAudits.channelId
+  );
 
   if (!channel) throw new Error("Channel not found");
   if (channel.type !== ChannelType.GuildText) {

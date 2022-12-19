@@ -62,22 +62,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!timeout) throw new Error("Timeout must be specified");
   if (!minimumLength) throw new Error("Minimum length must be specified");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigPoints.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      pointsEnabled: status,
-      pointsRate: rate,
-      pointsTimeout: timeout,
-      pointsMinimumLength: minimumLength,
+      status: status,
+      rate: rate,
+      timeout: timeout,
+      minimumLength: minimumLength,
     },
     create: {
       id: guild.id,
-      pointsEnabled: status,
-      pointsRate: rate,
-      pointsTimeout: timeout,
-      pointsMinimumLength: minimumLength,
+      status: status,
+      rate: rate,
+      timeout: timeout,
+      minimumLength: minimumLength,
     },
   });
 
@@ -90,22 +90,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     .addFields(
       {
         name: "🤖 Status",
-        value: `${createGuild.pointsEnabled}`,
+        value: `${createGuild.status}`,
         inline: true,
       },
       {
         name: "📈 Rate",
-        value: `${createGuild.pointsRate}`,
+        value: `${createGuild.rate}`,
         inline: true,
       },
       {
         name: "🔨 Minimum Length",
-        value: `${createGuild.pointsMinimumLength}`,
+        value: `${createGuild.minimumLength}`,
         inline: true,
       },
       {
         name: "⏰ Timeout",
-        value: `${createGuild.pointsTimeout}`,
+        value: `${createGuild.timeout}`,
         inline: true,
       }
     )

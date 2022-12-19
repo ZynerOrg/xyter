@@ -8,19 +8,19 @@ export default {
       member.guild
     );
 
-    const getGuild = await prisma.guild.findUnique({
+    const getGuildConfigWelcome = await prisma.guildConfigWelcome.findUnique({
       where: { id: member.guild.id },
     });
 
-    if (!getGuild) throw new Error("Guild not found");
+    if (!getGuildConfigWelcome) throw new Error("Guild not found");
 
     const { client } = member;
 
-    if (getGuild.welcomeEnabled !== true) return;
-    if (!getGuild.welcomeLeaveChannelId) return;
+    if (getGuildConfigWelcome.status !== true) return;
+    if (!getGuildConfigWelcome.leaveChannelId) return;
 
     const channel = client.channels.cache.get(
-      `${getGuild.welcomeLeaveChannelId}`
+      `${getGuildConfigWelcome.leaveChannelId}`
     );
 
     if (!channel) throw new Error("Channel not found");
@@ -34,7 +34,7 @@ export default {
           .setTitle(`${member.user.username} has left the server!`)
           .setThumbnail(member.user.displayAvatarURL())
           .setDescription(
-            getGuild.welcomeLeaveChannelMessage ||
+            getGuildConfigWelcome.leaveChannelMessage ||
               "Configure a leave message in the `/settings guild welcome`."
           )
           .setTimestamp()

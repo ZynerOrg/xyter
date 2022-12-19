@@ -46,18 +46,18 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!rolesPricePerHour)
     throw new Error("Roles price per hour must be provided");
 
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigShopRoles.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      shopRolesEnabled: rolesStatus,
-      shopRolesPricePerHour: rolesPricePerHour,
+      status: rolesStatus,
+      pricePerHour: rolesPricePerHour,
     },
     create: {
       id: guild.id,
-      shopRolesEnabled: rolesStatus,
-      shopRolesPricePerHour: rolesPricePerHour,
+      status: rolesStatus,
+      pricePerHour: rolesPricePerHour,
     },
   });
 
@@ -70,12 +70,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     .addFields(
       {
         name: "🤖 Roles Status",
-        value: `${createGuild.shopRolesEnabled}`,
+        value: `${createGuild.status}`,
         inline: true,
       },
       {
         name: "🌊 Roles Price Per Hour",
-        value: `${createGuild.shopRolesPricePerHour}`,
+        value: `${createGuild.pricePerHour}`,
         inline: true,
       }
     )

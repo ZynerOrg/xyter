@@ -42,7 +42,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const EmbedSuccess = await BaseEmbedSuccess(guild, "[:1234:] View");
 
   // 5. Get counter from database.
-  const channelCounter = await prisma.guildCounter.findUnique({
+  const channelCounter = await prisma.guildCounters.findUnique({
     where: {
       guildId_channelId: {
         guildId: guild.id,
