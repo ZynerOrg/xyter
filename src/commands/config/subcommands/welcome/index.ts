@@ -81,19 +81,19 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       id: guild.id,
     },
     update: {
-      status: status,
+      status,
       joinChannelId: joinChannel.id,
-      joinChannelMessage: joinChannelMessage,
+      joinChannelMessage,
       leaveChannelId: leaveChannel.id,
-      leaveChannelMessage: leaveChannelMessage,
+      leaveChannelMessage,
     },
     create: {
       id: guild.id,
-      status: status,
+      status,
       joinChannelId: joinChannel.id,
-      joinChannelMessage: joinChannelMessage,
+      joinChannelMessage,
       leaveChannelId: leaveChannel.id,
-      leaveChannelMessage: leaveChannelMessage,
+      leaveChannelMessage,
     },
   });
 

@@ -13,7 +13,10 @@ export default {
       where: { id: member.guild.id },
     });
 
-    if (!getGuildConfigWelcome) return logger.verbose("Guild not found");
+    if (!getGuildConfigWelcome) {
+      logger.verbose("Guild not found");
+      return;
+    }
 
     const { client } = member;
 
