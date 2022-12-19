@@ -5,6 +5,7 @@ import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import creditsGive from "../../../../helpers/credits/give";
+import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import cooldown from "../../../../middlewares/cooldown";
 import logger from "../../../../middlewares/logger";
 
@@ -22,6 +23,8 @@ export const execute = async (interaction: CommandInteraction) => {
   const { guild, user, commandId } = interaction;
   if (!guild) throw new Error("Guild not found");
   if (!user) throw new Error("User not found");
+
+  await upsertGuildMember(guild, user);
 
   // 3. Create base embeds.
   const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Work");
@@ -51,13 +54,13 @@ export const execute = async (interaction: CommandInteraction) => {
     max: createGuild.workRate,
   });
 
-  const upsertGuildMember = await creditsGive(guild, user, creditsEarned);
+  const upsertGuildMemberResult = await creditsGive(guild, user, creditsEarned);
 
   // 8. Send embed.
   await interaction.editReply({
     embeds: [
       EmbedSuccess.setDescription(
-        `You worked and earned **${creditsEarned}** credits! You now have **${upsertGuildMember.balance}** credits. :tada:`
+        `You worked and earned **${creditsEarned}** credits! You now have **${upsertGuildMemberResult.balance}** credits. :tada:`
       ),
     ],
   });

@@ -7,6 +7,7 @@ import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import creditsTransfer from "../../../../helpers/credits/transfer";
+import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
 
 // 1. Export a builder function.
@@ -58,6 +59,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     guild,
     `:credit_card:︱You received a gift from ${user.username}`
   );
+
+  await upsertGuildMember(guild, user);
 
   // 5. Start an transaction of the credits.
   await creditsTransfer(guild, user, account, credits);
