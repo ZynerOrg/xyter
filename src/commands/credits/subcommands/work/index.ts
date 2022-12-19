@@ -30,7 +30,7 @@ export const execute = async (interaction: CommandInteraction) => {
   const chance = new Chance();
 
   // 5. Upsert the guild in the database.
-  const createGuild = await prisma.guild.upsert({
+  const createGuild = await prisma.guildConfigCredits.upsert({
     where: {
       id: guild.id,
     },
@@ -43,12 +43,12 @@ export const execute = async (interaction: CommandInteraction) => {
   if (!createGuild) throw new Error("Guild not found");
 
   // 6. Create a cooldown for the user.
-  await cooldown(guild, user, commandId, createGuild.creditsWorkTimeout);
+  await cooldown(guild, user, commandId, createGuild.workTimeout);
 
   // 6. Generate a random number between 0 and creditsWorkRate.
   const creditsEarned = chance.integer({
     min: 0,
-    max: createGuild.creditsWorkRate,
+    max: createGuild.workRate,
   });
 
   const upsertGuildMember = await creditsGive(guild, user, creditsEarned);
@@ -57,7 +57,7 @@ export const execute = async (interaction: CommandInteraction) => {
   await interaction.editReply({
     embeds: [
       EmbedSuccess.setDescription(
-        `You worked and earned **${creditsEarned}** credits! You now have **${upsertGuildMember.creditsEarned}** credits. :tada:`
+        `You worked and earned **${creditsEarned}** credits! You now have **${upsertGuildMember.balance}** credits. :tada:`
       ),
     ],
   });

@@ -13,7 +13,7 @@ export default {
     const messages = await message.channel.messages.fetch({ limit: 2 });
     const lastMessage = messages.last();
 
-    const channelCounter = await prisma.guildCounter.findUnique({
+    const channelCounter = await prisma.guildCounters.findUnique({
       where: {
         guildId_channelId: {
           guildId: guild.id,
@@ -47,7 +47,7 @@ export default {
       return;
     }
 
-    const updateGuildCounter = await prisma.guildCounter.update({
+    const updateGuildCounter = await prisma.guildCounters.update({
       where: {
         guildId_channelId: {
           guildId: guild.id,

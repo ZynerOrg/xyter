@@ -62,7 +62,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   // 5. Start an transaction of the credits.
   await creditsTransfer(guild, user, account, credits);
 
-  const receiverGuildMember = await prisma.guildMember.upsert({
+  const receiverGuildMember = await prisma.guildMemberCredits.upsert({
     where: {
       userId_guildId: {
         userId: account.id,
@@ -71,30 +71,23 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     update: {},
     create: {
-      user: {
+      GuildMember: {
         connectOrCreate: {
           create: {
-            id: account.id,
+            userId: account.id,
+            guildId: guild.id,
           },
           where: {
-            id: account.id,
-          },
-        },
-      },
-      guild: {
-        connectOrCreate: {
-          create: {
-            id: guild.id,
-          },
-          where: {
-            id: guild.id,
+            userId_guildId: {
+              userId: account.id,
+              guildId: guild.id,
+            },
           },
         },
       },
     },
     include: {
-      user: true,
-      guild: true,
+      GuildMember: true,
     },
   });
   logger.silly(receiverGuildMember);
@@ -105,12 +98,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await account.send({
     embeds: [
       receiverEmbed.setDescription(
-        `You received a gift containing ${credits} coins from ${user}! You now have ${receiverGuildMember.creditsEarned} coins in balance!`
+        `You received a gift containing ${credits} coins from ${user}! You now have ${receiverGuildMember.balance} coins in balance!`
       ),
     ],
   });
 
-  const senderGuildMember = await prisma.guildMember.upsert({
+  const senderGuildMember = await prisma.guildMemberCredits.upsert({
     where: {
       userId_guildId: {
         userId: user.id,
@@ -119,30 +112,23 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     update: {},
     create: {
-      user: {
+      GuildMember: {
         connectOrCreate: {
           create: {
-            id: user.id,
+            userId: account.id,
+            guildId: guild.id,
           },
           where: {
-            id: user.id,
-          },
-        },
-      },
-      guild: {
-        connectOrCreate: {
-          create: {
-            id: guild.id,
-          },
-          where: {
-            id: guild.id,
+            userId_guildId: {
+              userId: account.id,
+              guildId: guild.id,
+            },
           },
         },
       },
     },
     include: {
-      user: true,
-      guild: true,
+      GuildMember: true,
     },
   });
   logger.silly(senderGuildMember);
@@ -158,7 +144,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply({
     embeds: [
       senderEmbed.setDescription(
-        `Your gift has been sent to ${account}. You now have ${senderGuildMember.creditsEarned} coins in balance!`
+        `Your gift has been sent to ${account}. You now have ${senderGuildMember.balance} coins in balance!`
       ),
     ],
   });

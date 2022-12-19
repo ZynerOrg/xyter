@@ -16,8 +16,8 @@ export const execute = async (message: Message) => {
   if (!message.member) return;
   if (message.author.bot) return;
 
-  client.emit("guildMemberAdd", message.member);
-  client.emit("guildMemberRemove", message.member);
-  client.emit("messageDelete", message);
-  client.emit("messageUpdate", message, message);
+  // client.emit("guildMemberAdd", message.member);
+  // client.emit("guildMemberRemove", message.member);
+  // client.emit("messageDelete", message);
+  // client.emit("messageUpdate", message, message);
 };

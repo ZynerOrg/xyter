@@ -11,7 +11,7 @@ export default async (message: Message) => {
 
   if (!channel) throw new Error("Channel not found");
 
-  const channelCounter = await prisma.guildCounter.findUnique({
+  const channelCounter = await prisma.guildCounters.findUnique({
     where: {
       guildId_channelId: {
         guildId: guild.id,

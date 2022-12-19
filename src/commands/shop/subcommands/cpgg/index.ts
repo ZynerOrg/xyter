@@ -48,7 +48,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   }
   if (!guild) throw new Error("Guild not found");
 
-  const createGuildMember = await prisma.guildMember.upsert({
+  const upsertGuildMemberCredits = await prisma.guildMemberCredits.upsert({
     where: {
       userId_guildId: {
         userId: user.id,
@@ -57,16 +57,32 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     update: {},
     create: {
-      user: {
+      GuildMember: {
         connectOrCreate: {
           create: {
-            id: user.id,
+            userId: user.id,
+            guildId: guild.id,
           },
           where: {
-            id: user.id,
+            userId_guildId: {
+              userId: user.id,
+              guildId: guild.id,
+            },
           },
         },
       },
+    },
+  });
+
+  if (!upsertGuildMemberCredits)
+    throw new Error("upsertGuildMemberCredits unavailable");
+
+  const upsertGuildConfigApisCpgg = await prisma.guildConfigApisCpgg.upsert({
+    where: {
+      id: guild.id,
+    },
+    update: {},
+    create: {
       guild: {
         connectOrCreate: {
           create: {
@@ -79,47 +95,43 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       },
     },
     include: {
-      user: true,
       guild: true,
     },
   });
 
-  logger.silly(createGuildMember);
+  logger.silly(upsertGuildMemberCredits);
 
   const dmUser = client?.users?.cache?.get(user?.id);
 
-  if ((optionAmount || createGuildMember.creditsEarned) < 100)
+  if ((optionAmount || upsertGuildMemberCredits.balance) < 100)
     throw new Error("You can't withdraw to CPGG below 100 credits.");
 
-  if ((optionAmount || createGuildMember.creditsEarned) > 1000000)
+  if ((optionAmount || upsertGuildMemberCredits.balance) > 1000000)
     throw new Error("Amount or user credits is above 1.000.000.");
 
-  if (createGuildMember.creditsEarned < optionAmount)
+  if (upsertGuildMemberCredits.balance < optionAmount)
     throw new Error("You can't withdraw more than you have on your account.");
 
-  if (
-    !createGuildMember.guild.apiCpggUrlIv ||
-    !createGuildMember.guild.apiCpggUrlContent
-  )
+  if (!upsertGuildConfigApisCpgg.urlIv || !upsertGuildConfigApisCpgg.urlContent)
     throw new Error("No API url available");
 
   if (
-    !createGuildMember.guild.apiCpggTokenIv ||
-    !createGuildMember.guild.apiCpggTokenContent
+    !upsertGuildConfigApisCpgg.tokenIv ||
+    !upsertGuildConfigApisCpgg.tokenContent
   )
     throw new Error("No API token available");
 
   const code = uuidv4();
   const url = encryption.decrypt({
-    iv: createGuildMember.guild.apiCpggUrlIv,
-    content: createGuildMember.guild.apiCpggUrlContent,
+    iv: upsertGuildConfigApisCpgg.urlIv,
+    content: upsertGuildConfigApisCpgg.urlContent,
   });
   const api = axios?.create({
     baseURL: `${url}/api/`,
     headers: {
       Authorization: `Bearer ${encryption.decrypt({
-        iv: createGuildMember.guild.apiCpggTokenIv,
-        content: createGuildMember.guild.apiCpggTokenContent,
+        iv: upsertGuildConfigApisCpgg.tokenIv,
+        content: upsertGuildConfigApisCpgg.tokenContent,
       })}`,
     },
   });
@@ -131,19 +143,20 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       .setEmoji("🏦")
       .setURL(`${shopUrl}?voucher=${code}`)
   );
+
   await api
     ?.post("vouchers", {
       uses: 1,
       code,
-      credits: optionAmount || createGuildMember.creditsEarned,
+      credits: optionAmount || upsertGuildMemberCredits.balance,
       memo: `${interaction?.createdTimestamp} - ${interaction?.user?.id}`,
     })
     ?.then(async () => {
       logger?.silly(`Successfully created voucher.`);
-      createGuildMember.creditsEarned -=
-        optionAmount || createGuildMember.creditsEarned;
+      upsertGuildMemberCredits.balance -=
+        optionAmount || upsertGuildMemberCredits.balance;
 
-      const updateGuildMember = await prisma.guildMember.update({
+      const updateGuildMember = await prisma.guildMemberCredits.update({
         where: {
           userId_guildId: {
             userId: user.id,
@@ -151,8 +164,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
           },
         },
         data: {
-          creditsEarned: {
-            decrement: optionAmount || createGuildMember.creditsEarned,
+          balance: {
+            decrement: optionAmount || upsertGuildMemberCredits.balance,
           },
         },
       });
@@ -168,7 +181,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         .setTimestamp()
         .addFields({
           name: "💶 Credits",
-          value: `${optionAmount || createGuildMember.creditsEarned}`,
+          value: `${optionAmount || upsertGuildMemberCredits.balance}`,
           inline: true,
         })
         .setColor(successColor)
