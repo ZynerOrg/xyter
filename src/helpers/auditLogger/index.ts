@@ -7,7 +7,10 @@ export default async (guild: Guild, embed: EmbedBuilder) => {
   const getGuildConfigAudits = await prisma.guildConfigAudits.findUnique({
     where: { id: guild.id },
   });
-  if (!getGuildConfigAudits) return logger.verbose("Guild not found");
+  if (!getGuildConfigAudits) {
+    logger.verbose("Guild not found");
+    return;
+  }
 
   if (getGuildConfigAudits.status !== true) return;
   if (!getGuildConfigAudits.channelId) {

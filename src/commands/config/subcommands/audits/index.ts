@@ -49,12 +49,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       id: guild.id,
     },
     update: {
-      status: status,
+      status,
       channelId: channel.id,
     },
     create: {
       id: guild.id,
-      status: status,
+      status,
       channelId: channel.id,
     },
   });

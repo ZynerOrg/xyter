@@ -3,6 +3,7 @@ import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
+import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
 
 // 1. Export a builder function.
@@ -33,7 +34,7 @@ export const execute = async (interaction: CommandInteraction) => {
   const EmbedSuccess = await BaseEmbedSuccess(guild, ":credit_card:︱Balance");
 
   // 5. Upsert the user in the database.
-  const createGuildMember = await prisma.guildMemberCredits.upsert({
+  const createGuildMemberCredits = await prisma.guildMemberCredits.upsert({
     where: {
       userId_guildId: {
         userId: (target || user).id,
@@ -60,15 +61,17 @@ export const execute = async (interaction: CommandInteraction) => {
     include: { GuildMember: true },
   });
 
-  logger.silly(createGuildMember);
+  logger.silly(createGuildMemberCredits);
+
+  await upsertGuildMember(guild, user);
 
   // 6. Send embed.
   await interaction.editReply({
     embeds: [
       EmbedSuccess.setDescription(
         target
-          ? `${target} has ${createGuildMember.balance} coins in his account.`
-          : `You have ${createGuildMember.balance} coins in your account.`
+          ? `${target} has ${createGuildMemberCredits.balance} coins in his account.`
+          : `You have ${createGuildMemberCredits.balance} coins in your account.`
       ),
     ],
   });
