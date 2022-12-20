@@ -1,30 +1,27 @@
 import {
+  channelMention,
   ChannelType,
   ChatInputCommandInteraction,
-  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
+import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("audits")
-    .setDescription("Audits")
+    .setDescription("Configure audits module")
     .addBooleanOption((option) =>
-      option
-        .setName("status")
-        .setDescription("Should audits be enabled?")
-        .setRequired(true)
+      option.setName("status").setDescription("Module status").setRequired(true)
     )
     .addChannelOption((option) =>
       option
         .setName("channel")
-        .setDescription("Channel for audit messages.")
+        .setDescription("Log channel")
         .addChannelTypes(ChannelType.GuildText)
         .setRequired(true)
     );
@@ -36,15 +33,14 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
   const { guild, options } = interaction;
-  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
+  if (!guild) throw new Error("Guild unavailable");
+
   const status = options.getBoolean("status");
   const channel = options.getChannel("channel");
+  if (status === null) throw new Error("Status must be set");
+  if (!channel) throw new Error("Channel unavailable");
 
-  if (!guild) throw new Error("Guild not found.");
-  if (!channel) throw new Error("Channel not found.");
-  if (status === null) throw new Error("Status not found.");
-
-  const createGuild = await prisma.guildConfigAudits.upsert({
+  const upsertGuildConfigAudits = await prisma.guildConfigAudits.upsert({
     where: {
       id: guild.id,
     },
@@ -59,34 +55,28 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
   });
 
-  logger.silly(createGuild);
+  logger.silly(upsertGuildConfigAudits);
 
-  const embedSuccess = new EmbedBuilder()
-    .setTitle("[:hammer:] Audits")
-    .setDescription("Guild configuration updated successfully.")
-    .setColor(successColor)
-    .addFields(
-      {
-        name: "🤖 Status",
-        value: `${
-          createGuild.status ? ":white_check_mark: Enabled" : ":x: Disabled"
-        }`,
-        inline: true,
-      },
-      {
-        name: "🌊 Channel",
-        value: `<#${createGuild.channelId}>`,
-        inline: true,
-      }
-    )
-    .setTimestamp()
-    .setFooter({
-      iconURL: footerIcon,
-      text: footerText,
-    });
+  const successEmbed = await embedSuccess(
+    guild,
+    ":gear:︱Configuration of Audits"
+  );
+
+  successEmbed.setDescription("Configuration updated successfully!").addFields(
+    {
+      name: "Status",
+      value: `${upsertGuildConfigAudits.status ? "Enabled" : "Disabled"}`,
+      inline: true,
+    },
+    {
+      name: "Channel",
+      value: `${channelMention(upsertGuildConfigAudits.channelId)}`,
+      inline: true,
+    }
+  );
 
   await interaction.editReply({
-    embeds: [embedSuccess],
+    embeds: [successEmbed],
   });
   return;
 };
