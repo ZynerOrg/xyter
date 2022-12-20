@@ -1,24 +1,23 @@
 import {
   ChatInputCommandInteraction,
-  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
+import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
 import encryption from "../../../../helpers/encryption";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("cpgg")
-    .setDescription("Controlpanel.gg")
+    .setDescription("Controlpanel.gg API")
     .addStringOption((option) =>
       option
         .setName("scheme")
-        .setDescription(`Controlpanel.gg Scheme`)
+        .setDescription(`API protocol`)
         .setRequired(true)
         .setChoices(
           { name: "HTTPS (secure)", value: "https" },
@@ -26,16 +25,10 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         )
     )
     .addStringOption((option) =>
-      option
-        .setName("domain")
-        .setDescription(`Controlpanel.gg Domain`)
-        .setRequired(true)
+      option.setName("domain").setDescription(`API domain`).setRequired(true)
     )
     .addStringOption((option) =>
-      option
-        .setName("token")
-        .setDescription(`Controlpanel.gg Application API`)
-        .setRequired(true)
+      option.setName("token").setDescription(`API Token`).setRequired(true)
     );
 };
 
@@ -44,22 +37,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  const { successColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  );
   const { options, guild } = interaction;
+  if (!guild) throw new Error("Guild unavailable");
 
-  const tokenData = options.getString("token");
   const scheme = options.getString("scheme");
   const domain = options.getString("domain");
-  const token = tokenData && encryption.encrypt(tokenData);
-  const url = scheme && domain && encryption.encrypt(`${scheme}://${domain}`);
+  const tokenData = options.getString("token");
+  if (!scheme) throw new Error("Scheme must be set");
+  if (!domain) throw new Error("Domain must be set");
+  if (!tokenData) throw new Error("Token must be set");
 
-  if (!guild) throw new Error("No guild found");
-  if (!token) throw new Error("Token not found");
-  if (!url) throw new Error("URL not found");
+  const url = encryption.encrypt(`${scheme}://${domain}`);
+  const token = encryption.encrypt(tokenData);
+  if (!url) throw new Error("URL must be set");
+  if (!token) throw new Error("Token must be set");
 
-  const createGuild = await prisma.guildConfigApisCpgg.upsert({
+  const upsertGuildConfigApisCpgg = await prisma.guildConfigApisCpgg.upsert({
     where: {
       id: guild.id,
     },
@@ -78,28 +71,33 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
   });
 
-  logger.silly(createGuild);
+  logger.silly(upsertGuildConfigApisCpgg);
 
-  logger?.silly(`Updated API credentials.`);
+  const successEmbed = await embedSuccess(
+    guild,
+    ":gear:︱Configuration of CPGG"
+  );
 
-  const interactionEmbed = new EmbedBuilder()
-    .setTitle("[:tools:] CPGG")
-    .setDescription(
-      `The following configuration will be used.
+  successEmbed.setDescription("Configuration updated successfully!").addFields(
+    {
+      name: "Scheme",
+      value: `${scheme}`,
+      inline: true,
+    },
+    {
+      name: "Domain",
+      value: `${domain}`,
+      inline: true,
+    },
+    {
+      name: "Token",
+      value: `ends with ${tokenData.slice(-4)}`,
+      inline: true,
+    }
+  );
 
-**Scheme**: ${scheme}
-**Domain**: ${domain}
-**Token**: ends with ${tokenData?.slice(-4)}`
-    )
-    .setColor(successColor)
-    .setTimestamp()
-    .setFooter({
-      iconURL: footerIcon,
-      text: footerText,
-    });
-
-  await interaction?.editReply({
-    embeds: [interactionEmbed],
+  await interaction.editReply({
+    embeds: [successEmbed],
   });
   return;
 };
