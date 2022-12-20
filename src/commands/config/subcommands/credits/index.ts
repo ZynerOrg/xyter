@@ -1,61 +1,51 @@
 import {
   ChatInputCommandInteraction,
-  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/database";
 import deferReply from "../../../../handlers/deferReply";
+import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("credits")
-    .setDescription(`Configure this guild's credits module.`)
+    .setDescription(`Configure credits module`)
     .addBooleanOption((option) =>
-      option
-        .setName("enabled")
-        .setDescription("Do you want to activate the credit module?")
-        .setRequired(true)
+      option.setName("status").setDescription("Module Status").setRequired(true)
     )
     .addNumberOption((option) =>
       option
         .setName("rate")
-        .setDescription("Credit rate per message.")
+        .setDescription("Credits per message")
         .setRequired(true)
         .setMinValue(1)
     )
     .addNumberOption((option) =>
       option
         .setName("minimum-length")
-        .setDescription("Minimum message length to receive credit.")
+        .setDescription("Minimum length per message")
         .setRequired(true)
     )
     .addNumberOption((option) =>
       option
         .setName("work-rate")
-        .setDescription(
-          "The maximum amount of credit that can be obtained within a working day."
-        )
+        .setDescription("Maximum credits per workshift")
         .setRequired(true)
         .setMinValue(1)
     )
     .addNumberOption((option) =>
       option
         .setName("work-timeout")
-        .setDescription(
-          "How long you need to wait before you can work again provided in seconds."
-        )
+        .setDescription("Time between workshifts")
         .setRequired(true)
     )
     .addNumberOption((option) =>
       option
         .setName("timeout")
-        .setDescription(
-          "How long you need to wait before you can earn more credits."
-        )
+        .setDescription("Time between messages")
         .setRequired(true)
     );
 };
@@ -65,12 +55,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  const { successColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  );
   const { guild, options } = interaction;
 
-  const enabled = options.getBoolean("enabled");
+  const status = options.getBoolean("status");
   const rate = options.getNumber("rate");
   const timeout = options.getNumber("timeout");
   const minimumLength = options.getNumber("minimum-length");
@@ -78,23 +65,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const workTimeout = options.getNumber("work-timeout");
 
   if (!guild) throw new Error("Guild not found.");
-  if (typeof enabled !== "boolean")
-    throw new Error("Enabled option is not a boolean.");
-  if (typeof rate !== "number") throw new Error("Rate is not a number.");
+  if (typeof status !== "boolean") throw new Error("Status must be an boolean");
+  if (typeof rate !== "number") throw new Error("Rate must be a number");
   if (typeof workRate !== "number")
-    throw new Error("Work rate is not a number.");
+    throw new Error("Work rate must be a number");
   if (typeof workTimeout !== "number")
-    throw new Error("Work timeout is not a number.");
-  if (typeof timeout !== "number") throw new Error("Timeout is not a number.");
+    throw new Error("Work timeout must be a number");
+  if (typeof timeout !== "number") throw new Error("Timeout must be a number");
   if (typeof minimumLength !== "number")
-    throw new Error("Minimum length is not a number.");
+    throw new Error("Minimum length must be a number");
 
-  const createGuild = await prisma.guildConfigCredits.upsert({
+  const upsertGuildConfigCredits = await prisma.guildConfigCredits.upsert({
     where: {
       id: guild.id,
     },
     update: {
-      status: enabled,
+      status,
       rate,
       timeout,
       workRate,
@@ -103,7 +89,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     create: {
       id: guild.id,
-      status: enabled,
+      status,
       rate,
       timeout,
       workRate,
@@ -112,52 +98,48 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
   });
 
-  logger.silly(createGuild);
+  logger.silly(upsertGuildConfigCredits);
 
-  const interactionEmbed = new EmbedBuilder()
-    .setTitle("[:tools:] Credits")
-    .setDescription("Credits settings updated")
-    .setColor(successColor)
-    .addFields(
-      {
-        name: "🤖 Enabled?",
-        value: `${createGuild.status}`,
-        inline: true,
-      },
-      {
-        name: "📈 Rate",
-        value: `${createGuild.rate}`,
-        inline: true,
-      },
-      {
-        name: "📈 Work Rate",
-        value: `${createGuild.workRate}`,
-        inline: true,
-      },
-      {
-        name: "🔨 Minimum Length",
-        value: `${createGuild.minimumLength}`,
-        inline: true,
-      },
-      {
-        name: "⏰ Timeout",
-        value: `${createGuild.timeout}`,
-        inline: true,
-      },
-      {
-        name: "⏰ Work Timeout",
-        value: `${createGuild.workTimeout}`,
-        inline: true,
-      }
-    )
-    .setTimestamp()
-    .setFooter({
-      iconURL: footerIcon,
-      text: footerText,
-    });
+  const successEmbed = await embedSuccess(
+    guild,
+    ":gear:︱Configuration of Credits"
+  );
+
+  successEmbed.setDescription("Configuration updated successfully!").addFields(
+    {
+      name: "Status",
+      value: `${upsertGuildConfigCredits.status ? "Enabled" : "Disabled"}`,
+      inline: true,
+    },
+    {
+      name: "Rate",
+      value: `${upsertGuildConfigCredits.rate}`,
+      inline: true,
+    },
+    {
+      name: "Work Rate",
+      value: `${upsertGuildConfigCredits.workRate}`,
+      inline: true,
+    },
+    {
+      name: "Minimum Length",
+      value: `${upsertGuildConfigCredits.minimumLength}`,
+      inline: true,
+    },
+    {
+      name: "Timeout",
+      value: `${upsertGuildConfigCredits.timeout}`,
+      inline: true,
+    },
+    {
+      name: "Work Timeout",
+      value: `${upsertGuildConfigCredits.workTimeout}`,
+      inline: true,
+    }
+  );
 
   await interaction.editReply({
-    embeds: [interactionEmbed],
+    embeds: [successEmbed],
   });
   return;
 };
