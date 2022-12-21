@@ -1,34 +1,39 @@
-// 3rd party dependencies
-import {
-  BaseInteraction,
-  CommandInteraction,
-  InteractionType,
-} from "discord.js";
+import { BaseInteraction, InteractionType } from "discord.js";
+import upsertGuildMember from "../../helpers/upsertGuildMember";
 import { IEventOptions } from "../../interfaces/EventOptions";
 import logger from "../../middlewares/logger";
-// Dependencies
 import audits from "./audits";
-import { handleCommandInteraction as HandlersHandleCommandInteraction } from "./handlers";
+import button from "./handlers/button";
+import chatInputCommand from "./handlers/chatInputCommand";
 
 export const options: IEventOptions = {
   type: "on",
 };
 
-// Execute the event
 export const execute = async (interaction: BaseInteraction) => {
-  const { guild, id } = interaction;
+  logger.silly({ interaction });
+  const { guild, user } = interaction;
 
-  logger?.silly(
-    `New interaction: ${id} in guild: ${guild?.name} (${guild?.id})`
-  );
+  if (guild) {
+    await upsertGuildMember(guild, user);
+  }
 
   switch (interaction.type) {
-    case InteractionType.ApplicationCommand:
-      await HandlersHandleCommandInteraction(<CommandInteraction>interaction);
-      break;
+    case InteractionType.ApplicationCommand: {
+      if (interaction.isChatInputCommand()) {
+        await chatInputCommand(interaction);
+        return;
+      }
 
+      if (interaction.isButton()) {
+        await button(interaction);
+        return;
+      }
+
+      break;
+    }
     default:
-      logger?.error(`Unknown interaction type: ${interaction.type}`);
+      throw new Error("Unknown interaction type");
   }
 
   await audits.execute(interaction);
