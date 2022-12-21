@@ -1,23 +1,24 @@
 import {
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonInteraction,
   ButtonStyle,
+  ChatInputCommandInteraction,
   EmbedBuilder,
 } from "discord.js";
 import getEmbedData from "../../../../helpers/getEmbedData";
 
-export default async (interaction: ButtonInteraction) => {
+export default async (interaction: ChatInputCommandInteraction) => {
   const { errorColor, footerText, footerIcon } = await getEmbedData(
     interaction.guild
   );
-  const { customId } = interaction;
 
-  const currentButton = await import(`../../../buttons/${customId}`);
+  if (!interaction.isCommand()) return;
+  const { client, commandName } = interaction;
 
-  if (!currentButton) throw new Error(`Unknown button ${customId}`);
+  const currentCommand = client.commands.get(commandName);
+  if (!currentCommand) throw new Error(`Unknown command ${commandName}`);
 
-  await currentButton.execute(interaction).catch((error: Error) => {
+  await currentCommand.execute(interaction).catch((error: Error) => {
     const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
         .setLabel("Report Problem")
