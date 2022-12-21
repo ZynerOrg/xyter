@@ -4,86 +4,46 @@ import creditsGive from "../../../../helpers/credits/give";
 import cooldown from "../../../../middlewares/cooldown";
 import logger from "../../../../middlewares/logger";
 
-export default {
-  execute: async (message: Message) => {
-    const { guild, author, content, channel } = message;
+export default async (message: Message) => {
+  const { guild, author, content, channel } = message;
 
-    if (!guild) return;
-    if (author.bot) return;
-    if (channel.type !== ChannelType.GuildText) return;
+  if (!guild) return;
+  if (author.bot) return;
+  if (channel.type !== ChannelType.GuildText) return;
 
-    const createGuildMember = await prisma.guildMember.upsert({
-      where: {
-        userId_guildId: {
-          userId: author.id,
-          guildId: guild.id,
-        },
-      },
-      update: {},
-      create: {
-        user: {
-          connectOrCreate: {
-            create: {
-              id: author.id,
-            },
-            where: {
-              id: author.id,
-            },
+  const upsertGuildConfigCredits = await prisma.guildConfigCredits.upsert({
+    where: {
+      id: guild.id,
+    },
+    update: {},
+    create: {
+      guild: {
+        connectOrCreate: {
+          create: {
+            id: guild.id,
           },
-        },
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
+          where: {
+            id: guild.id,
           },
         },
       },
-      include: {
-        user: true,
-        guild: true,
-      },
-    });
+    },
+    include: {
+      guild: true,
+    },
+  });
 
-    logger.silly(createGuildMember);
+  logger.silly(upsertGuildConfigCredits);
 
-    const upsertGuildConfigCredits = await prisma.guildConfigCredits.upsert({
-      where: {
-        id: guild.id,
-      },
-      update: {},
-      create: {
-        guild: {
-          connectOrCreate: {
-            create: {
-              id: guild.id,
-            },
-            where: {
-              id: guild.id,
-            },
-          },
-        },
-      },
-      include: {
-        guild: true,
-      },
-    });
+  if (content.length < upsertGuildConfigCredits.minimumLength) return;
 
-    logger.silly(upsertGuildConfigCredits);
+  await cooldown(
+    guild,
+    author,
+    "event-messageCreate-credits",
+    upsertGuildConfigCredits.timeout,
+    true
+  );
 
-    if (content.length < upsertGuildConfigCredits.minimumLength) return;
-
-    await cooldown(
-      guild,
-      author,
-      "event-messageCreate-credits",
-      upsertGuildConfigCredits.timeout,
-      true
-    );
-
-    await creditsGive(guild, author, upsertGuildConfigCredits.rate);
-  },
+  await creditsGive(guild, author, upsertGuildConfigCredits.rate);
 };
