@@ -1,4 +1,3 @@
-/* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
 import checkDirectory from "../../helpers/checkDirectory";
 import { IEvent } from "../../interfaces/Event";
@@ -8,10 +7,7 @@ import logger from "../../middlewares/logger";
 export const register = async (client: Client) => {
   const profiler = logger.startTimer();
 
-  await checkDirectory("events").then(async (eventNames) => {
-    const totalEvents = eventNames.length;
-    let loadedEvents = 0;
-
+  await checkDirectory("events").then((eventNames) => {
     // Import an event.
     const importEvent = async (name: string) => {
       await import(`../../events/${name}`).then((event: IEvent) => {
@@ -37,20 +33,17 @@ export const register = async (client: Client) => {
           type: event.options.type,
           message: `Listening to event '${name}'`,
         });
-        return loadedEvents++;
+
+        return event;
       });
     };
 
-    for await (const eventName of eventNames) {
+    eventNames.forEach(async (eventName) => {
       await importEvent(eventName);
+    });
+  });
 
-      if (loadedEvents === totalEvents) {
-        return profiler.done({
-          message: "Successfully listening to all events!",
-        });
-      }
-    }
-
-    return true;
+  return profiler.done({
+    message: "Successfully listening to all events!",
   });
 };

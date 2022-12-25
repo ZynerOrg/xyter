@@ -1,4 +1,3 @@
-/* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
 import checkDirectory from "../../helpers/checkDirectory";
 import { ICommand } from "../../interfaces/Command";
@@ -6,8 +5,10 @@ import logger from "../../middlewares/logger";
 
 // Register the commands.
 export const register = async (client: Client) => {
-  await checkDirectory("commands").then(async (commandNames) => {
-    for await (const commandName of commandNames) {
+  const profiler = logger.startTimer();
+
+  await checkDirectory("commands").then((commandNames) => {
+    commandNames.forEach(async (commandName) => {
       const commandProfiler = logger.startTimer();
 
       await import(`../../commands/${commandName}`)
@@ -30,6 +31,10 @@ export const register = async (client: Client) => {
             level: "error",
           });
         });
-    }
+    });
+  });
+
+  return profiler.done({
+    message: "Successfully registered all commands!",
   });
 };

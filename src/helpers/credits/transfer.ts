@@ -5,7 +5,7 @@ import transactionRules from "./transactionRules";
 export default async (guild: Guild, from: User, to: User, amount: number) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Decrement amount from the sender.
-    const sender = await tx.guildMemberCredits.upsert({
+    const sender = await tx.guildMemberCredit.upsert({
       update: {
         balance: {
           decrement: amount,
@@ -49,7 +49,7 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
     if (from.id === to.id) throw new Error("You can't transfer to yourself.");
 
     // 7. Increment the recipient's balance by amount.
-    const recipient = await tx.guildMemberCredits.upsert({
+    const recipient = await tx.guildMemberCredit.upsert({
       update: {
         balance: {
           increment: amount,

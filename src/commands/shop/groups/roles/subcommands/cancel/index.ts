@@ -57,7 +57,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await guild?.roles
     .delete(optionRole?.id, `${user?.id} canceled from shop`)
     .then(async () => {
-      const createGuildMember = await prisma.guildMemberCredits.upsert({
+      const createGuildMember = await prisma.guildMemberCredit.upsert({
         where: {
           userId_guildId: {
             userId: user.id,
