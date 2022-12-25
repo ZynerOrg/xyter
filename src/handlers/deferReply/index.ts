@@ -1,5 +1,5 @@
 import { BaseInteraction, EmbedBuilder } from "discord.js";
-import getEmbedConfig from "../../helpers/getEmbedData";
+import getEmbedData from "../../helpers/getEmbedData";
 
 export default async (interaction: BaseInteraction, ephemeral: boolean) => {
   if (!interaction.isRepliable())
@@ -9,7 +9,7 @@ export default async (interaction: BaseInteraction, ephemeral: boolean) => {
     ephemeral,
   });
 
-  const embedConfig = await getEmbedConfig(interaction.guild);
+  const embedConfig = await getEmbedData(interaction.guild);
 
   await interaction.editReply({
     embeds: [

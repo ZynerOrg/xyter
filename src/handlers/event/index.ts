@@ -6,49 +6,51 @@ import logger from "../../middlewares/logger";
 
 // Registers all available events.
 export const register = async (client: Client) => {
-  logger.info("📡 Started event management");
+  const profiler = logger.startTimer();
 
-  const eventNames = await checkDirectory("events");
-  if (!eventNames) return logger.warn("No available events found");
+  await checkDirectory("events").then(async (eventNames) => {
+    const totalEvents = eventNames.length;
+    let loadedEvents = 0;
 
-  const totalEvents = eventNames.length;
-  let loadedEvents = 0;
+    // Import an event.
+    const importEvent = async (name: string) => {
+      await import(`../../events/${name}`).then((event: IEvent) => {
+        // Create a new event execute function.
+        const eventExecutor = async (...args: Promise<void>[]) => {
+          await event.execute(...args);
+        };
 
-  logger.info(`📡 Loading ${totalEvents} events`);
+        switch (event.options.type) {
+          case "once":
+            client.once(name, eventExecutor);
+            break;
 
-  // Import an event.
-  const importEvent = async (name: string) => {
-    const event: IEvent = await import(`../../events/${name}`);
+          case "on":
+            client.on(name, eventExecutor);
+            break;
+          default:
+            throw new Error(`Unknown event type`);
+        }
 
-    // Create a new event execute function.
-    const eventExecutor = async (...args: Promise<void>[]) => {
-      await event.execute(...args);
+        logger.debug({
+          eventName: name,
+          type: event.options.type,
+          message: `Listening to event '${name}'`,
+        });
+        return loadedEvents++;
+      });
     };
 
-    switch (event.options.type) {
-      case "once":
-        client.once(name, eventExecutor);
-        break;
+    for await (const eventName of eventNames) {
+      await importEvent(eventName);
 
-      case "on":
-        client.on(name, eventExecutor);
-        break;
-      default:
-        throw new Error(`📡 Invalid event type for event: ${name}`);
+      if (loadedEvents === totalEvents) {
+        return profiler.done({
+          message: "Successfully listening to all events!",
+        });
+      }
     }
 
-    return loadedEvents++;
-  };
-
-  for await (const eventName of eventNames) {
-    await importEvent(eventName).then(() => {
-      return logger.verbose(`📡 Loaded event "${eventName}"`);
-    });
-
-    if (loadedEvents === totalEvents) {
-      return logger.info("📡 All events loaded");
-    }
-  }
-
-  return true;
+    return true;
+  });
 };

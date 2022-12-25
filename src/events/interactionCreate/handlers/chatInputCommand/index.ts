@@ -16,7 +16,7 @@ export default async (interaction: ChatInputCommandInteraction) => {
   const { client, commandName } = interaction;
 
   const currentCommand = client.commands.get(commandName);
-  if (!currentCommand) throw new Error(`Unknown command ${commandName}`);
+  if (!currentCommand) throw new Error("Command unavailable");
 
   await currentCommand.execute(interaction).catch((error: Error) => {
     const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
