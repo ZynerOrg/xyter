@@ -12,7 +12,11 @@ export const options: IEventOptions = {
 
 // Execute the event
 export const execute = async (client: Client) => {
-  logger.info("Discord's API client is ready!");
+  if (!client.user) throw new Error("Client user unavailable");
+
+  logger.info({
+    message: `Connected to Discord!`,
+  });
 
   updatePresence(client);
   await deployCommands(client);
