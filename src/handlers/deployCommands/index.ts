@@ -1,39 +1,29 @@
 import { Client, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
-import { ICommand } from "../../interfaces/Command";
 import logger from "../../middlewares/logger";
 
 export default async (client: Client) => {
-  // 1. Destructure the client.
   const { application } = client;
   if (!application) throw new Error("No application found");
 
-  // 2. Log that we are starting the command management.
-  logger.info("🔧 Started command deployment");
+  const builders: Array<RESTPostAPIApplicationCommandsJSONBody> = [];
 
-  // 3. Get the commands.
-  const commands: Array<RESTPostAPIApplicationCommandsJSONBody> = [];
-  client.commands.forEach((command: ICommand) => {
-    commands.push(command.builder.toJSON());
-
-    logger.verbose(`🔧 Loaded command "${command.builder.name}"`);
+  client.commands.forEach((command) => {
+    builders.push(command.builder.toJSON());
   });
 
-  // 4. Set the commands.
-  await application.commands.set(commands).then(() => {
-    logger.info("🔧 Deployed commands globally");
+  await application.commands.set(builders).then(() => {
+    logger.info({ builders, message: "Registered commands to users!" });
   });
 
-  // 5. Tell the user that development mode is enabled.
   if (process.env.NODE_ENV === "development") {
-    logger.info("🔧 Development mode enabled");
-
     await application.commands
-      .set(commands, process.env.DISCORD_GUILD_ID)
+      .set(builders, process.env.DISCORD_GUILD_ID)
       .then(() => {
-        logger.info(`🔧 Deployed commands to guild`);
+        logger.info({
+          builders,
+          devGuildId: process.env.DISCORD_GUILD_ID,
+          message: "Registered commands to development guild!",
+        });
       });
   }
-
-  // 6. Log that we are done with the command management.
-  logger.info("🔧 Finished command deployment");
 };

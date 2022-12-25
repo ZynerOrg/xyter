@@ -6,19 +6,25 @@ import logger from "../../middlewares/logger";
 
 // Start all jobs that are in the schedules directory
 export const start = async (client: Client) => {
-  logger.info("⏰ Started job management");
-
   const jobNames = await checkDirectory("schedules");
   if (!jobNames) return logger.warn("⏰ No available jobs found");
 
   return await Promise.all(
     jobNames.map(async (jobName) => {
-      const job: IJob = await import(`../../schedules/${jobName}`);
-
-      return schedule.scheduleJob(job.options.schedule, async () => {
-        logger.verbose(`⏰ Performed the job "${jobName}"`);
-        await job.execute(client);
-      });
+      await import(`../../schedules/${jobName}`)
+        .then((job: IJob) => {
+          return schedule.scheduleJob(job.options.schedule, async () => {
+            logger.verbose(`⏰ Performed the job "${jobName}"`);
+            await job.execute(client);
+          });
+        })
+        .catch((error) => {
+          logger.warn({
+            jobName,
+            message: `Failed to start job ${jobName}`,
+            error,
+          });
+        });
     })
   );
 };

@@ -14,6 +14,12 @@ prisma.$use(async (params, next) => {
     `Query ${params.model}.${params.action} took ${after - before}ms`
   );
 
+  if (after - before >= 50) {
+    logger.warn(
+      `Query ${params.model}.${params.action} took ${after - before}ms`
+    );
+  }
+
   return result;
 });
 

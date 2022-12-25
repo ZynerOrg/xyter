@@ -1,5 +1,5 @@
 // Dependencies
-import { ActivityType, Client } from "discord.js";
+import { ActivitiesOptions, ActivityType, Client } from "discord.js";
 import logger from "../../middlewares/logger";
 
 // Function
@@ -12,18 +12,27 @@ export default (client: Client) => {
   const memberCount = guilds.cache.reduce((a, g) => a + g.memberCount, 0);
   const guildCount = guilds.cache.size;
 
+  const activities: ActivitiesOptions[] = [
+    {
+      name: `${guildCount} guilds`,
+      type: ActivityType.Watching,
+    },
+    {
+      name: `${memberCount} members`,
+      type: ActivityType.Watching,
+    },
+  ];
+
+  const activity = activities[Math.floor(Math.random() * activities.length)];
+
   // 3. Set the presence.
-  user.setPresence({
-    activities: [
-      {
-        name: `${guildCount} guilds | ${memberCount} members`,
-        type: ActivityType.Watching,
-      },
-    ],
-  });
+  user.setActivity(activity);
 
   // 4. Log the presence.
-  return logger.info(
-    `👀 Presence set to "${guildCount} guilds | ${memberCount} members"`
-  );
+  return logger.debug({
+    guildCount,
+    memberCount,
+    message: `Presence updated`,
+    activity,
+  });
 };
