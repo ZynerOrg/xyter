@@ -8,7 +8,7 @@ export default async (guild: Guild, user: User, amount: number) => {
     transactionRules(guild, user, amount);
 
     // 2. Make the transaction.
-    const recipient = await tx.guildMemberCredits.upsert({
+    const recipient = await tx.guildMemberCredit.upsert({
       update: {
         balance: amount,
       },

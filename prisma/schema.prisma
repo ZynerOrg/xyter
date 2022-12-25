@@ -60,10 +60,10 @@ model GuildMember {
 
   pointsEarned Int @default(0)
 
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  GuildShopRoles     GuildShopRoles[]
-  GuildMemberCredits GuildMemberCredits?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  GuildShopRoles    GuildShopRoles[]
+  GuildMemberCredit GuildMemberCredit?
 
   // Unique Identifier
   @@unique([userId, guildId])
@@ -214,7 +214,7 @@ model GuildCounters {
   @@unique([guildId, channelId])
 }
 
-model GuildMemberCredits {
+model GuildMemberCredit {
   userId  String
   guildId String
 

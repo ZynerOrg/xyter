@@ -1,4 +1,4 @@
-import { GuildMemberCredits } from "@prisma/client";
+import { GuildMemberCredit } from "@prisma/client";
 import {
   CommandInteraction,
   SlashCommandSubcommandBuilder,
@@ -32,7 +32,7 @@ export const execute = async (interaction: CommandInteraction) => {
   const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Top");
 
   // 4. Get the top 10 users.
-  const topTen = await prisma.guildMemberCredits.findMany({
+  const topTen = await prisma.guildMemberCredit.findMany({
     where: {
       guildId: guild.id,
     },
@@ -44,9 +44,9 @@ export const execute = async (interaction: CommandInteraction) => {
   logger.silly(topTen);
 
   // 5. Create the top 10 list.
-  const entry = (guildMemberCredits: GuildMemberCredits, index: number) =>
-    `${index + 1}. ${userMention(guildMemberCredits.userId)} | :coin: ${
-      guildMemberCredits.balance
+  const entry = (guildMemberCredit: GuildMemberCredit, index: number) =>
+    `${index + 1}. ${userMention(guildMemberCredit.userId)} | :coin: ${
+      guildMemberCredit.balance
     }`;
 
   // 6. Send embed

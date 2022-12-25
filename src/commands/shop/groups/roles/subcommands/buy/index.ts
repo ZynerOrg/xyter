@@ -124,7 +124,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       // Get guild object
       const pricePerHour = upsertGuildConfigShopRoles.pricePerHour;
 
-      const updateGuildMember = await prisma.guildMemberCredits.update({
+      const updateGuildMember = await prisma.guildMemberCredit.update({
         where: {
           userId_guildId: {
             userId,
