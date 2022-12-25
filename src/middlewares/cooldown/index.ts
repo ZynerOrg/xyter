@@ -1,4 +1,4 @@
-import { add, formatDuration, intervalToDuration, isPast } from "date-fns";
+import { add, formatDuration, intervalToDuration } from "date-fns";
 import { Guild, User } from "discord.js";
 import prisma from "../../handlers/database";
 import logger from "../logger";
@@ -33,18 +33,6 @@ export default async (
       })
     );
 
-    if (isPast(dueDate)) {
-      return await prisma.cooldown.delete({
-        where: {
-          guildId_userId_timeoutId: {
-            guildId: guild.id,
-            userId: user.id,
-            timeoutId: id,
-          },
-        },
-      });
-    }
-
     if (silent) {
       return logger.verbose(
         `User ${userId} is on cooldown for ${timeoutId}, it ends in ${duration}.`
@@ -56,7 +44,7 @@ export default async (
     );
   }
 
-  const createCooldown = await prisma.cooldown.upsert({
+  await prisma.cooldown.upsert({
     where: {
       guildId_userId_timeoutId: {
         userId: user.id,
@@ -91,7 +79,15 @@ export default async (
     },
   });
 
-  logger.silly(createCooldown);
-
-  return createCooldown;
+  setTimeout(async () => {
+    await prisma.cooldown.delete({
+      where: {
+        guildId_userId_timeoutId: {
+          guildId: guild.id,
+          userId: user.id,
+          timeoutId: id,
+        },
+      },
+    });
+  }, cooldown * 1000);
 };
