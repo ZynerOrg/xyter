@@ -16,7 +16,9 @@ prisma.$use(async (params, next) => {
 
   if (after - before >= 50) {
     logger.warn(
-      `Query ${params.model}.${params.action} took ${after - before}ms`
+      `Query ${params.model}.${params.action} took long time ${
+        after - before
+      }ms`
     );
   }
 
