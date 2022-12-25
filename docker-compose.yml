@@ -1,14 +1,27 @@
 version: "3.7"
 
 services:
-  app:
-    container_name: app
+  xyter:
+    container_name: xyter
     image: zyner/xyter:main
     restart: unless-stopped
     env_file:
       - .env
     volumes:
       - ./logs:/logs
+    depends_on:
+      - mariadb
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:5
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=mariadb
+    depends_on:
+      - mariadb
 
   mariadb:
     container_name: mariadb
@@ -24,5 +37,3 @@ services:
       - MYSQL_PASSWORD=password
     volumes:
       - ./db:/config
-    ports:
-      - 3306:3306
