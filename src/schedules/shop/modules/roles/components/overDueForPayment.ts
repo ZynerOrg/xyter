@@ -34,7 +34,7 @@ export const execute = async (client: Client, role: GuildShopRoles) => {
   if (!getGuildConfigShopRoles)
     throw new Error("Could not find guild config shop roles.");
 
-  const getGuildMemberCredits = await prisma.guildMemberCredits.findUnique({
+  const getguildMemberCredit = await prisma.guildMemberCredit.findUnique({
     where: {
       userId_guildId: {
         userId,
@@ -46,13 +46,13 @@ export const execute = async (client: Client, role: GuildShopRoles) => {
     },
   });
 
-  logger.silly(getGuildMemberCredits);
+  logger.silly(getguildMemberCredit);
 
-  if (!getGuildMemberCredits) throw new Error("Could not find guild member.");
+  if (!getguildMemberCredit) throw new Error("Could not find guild member.");
 
   const pricePerHour = getGuildConfigShopRoles.pricePerHour;
 
-  if (getGuildMemberCredits.balance < pricePerHour) {
+  if (getguildMemberCredit.balance < pricePerHour) {
     await rMember.roles
       .remove(roleId)
       .then(async () => {
@@ -79,7 +79,7 @@ export const execute = async (client: Client, role: GuildShopRoles) => {
     throw new Error("User does not have enough credits.");
   }
 
-  const createGuildMember = await prisma.guildMemberCredits.upsert({
+  const createGuildMember = await prisma.guildMemberCredit.upsert({
     where: {
       userId_guildId: {
         userId,

@@ -65,7 +65,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   // 5. Start an transaction of the credits.
   await creditsTransfer(guild, user, account, credits);
 
-  const receiverGuildMember = await prisma.guildMemberCredits.upsert({
+  const receiverGuildMember = await prisma.guildMemberCredit.upsert({
     where: {
       userId_guildId: {
         userId: account.id,
@@ -106,7 +106,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     ],
   });
 
-  const senderGuildMember = await prisma.guildMemberCredits.upsert({
+  const senderGuildMember = await prisma.guildMemberCredit.upsert({
     where: {
       userId_guildId: {
         userId: user.id,
