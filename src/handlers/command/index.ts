@@ -6,32 +6,30 @@ import logger from "../../middlewares/logger";
 
 // Register the commands.
 export const register = async (client: Client) => {
-  logger.info("🔧 Started command management");
+  await checkDirectory("commands").then(async (commandNames) => {
+    for await (const commandName of commandNames) {
+      const commandProfiler = logger.startTimer();
 
-  const commandNames = await checkDirectory("commands");
-  if (!commandNames) return logger.warn("No available commands found");
+      await import(`../../commands/${commandName}`)
+        .then((command: ICommand) => {
+          client.commands.set(command.builder.name, command);
 
-  const totalCommands = commandNames.length;
-  let loadedCommands = 0;
+          commandProfiler.done({
+            commandName,
+            message: `Registered command '${commandName}'`,
+            level: "debug",
+          });
 
-  logger.info(`🔧 Loading ${totalCommands} commands`);
-
-  // Import an command.
-  const importCommand = async (name: string) => {
-    const command: ICommand = await import(`../../commands/${name}`);
-
-    client.commands.set(command.builder.name, command);
-    return loadedCommands++;
-  };
-
-  for await (const commandName of commandNames) {
-    await importCommand(commandName).then(() => {
-      return logger.verbose(`🔧 Loaded command "${commandName}"`);
-    });
-
-    if (loadedCommands === totalCommands) {
-      return logger.info("🔧 All commands loaded");
+          return command;
+        })
+        .catch((error) => {
+          commandProfiler.done({
+            message: `Failed to register command '${commandName}'`,
+            commandName,
+            error,
+            level: "error",
+          });
+        });
     }
-  }
-  return true;
+  });
 };

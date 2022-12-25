@@ -1,17 +1,17 @@
 import winston from "winston";
 import "winston-daily-rotate-file";
 
-const { combine, timestamp, printf, errors, colorize, align, json } =
+const { combine, timestamp, json, errors, colorize, align, printf } =
   winston.format;
-
-export default winston.createLogger({
+const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
+  format: combine(errors({ stack: true }), timestamp(), json()),
   transports: [
     new winston.transports.DailyRotateFile({
       filename: "logs/combined-%DATE%.log",
       datePattern: "YYYY-MM-DD",
       maxFiles: "14d",
-      format: combine(timestamp(), json()),
+      format: combine(errors({ stack: true }), timestamp(), json()),
     }),
     new winston.transports.Console({
       format: combine(
@@ -21,8 +21,13 @@ export default winston.createLogger({
           format: "YYYY-MM-DD HH:MM:ss",
         }),
         align(),
-        printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`)
+        printf(
+          (info) =>
+            `[${info.timestamp}] ${info.level}: ${info.stack || info.message}`
+        )
       ),
     }),
   ],
 });
+
+export default logger;
