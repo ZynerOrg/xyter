@@ -79,7 +79,7 @@ export default async (
     },
   });
 
-  setTimeout(async () => {
+  return setTimeout(async () => {
     await prisma.cooldown.delete({
       where: {
         guildId_userId_timeoutId: {
