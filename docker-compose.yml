@@ -3,7 +3,7 @@ version: "3.7"
 services:
   xyter:
     container_name: xyter
-    image: zyner/xyter:main
+    image: zyner/xyter
     restart: unless-stopped
     env_file:
       - .env
