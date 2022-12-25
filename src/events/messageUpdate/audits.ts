@@ -15,6 +15,9 @@ export default {
     // Do not send audit log when an message contains an link and that links creates an embed
     if (!newMessage.editedTimestamp) return;
 
+    // Do not send audit log if oldMessage content is not found
+    if (!oldMessage.content) return;
+
     const embed = new EmbedBuilder()
       .setAuthor({
         name: "Message Updated",
