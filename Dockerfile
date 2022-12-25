@@ -1,6 +1,5 @@
 # Dependencies
 FROM node:19-alpine3.17 AS dependencies
-MAINTAINER "Vermium Sifell <vermium@zyner.org>"
 
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -8,18 +7,15 @@ RUN npm install
 
 # Build
 FROM node:19-alpine3.17 AS build
-MAINTAINER "Vermium Sifell <vermium@zyner.org>"
 
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
-RUN npx prisma generate
-RUN npm run build
+RUN npx prisma generate && npm run build
 
 # Deploy
 FROM node:19-alpine3.17 as deploy
-MAINTAINER "Vermium Sifell <vermium@zyner.org>"
 
 WORKDIR /app
 
