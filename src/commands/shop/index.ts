@@ -35,9 +35,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     }
   }
 
-  if(!options.getSubcommandGroup()) {
+  if (!options.getSubcommandGroup()) {
     return;
-  };
+  }
 
   switch (options.getSubcommandGroup()) {
     case "roles": {

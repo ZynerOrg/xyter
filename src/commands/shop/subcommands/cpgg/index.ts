@@ -34,7 +34,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await getEmbedData(interaction.guild);
   const { options, guild, user, client } = interaction;
   const optionAmount = options?.getInteger("amount");
-  if (optionAmount === null) throw new Error("Can't find a valid amount specified!");
+  if (optionAmount === null)
+    throw new Error("Can't find a valid amount specified!");
   if (!guild) throw new Error("Guild not found");
 
   const upsertguildMemberCredit = await prisma.guildMemberCredit.upsert({
