@@ -21,9 +21,16 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
+# Add mysql precheck
+RUN apk add --no-cache mysql-client
+ADD docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# Copy files
 COPY --from=build /app/package.json ./
 COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/dist ./dist
 
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD [ "npm", "run", "start:migrate:prod" ]
