@@ -35,6 +35,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     }
   }
 
+  if(!options.getSubcommandGroup()) {
+    return;
+  };
+
   switch (options.getSubcommandGroup()) {
     case "roles": {
       await RolesExecute(interaction);
