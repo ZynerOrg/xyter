@@ -140,3 +140,6 @@ dist
 
 # NixOS
 .direnv
+
+# Docker
+docker-compose.override.yml
