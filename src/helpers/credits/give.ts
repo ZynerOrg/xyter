@@ -1,5 +1,6 @@
 import { Guild, User } from "discord.js";
 import prisma from "../../handlers/database";
+import logger from "../../middlewares/logger";
 import transactionRules from "./transactionRules";
 
 export default async (guild: Guild, user: User, amount: number) => {
@@ -17,7 +18,10 @@ export default async (guild: Guild, user: User, amount: number) => {
       create: {
         GuildMember: {
           connectOrCreate: {
-            create: { userId: user.id, guildId: guild.id },
+            create: {
+              user: { connectOrCreate: { create: { id: user.id }, where: { id: user.id } } },
+              guild: { connectOrCreate: { create: { id: guild.id }, where: { id: guild.id } } }
+            },
             where: { userId_guildId: { userId: user.id, guildId: guild.id } },
           },
         },

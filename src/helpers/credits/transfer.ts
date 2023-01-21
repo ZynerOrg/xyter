@@ -15,15 +15,10 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
         GuildMember: {
           connectOrCreate: {
             create: {
-              userId: from.id,
-              guildId: guild.id,
+              user: { connectOrCreate: { create: { id: from.id }, where: { id: from.id } } },
+              guild: { connectOrCreate: { create: { id: guild.id }, where: { id: guild.id } } }
             },
-            where: {
-              userId_guildId: {
-                userId: from.id,
-                guildId: guild.id,
-              },
-            },
+            where: { userId_guildId: { userId: from.id, guildId: guild.id } },
           },
         },
         balance: -amount,
@@ -59,15 +54,10 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
         GuildMember: {
           connectOrCreate: {
             create: {
-              userId: to.id,
-              guildId: guild.id,
+              user: { connectOrCreate: { create: { id: to.id }, where: { id: to.id } } },
+              guild: { connectOrCreate: { create: { id: guild.id }, where: { id: guild.id } } }
             },
-            where: {
-              userId_guildId: {
-                userId: to.id,
-                guildId: guild.id,
-              },
-            },
+            where: { userId_guildId: { userId: to.id, guildId: guild.id } },
           },
         },
         balance: amount,
