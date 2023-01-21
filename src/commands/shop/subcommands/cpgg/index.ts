@@ -34,18 +34,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await getEmbedData(interaction.guild);
   const { options, guild, user, client } = interaction;
   const optionAmount = options?.getInteger("amount");
-  if (optionAmount === null) {
-    logger?.silly(`Amount is null.`);
-    const interactionEmbed = new EmbedBuilder()
-      .setTitle("[:dollar:] Gift")
-      .setDescription("We could not read your requested amount.")
-      .setTimestamp()
-      .setColor(errorColor)
-      .setFooter({ text: footerText, iconURL: footerIcon });
-    return interaction?.editReply({
-      embeds: [interactionEmbed],
-    });
-  }
+  if (optionAmount === null) throw new Error("Can't find a valid amount specified!");
   if (!guild) throw new Error("Guild not found");
 
   const upsertguildMemberCredit = await prisma.guildMemberCredit.upsert({
@@ -174,7 +163,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
       if (!interaction.guild) throw new Error("Guild is undefined");
       const dmEmbed = new EmbedBuilder()
-        .setTitle("[:shopping_cart:] CPGG")
+        .setTitle(":shopping_cart:︱CPGG")
         .setDescription(
           `This voucher comes from **${interaction.guild.name}**.`
         )
@@ -193,7 +182,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         })
         .then(async (msg: Message) => {
           const interactionEmbed = new EmbedBuilder()
-            .setTitle("[:shopping_cart:] CPGG")
+            .setTitle(":shopping_cart:︱CPGG")
             .setDescription(`I have sent you the code in [DM](${msg.url})!`)
             .setTimestamp()
             .setColor(successColor)
