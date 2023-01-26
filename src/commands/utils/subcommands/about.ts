@@ -13,13 +13,14 @@ import getEmbedConfig from "../../../helpers/getEmbedConfig";
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("about")
-    .setDescription("Check information about this instance");
+    .setDescription("Check information about the bot");
 };
 
 export const execute = async (interaction: CommandInteraction) => {
   await deferReply(interaction, false);
 
-  if (!interaction.guild) throw new Error("You need to be in a guild");
+  if (!interaction.guild)
+    throw new Error("This command is only available in guilds");
 
   const { client } = interaction;
 

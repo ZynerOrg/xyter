@@ -9,7 +9,7 @@ import getEmbedConfig from "../../../helpers/getEmbedConfig";
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("avatar")
-    .setDescription("Check someones avatar!)")
+    .setDescription("Display someones avatar")
     .addUserOption((option) =>
       option
         .setName("user")
