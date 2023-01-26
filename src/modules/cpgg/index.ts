@@ -1,4 +1,4 @@
-import createVoucher from "./features/createVoucher.ts";
+import createVoucher from "./features/createVoucher";
 
 export default {
   createVoucher,

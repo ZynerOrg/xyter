@@ -1,13 +1,14 @@
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/prisma";
-import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
 import deferReply from "../../../../helpers/deferReply";
 import encryption from "../../../../helpers/encryption";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -73,31 +74,36 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   logger.silly(upsertGuildConfigApisCpgg);
 
-  const successEmbed = await embedSuccess(
-    guild,
-    ":gear:︱Configuration of CPGG"
-  );
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-  successEmbed.setDescription("Configuration updated successfully!").addFields(
-    {
-      name: "Scheme",
-      value: `${scheme}`,
-      inline: true,
-    },
-    {
-      name: "Domain",
-      value: `${domain}`,
-      inline: true,
-    },
-    {
-      name: "Token",
-      value: `ends with ${tokenData.slice(-4)}`,
-      inline: true,
-    }
-  );
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":gear:︱Configuration of CPGG")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
   await interaction.editReply({
-    embeds: [successEmbed],
+    embeds: [
+      embedSuccess
+        .setDescription("Configuration updated successfully!")
+        .addFields(
+          {
+            name: "Scheme",
+            value: `${scheme}`,
+            inline: true,
+          },
+          {
+            name: "Domain",
+            value: `${domain}`,
+            inline: true,
+          },
+          {
+            name: "Token",
+            value: `ends with ${tokenData.slice(-4)}`,
+            inline: true,
+          }
+        ),
+    ],
   });
   return;
 };

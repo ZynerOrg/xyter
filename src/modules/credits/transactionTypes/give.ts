@@ -15,7 +15,7 @@ export default async (guild: Guild, user: User, amount: number) => {
         },
       },
       create: {
-        GuildMember: {
+        guildMember: {
           connectOrCreate: {
             create: {
               user: {

@@ -22,10 +22,6 @@ import {
   execute as PointsExecute,
 } from "./subcommands/points";
 import {
-  builder as ShopBuilder,
-  execute as ShopExecute,
-} from "./subcommands/shop";
-import {
   builder as WelcomeBuilder,
   execute as WelcomeExecute,
 } from "./subcommands/welcome";
@@ -41,7 +37,6 @@ export const builder = new SlashCommandBuilder()
   .addSubcommand(CreditsBuilder)
   .addSubcommand(EmbedsBuilder)
   .addSubcommand(PointsBuilder)
-  .addSubcommand(ShopBuilder)
   .addSubcommand(WelcomeBuilder);
 
 // Execute function
@@ -61,9 +56,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       break;
     case "points":
       await PointsExecute(interaction);
-      break;
-    case "shop":
-      await ShopExecute(interaction);
       break;
     case "welcome":
       await WelcomeExecute(interaction);

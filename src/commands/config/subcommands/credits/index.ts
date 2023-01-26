@@ -1,12 +1,13 @@
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/prisma";
-import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
 import deferReply from "../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -100,46 +101,53 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   logger.silly(upsertGuildConfigCredits);
 
-  const successEmbed = await embedSuccess(
-    guild,
-    ":gear:︱Configuration of Credits"
-  );
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-  successEmbed.setDescription("Configuration updated successfully!").addFields(
-    {
-      name: "Status",
-      value: `${upsertGuildConfigCredits.status ? "Enabled" : "Disabled"}`,
-      inline: true,
-    },
-    {
-      name: "Rate",
-      value: `${upsertGuildConfigCredits.rate}`,
-      inline: true,
-    },
-    {
-      name: "Work Rate",
-      value: `${upsertGuildConfigCredits.workRate}`,
-      inline: true,
-    },
-    {
-      name: "Minimum Length",
-      value: `${upsertGuildConfigCredits.minimumLength}`,
-      inline: true,
-    },
-    {
-      name: "Timeout",
-      value: `${upsertGuildConfigCredits.timeout}`,
-      inline: true,
-    },
-    {
-      name: "Work Timeout",
-      value: `${upsertGuildConfigCredits.workTimeout}`,
-      inline: true,
-    }
-  );
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":gear:︱Configuration of Credits")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
   await interaction.editReply({
-    embeds: [successEmbed],
+    embeds: [
+      embedSuccess
+        .setDescription("Configuration updated successfully!")
+        .addFields(
+          {
+            name: "Status",
+            value: `${
+              upsertGuildConfigCredits.status ? "Enabled" : "Disabled"
+            }`,
+            inline: true,
+          },
+          {
+            name: "Rate",
+            value: `${upsertGuildConfigCredits.rate}`,
+            inline: true,
+          },
+          {
+            name: "Work Rate",
+            value: `${upsertGuildConfigCredits.workRate}`,
+            inline: true,
+          },
+          {
+            name: "Minimum Length",
+            value: `${upsertGuildConfigCredits.minimumLength}`,
+            inline: true,
+          },
+          {
+            name: "Timeout",
+            value: `${upsertGuildConfigCredits.timeout}`,
+            inline: true,
+          },
+          {
+            name: "Work Timeout",
+            value: `${upsertGuildConfigCredits.workTimeout}`,
+            inline: true,
+          }
+        ),
+    ],
   });
   return;
 };
