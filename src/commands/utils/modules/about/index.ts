@@ -9,9 +9,9 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import deferReply from "../../../../handlers/deferReply";
+import deferReply from "../../../../helpers/deferReply";
 // Configurations
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {

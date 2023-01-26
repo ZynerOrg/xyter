@@ -1,13 +1,13 @@
 import Chance from "chance";
 import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
+import prisma from "../../../../handlers/prisma";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import creditsGive from "../../../../helpers/credits/give";
+import deferReply from "../../../../helpers/deferReply";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import cooldown from "../../../../middlewares/cooldown";
 import logger from "../../../../middlewares/logger";
+import economy from "../../../../modules/credits";
 
 // 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -54,7 +54,11 @@ export const execute = async (interaction: CommandInteraction) => {
     max: createGuild.workRate,
   });
 
-  const upsertGuildMemberResult = await creditsGive(guild, user, creditsEarned);
+  const upsertGuildMemberResult = await economy.give(
+    guild,
+    user,
+    creditsEarned
+  );
 
   // 8. Send embed.
   await interaction.editReply({

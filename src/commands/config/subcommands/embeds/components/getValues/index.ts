@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, ColorResolvable } from "discord.js";
-import prisma from "../../../../../../handlers/database";
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import prisma from "../../../../../../handlers/prisma";
+import getEmbedConfig from "../../../../../../helpers/getEmbedConfig";
 import logger from "../../../../../../middlewares/logger";
 
 export default async (interaction: ChatInputCommandInteraction) => {

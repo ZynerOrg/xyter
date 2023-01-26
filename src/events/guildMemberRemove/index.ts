@@ -1,11 +1,10 @@
 // 3rd party dependencies
 import { GuildMember } from "discord.js";
-import prisma from "../../handlers/database";
-import updatePresence from "../../handlers/updatePresence";
+import prisma from "../../handlers/prisma";
 import { IEventOptions } from "../../interfaces/EventOptions";
 import logger from "../../middlewares/logger";
-import audits from "./audits";
-import leaveMessage from "./leaveMessage";
+import sendAuditEntry from "./components/sendAuditEntry";
+import sendLeaveMessage from "./components/sendLeaveMessage";
 
 export const options: IEventOptions = {
   type: "on",
@@ -13,23 +12,23 @@ export const options: IEventOptions = {
 
 // Execute the function
 export const execute = async (member: GuildMember) => {
-  const { client, user, guild } = member;
+  const { user, guild } = member;
 
-  logger?.silly(
-    `Removed member: ${user.tag} (${user.id}) from guild: ${guild.name} (${guild.id})`
-  );
-
-  await audits.execute(member);
-  await leaveMessage.execute(member);
-  updatePresence(client);
-
-  // Delete guildMember object
-  const deleteGuildMember = await prisma.guildMember.deleteMany({
-    where: {
-      userId: user.id,
-      guildId: guild.id,
-    },
+  logger.verbose({
+    message: `User: ${user.tag} (${user.id}) left guild: ${guild.name} (${guild.id})`,
+    guild,
+    user,
   });
 
-  logger.silly(deleteGuildMember);
+  await sendAuditEntry(member);
+  await sendLeaveMessage(member);
+
+  await prisma.guildMember.delete({
+    where: {
+      userId_guildId: {
+        userId: user.id,
+        guildId: guild.id,
+      },
+    },
+  });
 };

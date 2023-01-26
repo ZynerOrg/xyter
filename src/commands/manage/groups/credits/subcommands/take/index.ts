@@ -6,11 +6,10 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 
-import deferReply from "../../../../../../handlers/deferReply";
 import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../../../helpers/checkPermission";
-import creditsTake from "../../../../../../helpers/credits/take";
-import pluralize from "../../../../../../helpers/pluralize";
+import deferReply from "../../../../../../helpers/deferReply";
+import economy from "../../../../../../modules/credits";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -52,13 +51,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Take");
 
   // 6. Take the credits.
-  await creditsTake(guild, discordReceiver, optionAmount);
+  await economy.take(guild, discordReceiver, optionAmount);
 
   // 7. Send embed.
   return await interaction.editReply({
     embeds: [
       embedSuccess.setDescription(
-        `Took ${pluralize(optionAmount, "credit")} from ${discordReceiver}.`
+        `Took ${optionAmount} credits from ${discordReceiver}.`
       ),
     ],
   });

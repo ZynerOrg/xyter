@@ -8,14 +8,13 @@ import {
 } from "discord.js";
 // Configurations
 // Models
-import deferReply from "../../../../../../handlers/deferReply";
+import deferReply from "../../../../../../helpers/deferReply";
 import logger from "../../../../../../middlewares/logger";
 // Configurations
 // Models
 
-import prisma from "../../../../../../handlers/database";
-import getEmbedData from "../../../../../../helpers/getEmbedData";
-import pluralize from "../../../../../../helpers/pluralize";
+import prisma from "../../../../../../handlers/prisma";
+import getEmbedData from "../../../../../../helpers/getEmbedConfig";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -109,7 +108,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         .setColor(successColor)
         .addFields({
           name: "Your balance",
-          value: `${pluralize(createGuildMember.balance, "credit")}`,
+          value: `${createGuildMember.balance} credits`,
         })
         .setFooter({ text: footerText, iconURL: footerIcon });
       return interaction?.editReply({
