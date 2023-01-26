@@ -1,13 +1,14 @@
 import { GuildMemberCredit } from "@prisma/client";
 import {
   CommandInteraction,
+  EmbedBuilder,
   SlashCommandSubcommandBuilder,
   userMention,
 } from "discord.js";
 
 import prisma from "../../../../handlers/prisma";
-import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import deferReply from "../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
 
@@ -18,20 +19,23 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 
 // 2. Export an execute function.
 export const execute = async (interaction: CommandInteraction) => {
-  // 1. Defer reply as permanent.
+  const { guild, client, user } = interaction;
+
   await deferReply(interaction, false);
 
-  // 2. Destructure interaction object.
-  const { guild, client, user } = interaction;
   if (!guild) throw new Error("Guild not found");
   if (!client) throw new Error("Client not found");
 
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
+
   await upsertGuildMember(guild, user);
 
-  // 3. Create base embeds.
-  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Top");
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":credit_card:︱Top")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
-  // 4. Get the top 10 users.
   const topTen = await prisma.guildMemberCredit.findMany({
     where: {
       guildId: guild.id,
@@ -52,7 +56,7 @@ export const execute = async (interaction: CommandInteraction) => {
   // 6. Send embed
   return interaction.editReply({
     embeds: [
-      EmbedSuccess.setDescription(
+      embedSuccess.setDescription(
         `The top 10 users in this server are:\n\n${topTen
           .map(entry)
           .join("\n")}`

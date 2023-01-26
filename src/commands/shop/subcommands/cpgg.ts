@@ -47,7 +47,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     update: {},
     create: {
-      GuildMember: {
+      guildMember: {
         connectOrCreate: {
           create: {
             userId: user.id,

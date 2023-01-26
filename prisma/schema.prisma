@@ -17,65 +17,52 @@ model Guild {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  GuildConfigEmbeds     GuildConfigEmbeds?
-  GuildConfigCredits    GuildConfigCredits?
-  GuildConfigPoints     GuildConfigPoints?
-  GuildConfigReputation GuildConfigReputation?
-  GuildConfigCounters   GuildConfigCounters?
-  GuildConfigApisCpgg   GuildConfigApisCpgg?
-  GuildConfigAudits     GuildConfigAudits?
-  GuildConfigShop       GuildConfigShop?
-  GuildConfigShopRoles  GuildConfigShopRoles?
-  GuildConfigWelcome    GuildConfigWelcome?
-  GuildShopRoles        GuildShopRoles[]
-  GuildMember           GuildMember[]
-  Cooldown              Cooldown[]
-  GuildCounters         GuildCounters[]
+  members   GuildMember[]
+  cooldowns Cooldown[]
+
+  embedConfig       GuildConfigEmbeds?
+  creditsConfig     GuildConfigCredits?
+  reputationConfig  GuildConfigReputation?
+  countersConfig    GuildConfigCounters?
+  apisCpggConfig    GuildConfigApisCpgg?
+  auditsConfig      GuildConfigAudits?
+  shopConfig        GuildConfigShop?
+  welcomeConfig     GuildConfigWelcome?
+  GuildCounters     GuildCounters[]
+  GuildConfigPoints GuildConfigPoints?
 }
 
 model User {
-  id          String        @unique
-  GuildMember GuildMember[]
+  id        String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // Settings
+  guildAccounts GuildMember[]
+  cooldowns     Cooldown[]
 
-  // Modules
-  reputationsEarned Int        @default(0)
-  Cooldown          Cooldown[]
-
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  GuildShopRoles GuildShopRoles[]
+  reputationsEarned Int @default(0)
 }
 
 model GuildMember {
-  userId  String
-  guildId String
+  userId    String
+  guildId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user  User  @relation(fields: [userId], references: [id])
   guild Guild @relation(fields: [guildId], references: [id])
 
-  // Settings
+  credits GuildMemberCredit?
 
-  pointsEarned Int @default(0)
-
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  GuildShopRoles    GuildShopRoles[]
-  GuildMemberCredit GuildMemberCredit?
-
-  // Unique Identifier
   @@unique([userId, guildId])
 }
 
-//
-
 model GuildConfigEmbeds {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   successColor String @default("#22bb33")
   waitColor    String @default("#f0ad4e")
@@ -85,11 +72,11 @@ model GuildConfigEmbeds {
 }
 
 model GuildConfigCredits {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   status        Boolean @default(false)
   rate          Int     @default(1)
@@ -100,11 +87,11 @@ model GuildConfigCredits {
 }
 
 model GuildConfigPoints {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   status        Boolean @default(false)
   rate          Int     @default(1)
@@ -113,31 +100,31 @@ model GuildConfigPoints {
 }
 
 model GuildConfigReputation {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   status Boolean @default(false)
 }
 
 model GuildConfigCounters {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   status Boolean @default(false)
 }
 
 model GuildConfigApisCpgg {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   urlIv        String?
   urlContent   String?
@@ -146,46 +133,32 @@ model GuildConfigApisCpgg {
 }
 
 model GuildConfigAudits {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   status    Boolean @default(false)
   channelId String
 }
 
 model GuildConfigShop {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  status                 Boolean               @default(false)
-  roles                  GuildConfigShopRoles? @relation(fields: [guildConfigShopRolesId], references: [id])
-  guildConfigShopRolesId String?
-}
+  guild Guild @relation(fields: [id], references: [id])
 
-model GuildConfigShopRoles {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status          Boolean           @default(false)
-  pricePerHour    Int               @default(5)
-  GuildConfigShop GuildConfigShop[]
+  status Boolean @default(false)
 }
 
 model GuildConfigWelcome {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id])
 
   status              Boolean @default(false)
   joinChannelId       String?
@@ -194,21 +167,16 @@ model GuildConfigWelcome {
   leaveChannelMessage String?
 }
 
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-
 model GuildCounters {
-  guildId     String
-  channelId   String
-  triggerWord String
-  count       Int    @default(0)
-  guild       Guild  @relation(fields: [guildId], references: [id])
-
+  guildId   String
+  channelId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id])
+
+  triggerWord String
+  count       Int    @default(0)
 
   @@unique([guildId, channelId])
 }
@@ -217,7 +185,7 @@ model GuildMemberCredit {
   userId  String
   guildId String
 
-  GuildMember GuildMember @relation(fields: [userId, guildId], references: [userId, guildId])
+  guildMember GuildMember @relation(fields: [userId, guildId], references: [userId, guildId])
 
   balance Int @default(0)
 
@@ -225,32 +193,16 @@ model GuildMemberCredit {
 }
 
 model Cooldown {
-  guild     Guild  @relation(fields: [guildId], references: [id])
-  user      User   @relation(fields: [userId], references: [id])
   guildId   String
   userId    String
-  cooldown  Int
   timeoutId String
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([guildId, userId, timeoutId])
-}
-
-model GuildShopRoles {
-  guildId      String
-  roleId       String
-  userId       String
-  pricePerHour Int      @default(5)
-  lastPayed    DateTime
 
   guild Guild @relation(fields: [guildId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
 
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  member    GuildMember? @relation(fields: [userId, guildId], references: [userId, guildId])
+  cooldown Int
 
-  @@unique([guildId, userId, roleId])
+  @@unique([guildId, userId, timeoutId])
 }

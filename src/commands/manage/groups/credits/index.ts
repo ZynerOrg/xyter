@@ -2,57 +2,41 @@ import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js";
-
-// Modules
-import {
-  builder as GiveBuilder,
-  execute as GiveExecute,
-} from "./subcommands/give";
-import {
-  builder as GiveawayBuilder,
-  execute as GiveawayExecute,
-} from "./subcommands/giveaway";
-import {
-  builder as SetBuilder,
-  execute as SetExecute,
-} from "./subcommands/set";
-import {
-  builder as TakeBuilder,
-  execute as TakeExecute,
-} from "./subcommands/take";
-import {
-  builder as TransferBuilder,
-  execute as TransferExecute,
-} from "./subcommands/transfer";
+import * as give from "./subcommands/give";
+import * as giveaway from "./subcommands/giveaway";
+import * as set from "./subcommands/set";
+import * as take from "./subcommands/take";
+import * as transfer from "./subcommands/transfer";
 
 export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
   return group
     .setName("credits")
     .setDescription("Manage the credits of a user.")
-    .addSubcommand(GiveBuilder)
-    .addSubcommand(SetBuilder)
-    .addSubcommand(TakeBuilder)
-    .addSubcommand(TransferBuilder)
-    .addSubcommand(GiveawayBuilder);
+    .addSubcommand(give.builder)
+    .addSubcommand(set.builder)
+    .addSubcommand(take.builder)
+    .addSubcommand(transfer.builder)
+    .addSubcommand(giveaway.builder);
 };
+
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   switch (interaction.options.getSubcommand()) {
     case "give":
-      await GiveExecute(interaction);
+      await give.execute(interaction);
       break;
     case "set":
-      await SetExecute(interaction);
+      await set.execute(interaction);
       break;
     case "take":
-      await TakeExecute(interaction);
+      await take.execute(interaction);
       break;
     case "transfer":
-      await TransferExecute(interaction);
+      await transfer.execute(interaction);
       break;
     case "giveaway":
-      await GiveawayExecute(interaction);
+      await giveaway.execute(interaction);
       break;
     default:
-      throw new Error("No module found for that specific command");
+      throw new Error("Invalid subcommand");
   }
 };
