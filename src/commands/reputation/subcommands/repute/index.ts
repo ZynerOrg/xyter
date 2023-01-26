@@ -3,12 +3,12 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import logger from "../../../../middlewares/logger";
 import noSelfReputation from "./components/noSelfReputation";
 
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
+import prisma from "../../../../handlers/prisma";
+import deferReply from "../../../../helpers/deferReply";
 import cooldown from "../../../../middlewares/cooldown";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {

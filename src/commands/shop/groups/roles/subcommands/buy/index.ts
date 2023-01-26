@@ -7,15 +7,14 @@ import {
   GuildMemberRoleManager,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import deferReply from "../../../../../../handlers/deferReply";
-import getEmbedData from "../../../../../../helpers/getEmbedData";
+import deferReply from "../../../../../../helpers/deferReply";
+import getEmbedData from "../../../../../../helpers/getEmbedConfig";
 import logger from "../../../../../../middlewares/logger";
 // Configurations
 // import fetchUser from "../../../../../../helpers/userData";
 // Models
 
-import prisma from "../../../../../../handlers/database";
-import pluralize from "../../../../../../helpers/pluralize";
+import prisma from "../../../../../../handlers/prisma";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -184,10 +183,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       const interactionEmbed = new EmbedBuilder()
         .setTitle("[:shopping_cart:] Buy")
         .setDescription(
-          `You bought **${optionName}** for **${pluralize(
-            pricePerHour,
-            "credit"
-          )}**.`
+          `You bought **${optionName}** for **${pricePerHour} credits**.`
         )
         .setTimestamp()
         .setColor(successColor)

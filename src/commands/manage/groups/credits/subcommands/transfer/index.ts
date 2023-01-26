@@ -6,11 +6,11 @@ import {
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import creditsTransfer from "../../../../../../helpers/credits/transfer";
 // Configurations
-import deferReply from "../../../../../../handlers/deferReply";
 import checkPermission from "../../../../../../helpers/checkPermission";
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import deferReply from "../../../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../../../helpers/getEmbedConfig";
+import economy from "../../../../../../modules/credits";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -64,7 +64,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   if (!optionToUser) throw new Error("You must provide a user to transfer to.");
 
-  await creditsTransfer(guild, optionFromUser, optionToUser, optionAmount);
+  await economy.transfer(guild, optionFromUser, optionToUser, optionAmount);
 
   return interaction?.editReply({
     embeds: [

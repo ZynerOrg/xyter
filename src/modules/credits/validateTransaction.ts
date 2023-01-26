@@ -12,6 +12,6 @@ export default (guild: Guild, user: User, amount: number) => {
 
   // 3. Verify that the user is not an bot.
   if (user.bot) {
-    throw new Error("");
+    throw new Error("Bots cant participate in transactions");
   }
 };

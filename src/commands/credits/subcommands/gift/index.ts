@@ -2,13 +2,13 @@ import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import prisma from "../../../../handlers/database";
+import prisma from "../../../../handlers/prisma";
 
-import deferReply from "../../../../handlers/deferReply";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import creditsTransfer from "../../../../helpers/credits/transfer";
+import deferReply from "../../../../helpers/deferReply";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
+import economy from "../../../../modules/credits";
 
 // 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -63,7 +63,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await upsertGuildMember(guild, user);
 
   // 5. Start an transaction of the credits.
-  await creditsTransfer(guild, user, account, credits);
+  await economy.transfer(guild, user, account, credits);
 
   const receiverGuildMember = await prisma.guildMemberCredit.upsert({
     where: {

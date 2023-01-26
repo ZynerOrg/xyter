@@ -5,7 +5,7 @@ import {
   ButtonStyle,
   EmbedBuilder,
 } from "discord.js";
-import getEmbedData from "../../../../helpers/getEmbedData";
+import getEmbedData from "../../../../helpers/getEmbedConfig";
 
 export default async (interaction: ButtonInteraction) => {
   const { errorColor, footerText, footerIcon } = await getEmbedData(

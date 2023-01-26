@@ -7,10 +7,10 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 
-import deferReply from "../../../../../../handlers/deferReply";
 import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../../../helpers/checkPermission";
-import creditsSet from "../../../../../../helpers/credits/set";
+import deferReply from "../../../../../../helpers/deferReply";
+import economy from "../../../../../../modules/credits";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -49,7 +49,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!discordUser) throw new Error("User is not specified");
 
   // 5. Set the credits.
-  await creditsSet(guild, discordUser, creditAmount);
+  await economy.set(guild, discordUser, creditAmount);
 
   // 6. Create base embeds.
   const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Set");

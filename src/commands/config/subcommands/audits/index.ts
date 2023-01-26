@@ -5,10 +5,10 @@ import {
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
+import prisma from "../../../../handlers/prisma";
 import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
+import deferReply from "../../../../helpers/deferReply";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {

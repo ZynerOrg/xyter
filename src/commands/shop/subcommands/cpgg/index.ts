@@ -9,10 +9,10 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
+import prisma from "../../../../handlers/prisma";
+import deferReply from "../../../../helpers/deferReply";
 import encryption from "../../../../helpers/encryption";
-import getEmbedData from "../../../../helpers/getEmbedData";
+import getEmbedData from "../../../../helpers/getEmbedConfig";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {

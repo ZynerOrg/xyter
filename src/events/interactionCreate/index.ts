@@ -2,7 +2,7 @@ import { BaseInteraction, InteractionType } from "discord.js";
 import upsertGuildMember from "../../helpers/upsertGuildMember";
 import { IEventOptions } from "../../interfaces/EventOptions";
 import logger from "../../middlewares/logger";
-import audits from "./audits";
+import sendAuditEntry from "./components/sendAuditEntry";
 import button from "./handlers/button";
 import chatInputCommand from "./handlers/chatInputCommand";
 
@@ -11,8 +11,14 @@ export const options: IEventOptions = {
 };
 
 export const execute = async (interaction: BaseInteraction) => {
-  logger.silly({ interaction });
   const { guild, user } = interaction;
+
+  logger.verbose({
+    message: `New interaction created: ${interaction.id} by: ${user.tag} (${user.id})`,
+    interaction,
+    guild,
+    user,
+  });
 
   if (guild) {
     await upsertGuildMember(guild, user);
@@ -36,5 +42,5 @@ export const execute = async (interaction: BaseInteraction) => {
       throw new Error("Unknown interaction type");
   }
 
-  await audits.execute(interaction);
+  await sendAuditEntry(interaction);
 };
