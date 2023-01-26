@@ -1,16 +1,13 @@
-// Dependencies
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-// Configurations
-// Models
-// Handlers
-import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import deferReply from "../../../../../../helpers/deferReply";
-import economy from "../../../../../../modules/credits";
+import checkPermission from "../../../../../helpers/checkPermission";
+import deferReply from "../../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
+import economy from "../../../../../modules/credits";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -31,19 +28,17 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  // 1. Defer reply as ephemeral.
-  await deferReply(interaction, true);
+  const { guild, options } = interaction;
 
-  // 2. Check if the user has the MANAGE_GUILD permission.
+  await deferReply(interaction, true);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  // 3. Destructure interaction object.
-  const { guild, options } = interaction;
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
+
   if (!guild)
     throw new Error("We could not get the current guild from discord.");
   if (!options) throw new Error("We could not get the options from discord.");
 
-  // 4. Get the user and amount from the options.
   const discordReceiver = options.getUser("user");
   const creditsAmount = options.getInteger("amount");
   if (typeof creditsAmount !== "number")
@@ -51,13 +46,14 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!discordReceiver)
     throw new Error("We could not get the receiving user from Discord");
 
-  // 5. Create base embeds.
-  const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Give");
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":toolbox:︱Give")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
-  // 6. Give the credits.
   await economy.give(guild, discordReceiver, creditsAmount);
 
-  // 7. Send embed.
   return await interaction.editReply({
     embeds: [
       embedSuccess.setDescription(`Successfully gave ${creditsAmount} credits`),

@@ -7,10 +7,10 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 // Configurations
-import checkPermission from "../../../../../../helpers/checkPermission";
-import deferReply from "../../../../../../helpers/deferReply";
-import getEmbedConfig from "../../../../../../helpers/getEmbedConfig";
-import economy from "../../../../../../modules/credits";
+import checkPermission from "../../../../../helpers/checkPermission";
+import deferReply from "../../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
+import economy from "../../../../../modules/credits";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -38,19 +38,16 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
-
-  checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
-
-  const { successColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  ); // Destructure member
   const { guild, options } = interaction;
 
-  // Get options
-  const optionFromUser = options?.getUser("from");
-  const optionToUser = options?.getUser("to");
-  const optionAmount = options?.getInteger("amount");
+  await deferReply(interaction, true);
+  checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
+
+  const optionFromUser = options.getUser("from");
+  const optionToUser = options.getUser("to");
+  const optionAmount = options.getInteger("amount");
 
   if (optionAmount === null) throw new Error("Amount is not specified");
 
@@ -66,7 +63,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   await economy.transfer(guild, optionFromUser, optionToUser, optionAmount);
 
-  return interaction?.editReply({
+  return interaction.editReply({
     embeds: [
       new EmbedBuilder()
         .setTitle("[:toolbox:] Manage - Credits (Transfer)")

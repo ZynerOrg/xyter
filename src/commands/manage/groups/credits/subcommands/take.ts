@@ -2,14 +2,15 @@
 // Models
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 
-import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import deferReply from "../../../../../../helpers/deferReply";
-import economy from "../../../../../../modules/credits";
+import checkPermission from "../../../../../helpers/checkPermission";
+import deferReply from "../../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../../helpers/getEmbedConfig";
+import economy from "../../../../../modules/credits";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -30,30 +31,29 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  // 1. Defer reply as ephemeral.
-  await deferReply(interaction, true);
+  const { guild, options } = interaction;
 
-  // 2. Check if the user has the MANAGE_GUILD permission.
+  await deferReply(interaction, true);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  // 3. Destructure interaction object.
-  const { guild, options } = interaction;
   if (!guild) throw new Error("Invalid guild.");
   if (!options) throw new Error("Invalid options.");
 
-  // 4. Get the user and amount from the options.
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
+
   const discordReceiver = options.getUser("user");
   const optionAmount = options.getInteger("amount");
   if (typeof optionAmount !== "number") throw new Error("Invalid amount.");
   if (!discordReceiver) throw new Error("Invalid user.");
 
-  // 5. Create base embeds.
-  const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Take");
-
-  // 6. Take the credits.
   await economy.take(guild, discordReceiver, optionAmount);
 
-  // 7. Send embed.
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":toolbox:︱Take")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
+
   return await interaction.editReply({
     embeds: [
       embedSuccess.setDescription(

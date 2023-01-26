@@ -1,14 +1,13 @@
 import {
   ChannelType,
   ChatInputCommandInteraction,
+  EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-
 import prisma from "../../../../handlers/prisma";
-import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import deferReply from "../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 
-// 1. Create builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("view")
@@ -24,24 +23,24 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     );
 };
 
-// 2. Create execute function.
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  // 1. Defer reply as permanent.
   await deferReply(interaction, false);
 
-  // 2. Destructure interaction object
   const { options, guild } = interaction;
   if (!guild) throw new Error(`Guild not found`);
   if (!options) throw new Error(`Options not found`);
 
-  // 3. Get options
   const discordChannel = options.getChannel("channel");
   if (!discordChannel) throw new Error(`Channel not found`);
 
-  // 4. Create base embeds.
-  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:1234:] View");
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-  // 5. Get counter from database.
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":1234:︱View")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
+
   const channelCounter = await prisma.guildCounters.findUnique({
     where: {
       guildId_channelId: {
@@ -52,10 +51,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   });
   if (!channelCounter) throw new Error("No counter found for channel");
 
-  // 6. Send embed.
   await interaction.editReply({
     embeds: [
-      EmbedSuccess.setDescription(
+      embedSuccess.setDescription(
         `Viewing counter for channel ${discordChannel}: ${channelCounter.count}!`
       ),
     ],
