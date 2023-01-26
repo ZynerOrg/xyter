@@ -14,7 +14,11 @@ export default (client: Client) => {
 
   const activities: ActivitiesOptions[] = [
     {
-      name: `${guildCount} servers︱${memberCount} users`,
+      name: `${memberCount} users`,
+      type: ActivityType.Watching,
+    },
+    {
+      name: `${guildCount} servers`,
       type: ActivityType.Watching,
     },
   ];
