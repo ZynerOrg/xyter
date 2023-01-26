@@ -1,5 +1,3 @@
-/* eslint-disable no-loops/no-loops */
-// Dependencies
 import { formatDuration, intervalToDuration, subMilliseconds } from "date-fns";
 import {
   ActionRowBuilder,
@@ -10,10 +8,8 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../helpers/deferReply";
-// Configurations
 import getEmbedConfig from "../../../helpers/getEmbedConfig";
 
-// Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("about")
@@ -27,33 +23,9 @@ export const execute = async (interaction: CommandInteraction) => {
 
   const { client } = interaction;
 
-  // await cooldown(
-  //   interaction.guild,
-  //   interaction.user,
-  //   interaction.commandId,
-  //   3600
-  // );
-
   const { successColor, footerText, footerIcon } = await getEmbedConfig(
     interaction.guild
   );
-
-  // // Initialize a storage for the user ids
-  // const userIds = new Set();
-  // // Iterate over all guilds (always cached)
-  // for await (const guild of client.guilds.cache.values()) {
-  //   // Fetch all guild members and iterate over them
-  //   for await (const member of (await guild.members.fetch()).values()) {
-  //     // Fetch the user, if user already cached, returns value from cache
-  //     // Will probably always return from cache
-  //     const user = await client.users.fetch(member.id);
-  //     // Check if user id is not already in set and user is not a bot
-  //     if (!userIds.has(user.id) && !user.bot) {
-  //       // Add unique user id to our set
-  //       userIds.add(user.id);
-  //     }
-  //   }
-  // }
 
   const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
