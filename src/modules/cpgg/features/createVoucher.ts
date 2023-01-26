@@ -31,13 +31,15 @@ export default async (
     },
   });
 
-  if (!upsertGuildConfigApisCpgg.urlIv || !upsertGuildConfigApisCpgg.urlContent)
-    throw new Error("No API url available");
   if (
+    !upsertGuildConfigApisCpgg.urlIv ||
+    !upsertGuildConfigApisCpgg.urlContent ||
     !upsertGuildConfigApisCpgg.tokenIv ||
     !upsertGuildConfigApisCpgg.tokenContent
   )
-    throw new Error("No API token available");
+    throw new Error(
+      "Please ask the server administrator to configure the API for controlpanel.gg to enable this functionality."
+    );
 
   const url = encryption.decrypt({
     iv: upsertGuildConfigApisCpgg.urlIv,

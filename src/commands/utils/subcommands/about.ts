@@ -45,7 +45,7 @@ export const execute = async (interaction: CommandInteraction) => {
     .setColor(successColor)
     .setTitle(":toolbox:︱About this instance")
     .setDescription(
-      `This bot instance is hosted by [${process.env.BOT_HOSTER_NAME}](${process.env.BOT_HOSTER_URL}) who might have modified the [source code](https://github.com/ZynerOrg/xyter).`
+      `This bot is hosted by ${process.env.BOT_HOSTER_NAME} whose website is ${process.env.BOT_HOSTER_URL}. They may have made changes to the bot's source code, which can be found on [GitHub](https://github.com/ZynerOrg/xyter).`
     )
     .setFields(
       {
