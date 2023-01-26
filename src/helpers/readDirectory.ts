@@ -1,5 +1,5 @@
 import fs from "fs";
-import logger from "../../middlewares/logger";
+import logger from "../middlewares/logger";
 const fsPromises = fs.promises;
 
 export default async (path: string) => {

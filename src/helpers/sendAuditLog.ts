@@ -1,7 +1,7 @@
 import { ChannelType, EmbedBuilder, Guild } from "discord.js";
-import prisma from "../../handlers/database";
-import getEmbedConfig from "../../helpers/getEmbedData";
-import logger from "../../middlewares/logger";
+import prisma from "../handlers/prisma";
+import logger from "../middlewares/logger";
+import getEmbedConfig from "./getEmbedConfig";
 
 export default async (guild: Guild, embed: EmbedBuilder) => {
   const getGuildConfigAudits = await prisma.guildConfigAudits.findUnique({

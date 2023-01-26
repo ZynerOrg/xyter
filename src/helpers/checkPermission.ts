@@ -5,8 +5,8 @@ export default (
   permission: PermissionResolvable
 ) => {
   if (!interaction.memberPermissions)
-    throw new Error("Could not check user for permissions");
+    throw new Error("Failed to check your permissions");
 
   if (!interaction.memberPermissions.has(permission))
-    throw new Error("Permission denied");
+    throw new Error(`You do not have the required permission: ${permission}`);
 };
