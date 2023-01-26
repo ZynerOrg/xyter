@@ -5,7 +5,7 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
 } from "discord.js";
-import getEmbedData from "../../../../helpers/getEmbedData";
+import getEmbedData from "../../../../helpers/getEmbedConfig";
 
 export default async (interaction: ChatInputCommandInteraction) => {
   const { errorColor, footerText, footerIcon } = await getEmbedData(

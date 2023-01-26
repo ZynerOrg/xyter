@@ -5,9 +5,9 @@ import {
   userMention,
 } from "discord.js";
 
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
+import prisma from "../../../../handlers/prisma";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
+import deferReply from "../../../../helpers/deferReply";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
 

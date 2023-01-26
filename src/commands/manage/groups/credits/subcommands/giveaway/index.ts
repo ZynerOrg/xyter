@@ -13,10 +13,10 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import encryption from "../../../../../../helpers/encryption";
 // Configurations
-import prisma from "../../../../../../handlers/database";
-import deferReply from "../../../../../../handlers/deferReply";
+import prisma from "../../../../../../handlers/prisma";
 import checkPermission from "../../../../../../helpers/checkPermission";
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import deferReply from "../../../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../../../helpers/getEmbedConfig";
 import logger from "../../../../../../middlewares/logger";
 
 // Function

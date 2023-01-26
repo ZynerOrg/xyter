@@ -1,6 +1,6 @@
 import { add, formatDuration, intervalToDuration } from "date-fns";
 import { Guild, User } from "discord.js";
-import prisma from "../../handlers/database";
+import prisma from "../../handlers/prisma";
 import logger from "../logger";
 
 export default async (

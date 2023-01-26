@@ -5,14 +5,12 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 // Configurations
-// Helpers../../../../../../../helpers/userData
-import pluralize from "../../../../../../helpers/pluralize";
 // Models
 // Handlers
-import deferReply from "../../../../../../handlers/deferReply";
 import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../../../helpers/checkPermission";
-import creditsGive from "../../../../../../helpers/credits/give";
+import deferReply from "../../../../../../helpers/deferReply";
+import economy from "../../../../../../modules/credits";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -57,14 +55,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Give");
 
   // 6. Give the credits.
-  await creditsGive(guild, discordReceiver, creditsAmount);
+  await economy.give(guild, discordReceiver, creditsAmount);
 
   // 7. Send embed.
   return await interaction.editReply({
     embeds: [
-      embedSuccess.setDescription(
-        `Successfully gave ${pluralize(creditsAmount, "credit")}`
-      ),
+      embedSuccess.setDescription(`Successfully gave ${creditsAmount} credits`),
     ],
   });
 };
