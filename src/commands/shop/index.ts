@@ -1,33 +1,20 @@
-// Dependencies
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import * as roles from "./groups/roles";
+import * as cpgg from "./subcommands/cpgg";
 
-// Modules
-import {
-  builder as RolesBuilder,
-  execute as RolesExecute,
-} from "./groups/roles";
-import {
-  builder as CpggBuilder,
-  execute as CpggExecute,
-} from "./subcommands/cpgg";
-
-// Function
 export const builder = new SlashCommandBuilder()
   .setName("shop")
   .setDescription("Shop for credits and custom roles.")
   .setDMPermission(false)
+  .addSubcommand(cpgg.builder)
+  .addSubcommandGroup(roles.builder);
 
-  // Modules
-  .addSubcommand(CpggBuilder)
-  .addSubcommandGroup(RolesBuilder);
-
-// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options } = interaction;
 
   switch (options.getSubcommand()) {
     case "cpgg": {
-      await CpggExecute(interaction);
+      await cpgg.execute(interaction);
       break;
     }
     default: {
@@ -41,7 +28,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   switch (options.getSubcommandGroup()) {
     case "roles": {
-      await RolesExecute(interaction);
+      await roles.execute(interaction);
       break;
     }
     default: {
