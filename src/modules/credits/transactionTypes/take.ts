@@ -1,11 +1,11 @@
 import { Guild, User } from "discord.js";
-import prisma from "../../handlers/database";
-import transactionRules from "./transactionRules";
+import prisma from "../../../handlers/prisma";
+import validateTransaction from "../validateTransaction";
 
 export default async (guild: Guild, user: User, amount: number) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Check if the transaction is valid.
-    transactionRules(guild, user, amount);
+    validateTransaction(guild, user, amount);
 
     // 2. Make the transaction.
     const recipient = await tx.guildMemberCredit.upsert({
