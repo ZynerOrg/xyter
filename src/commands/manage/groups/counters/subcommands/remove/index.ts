@@ -7,11 +7,11 @@ import {
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import deferReply from "../../../../../../handlers/deferReply";
 import checkPermission from "../../../../../../helpers/checkPermission";
+import deferReply from "../../../../../../helpers/deferReply";
 // Configurations
-import prisma from "../../../../../../handlers/database";
-import getEmbedConfig from "../../../../../../helpers/getEmbedData";
+import prisma from "../../../../../../handlers/prisma";
+import getEmbedConfig from "../../../../../../helpers/getEmbedConfig";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {

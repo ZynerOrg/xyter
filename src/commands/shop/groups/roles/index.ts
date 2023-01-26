@@ -16,7 +16,7 @@ import {
   execute as CancelExecute,
 } from "./subcommands/cancel";
 
-import prisma from "../../../../handlers/database";
+import prisma from "../../../../handlers/prisma";
 
 export const builder = (group: SlashCommandSubcommandGroupBuilder) => {
   return (

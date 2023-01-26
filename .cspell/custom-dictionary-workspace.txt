@@ -5,9 +5,9 @@ cpgg
 dagen
 discordjs
 Följande
+Gåva
 gett
 Globalt
-Gåva
 hoster
 inom
 inställningar
@@ -33,5 +33,6 @@ Språkkod
 upsert
 uuidv
 Vermium
+voca
 xyter
 Zyner

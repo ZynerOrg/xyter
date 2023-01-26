@@ -4,9 +4,9 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
+import prisma from "../../../../handlers/prisma";
 import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
+import deferReply from "../../../../helpers/deferReply";
 
 // 1. Create builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {

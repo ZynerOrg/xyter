@@ -3,9 +3,9 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import prisma from "../../../../handlers/database";
-import deferReply from "../../../../handlers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedData";
+import prisma from "../../../../handlers/prisma";
+import deferReply from "../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
