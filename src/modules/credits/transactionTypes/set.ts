@@ -13,7 +13,7 @@ export default async (guild: Guild, user: User, amount: number) => {
         balance: amount,
       },
       create: {
-        GuildMember: {
+        guildMember: {
           connectOrCreate: {
             create: {
               user: {

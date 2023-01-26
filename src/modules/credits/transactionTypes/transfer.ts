@@ -16,7 +16,7 @@ export default async (
         },
       },
       create: {
-        GuildMember: {
+        guildMember: {
           connectOrCreate: {
             create: {
               user: {
@@ -62,7 +62,7 @@ export default async (
         },
       },
       create: {
-        GuildMember: {
+        guildMember: {
           connectOrCreate: {
             create: {
               user: {

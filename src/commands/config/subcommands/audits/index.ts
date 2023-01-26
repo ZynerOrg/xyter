@@ -2,13 +2,14 @@ import {
   channelMention,
   ChannelType,
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/prisma";
-import { success as embedSuccess } from "../../../../helpers/baseEmbeds";
 import checkPermission from "../../../../helpers/checkPermission";
 import deferReply from "../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import logger from "../../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -57,26 +58,31 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   logger.silly(upsertGuildConfigAudits);
 
-  const successEmbed = await embedSuccess(
-    guild,
-    ":gear:︱Configuration of Audits"
-  );
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-  successEmbed.setDescription("Configuration updated successfully!").addFields(
-    {
-      name: "Status",
-      value: `${upsertGuildConfigAudits.status ? "Enabled" : "Disabled"}`,
-      inline: true,
-    },
-    {
-      name: "Channel",
-      value: `${channelMention(upsertGuildConfigAudits.channelId)}`,
-      inline: true,
-    }
-  );
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":gear:︱Configuration of Audits")
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
   await interaction.editReply({
-    embeds: [successEmbed],
+    embeds: [
+      embedSuccess
+        .setDescription("Configuration updated successfully!")
+        .addFields(
+          {
+            name: "Status",
+            value: `${upsertGuildConfigAudits.status ? "Enabled" : "Disabled"}`,
+            inline: true,
+          },
+          {
+            name: "Channel",
+            value: `${channelMention(upsertGuildConfigAudits.channelId)}`,
+            inline: true,
+          }
+        ),
+    ],
   });
   return;
 };

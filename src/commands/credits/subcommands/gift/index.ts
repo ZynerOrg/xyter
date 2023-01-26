@@ -1,11 +1,12 @@
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import prisma from "../../../../handlers/prisma";
 
-import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
 import deferReply from "../../../../helpers/deferReply";
+import getEmbedConfig from "../../../../helpers/getEmbedConfig";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import logger from "../../../../middlewares/logger";
 import economy from "../../../../modules/credits";
@@ -54,13 +55,15 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (typeof credits !== "number")
     throw new Error("You need to enter a valid number of credits to gift");
 
-  // 4. Create base embeds.
-  const receiverEmbed = await BaseEmbedSuccess(
-    guild,
-    `:credit_card:︱You received a gift from ${user.username}`
-  );
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
   await upsertGuildMember(guild, user);
+
+  const receiverEmbed = new EmbedBuilder()
+    .setTitle(`:credit_card:︱You received a gift from ${user.username}`)
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
   // 5. Start an transaction of the credits.
   await economy.transfer(guild, user, account, credits);
@@ -74,7 +77,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     update: {},
     create: {
-      GuildMember: {
+      guildMember: {
         connectOrCreate: {
           create: {
             userId: account.id,
@@ -90,7 +93,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       },
     },
     include: {
-      GuildMember: true,
+      guildMember: true,
     },
   });
   logger.silly(receiverGuildMember);
@@ -115,7 +118,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     },
     update: {},
     create: {
-      GuildMember: {
+      guildMember: {
         connectOrCreate: {
           create: {
             userId: account.id,
@@ -131,15 +134,16 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       },
     },
     include: {
-      GuildMember: true,
+      guildMember: true,
     },
   });
   logger.silly(senderGuildMember);
 
-  const senderEmbed = await BaseEmbedSuccess(
-    guild,
-    ":credit_card:︱Send a gift"
-  );
+  const senderEmbed = new EmbedBuilder()
+    .setTitle(`:credit_card:︱Send a gift`)
+    .setColor(successColor)
+    .setFooter({ text: footerText, iconURL: footerIcon })
+    .setTimestamp(new Date());
 
   if (message) senderEmbed.setFields({ name: "Message", value: message });
 
