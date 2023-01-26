@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { IEncryptionData } from "../../interfaces/EncryptionData";
+import { IEncryptionData } from "../interfaces/EncryptionData";
 
 const iv = crypto.randomBytes(16);
 

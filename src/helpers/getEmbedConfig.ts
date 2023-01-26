@@ -1,6 +1,6 @@
 import { ColorResolvable, Guild } from "discord.js";
-import prisma from "../../handlers/database";
-import logger from "../../middlewares/logger";
+import prisma from "../handlers/prisma";
+import logger from "../middlewares/logger";
 
 export default async (guild?: Guild | null) => {
   const {

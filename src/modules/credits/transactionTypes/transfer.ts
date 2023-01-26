@@ -1,11 +1,15 @@
 import { Guild, User } from "discord.js";
-import prisma from "../../handlers/database";
-import transactionRules from "./transactionRules";
+import prisma from "../../../handlers/prisma";
+import validateTransaction from "../validateTransaction";
 
-export default async (guild: Guild, from: User, to: User, amount: number) => {
+export default async (
+  guild: Guild,
+  fromUser: User,
+  toUser: User,
+  amount: number
+) => {
   return await prisma.$transaction(async (tx) => {
-    // 1. Decrement amount from the sender.
-    const sender = await tx.guildMemberCredit.upsert({
+    const fromTransaction = await tx.guildMemberCredit.upsert({
       update: {
         balance: {
           decrement: amount,
@@ -17,8 +21,8 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
             create: {
               user: {
                 connectOrCreate: {
-                  create: { id: from.id },
-                  where: { id: from.id },
+                  create: { id: fromUser.id },
+                  where: { id: fromUser.id },
                 },
               },
               guild: {
@@ -28,33 +32,30 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
                 },
               },
             },
-            where: { userId_guildId: { userId: from.id, guildId: guild.id } },
+            where: {
+              userId_guildId: { userId: fromUser.id, guildId: guild.id },
+            },
           },
         },
         balance: -amount,
       },
       where: {
         userId_guildId: {
-          userId: from.id,
+          userId: fromUser.id,
           guildId: guild.id,
         },
       },
     });
 
-    // 4. Verify that the sender's balance didn't go below zero.
-    if (sender.balance < 0) {
-      throw new Error(`${from} doesn't have enough to send ${amount}`);
+    if (fromTransaction.balance < 0) {
+      throw new Error(`${fromUser} do not have enough credits`);
     }
 
-    // 5. Check if the transactions is valid.
-    transactionRules(guild, from, amount);
-    transactionRules(guild, to, amount);
+    if (fromUser.id === toUser.id) {
+      throw new Error("You can't transfer credits to yourself");
+    }
 
-    // 6. Verify that sender and recipient are not the same user.
-    if (from.id === to.id) throw new Error("You can't transfer to yourself.");
-
-    // 7. Increment the recipient's balance by amount.
-    const recipient = await tx.guildMemberCredit.upsert({
+    const toTransaction = await tx.guildMemberCredit.upsert({
       update: {
         balance: {
           increment: amount,
@@ -66,8 +67,8 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
             create: {
               user: {
                 connectOrCreate: {
-                  create: { id: to.id },
-                  where: { id: to.id },
+                  create: { id: toUser.id },
+                  where: { id: toUser.id },
                 },
               },
               guild: {
@@ -77,19 +78,22 @@ export default async (guild: Guild, from: User, to: User, amount: number) => {
                 },
               },
             },
-            where: { userId_guildId: { userId: to.id, guildId: guild.id } },
+            where: { userId_guildId: { userId: toUser.id, guildId: guild.id } },
           },
         },
         balance: amount,
       },
       where: {
         userId_guildId: {
-          userId: to.id,
+          userId: toUser.id,
           guildId: guild.id,
         },
       },
     });
 
-    return recipient;
+    validateTransaction(guild, fromUser, amount);
+    validateTransaction(guild, toUser, amount);
+
+    return { fromTransaction, toTransaction };
   });
 };
