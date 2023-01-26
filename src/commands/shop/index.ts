@@ -1,38 +1,20 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import * as roles from "./groups/roles";
 import * as cpgg from "./subcommands/cpgg";
 
 export const builder = new SlashCommandBuilder()
   .setName("shop")
-  .setDescription("Shop for credits and custom roles.")
+  .setDescription("Guild shop")
   .setDMPermission(false)
-  .addSubcommand(cpgg.builder)
-  .addSubcommandGroup(roles.builder);
+  .addSubcommand(cpgg.builder);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  const { options } = interaction;
-
-  switch (options.getSubcommand()) {
+  switch (interaction.options.getSubcommand()) {
     case "cpgg": {
       await cpgg.execute(interaction);
       break;
     }
     default: {
-      throw new Error("Could not find module for that command.");
-    }
-  }
-
-  if (!options.getSubcommandGroup()) {
-    return;
-  }
-
-  switch (options.getSubcommandGroup()) {
-    case "roles": {
-      await roles.execute(interaction);
-      break;
-    }
-    default: {
-      throw new Error("Could not find module for that command.");
+      throw new Error("Unknown command");
     }
   }
 };

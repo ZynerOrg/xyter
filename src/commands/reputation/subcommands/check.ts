@@ -3,10 +3,10 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import prisma from "../../../../handlers/prisma";
-import deferReply from "../../../../helpers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedConfig";
-import logger from "../../../../middlewares/logger";
+import prisma from "../../../handlers/prisma";
+import deferReply from "../../../helpers/deferReply";
+import getEmbedConfig from "../../../helpers/getEmbedConfig";
+import logger from "../../../middlewares/logger";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -14,8 +14,8 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     .setDescription("Check reputation")
     .addUserOption((option) =>
       option
-        .setName("account")
-        .setDescription("The account you checking")
+        .setName("user")
+        .setDescription("The user you are checking")
         .setRequired(false)
     );
 };
@@ -27,7 +27,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-  const optionAccount = options?.getUser("account");
+  const checkUser = options.getUser("user");
 
   if (!guild) throw new Error("Server unavailable");
   if (!user) throw new Error("User unavailable");
@@ -35,7 +35,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const createGuildMember = await prisma.guildMember.upsert({
     where: {
       userId_guildId: {
-        userId: (optionAccount || user).id,
+        userId: (checkUser || user).id,
         guildId: guild.id,
       },
     },
@@ -44,10 +44,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       user: {
         connectOrCreate: {
           create: {
-            id: (optionAccount || user).id,
+            id: (checkUser || user).id,
           },
           where: {
-            id: (optionAccount || user).id,
+            id: (checkUser || user).id,
           },
         },
       },
@@ -78,13 +78,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   const interactionEmbed = new EmbedBuilder()
     .setTitle(
-      optionAccount
-        ? `:loudspeaker:︱Showing ${optionAccount.username}'s reputation`
+      checkUser
+        ? `:loudspeaker:︱Showing ${checkUser.username}'s reputation`
         : ":loudspeaker:︱Showing your reputation"
     )
     .setDescription(
-      optionAccount
-        ? `${optionAccount} have a ${reputationType(
+      checkUser
+        ? `${checkUser} have a ${reputationType(
             createGuildMember.user.reputationsEarned
           )}`
         : `You have a ${reputationType(

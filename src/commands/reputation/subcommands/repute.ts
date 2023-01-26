@@ -3,22 +3,20 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import getEmbedConfig from "../../../../helpers/getEmbedConfig";
-import logger from "../../../../middlewares/logger";
-import noSelfReputation from "./components/noSelfReputation";
+import getEmbedConfig from "../../../helpers/getEmbedConfig";
 
-import prisma from "../../../../handlers/prisma";
-import deferReply from "../../../../helpers/deferReply";
-import cooldown from "../../../../middlewares/cooldown";
+import prisma from "../../../handlers/prisma";
+import deferReply from "../../../helpers/deferReply";
+import cooldown from "../../../middlewares/cooldown";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("repute")
-    .setDescription("Repute an account")
+    .setDescription("Repute a user")
     .addUserOption((option) =>
       option
-        .setName("account")
-        .setDescription("The account you repute")
+        .setName("user")
+        .setDescription("The user you repute")
         .setRequired(true)
     )
     .addStringOption((option) =>
@@ -37,22 +35,25 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
-
   const { options, user, guild, commandId } = interaction;
+  await deferReply(interaction, true);
+  if (!guild) throw new Error("This command can only be used in guilds");
 
   const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-  const optionAccount = options?.getUser("account");
-  const optionType = options?.getString("type");
+  const reputationUser = options.getUser("user");
+  const reputationType = options.getString("type");
 
-  if (!guild) throw new Error("Server unavailable");
-  if (!optionAccount) throw new Error("User unavailable");
+  if (!reputationUser) {
+    throw new Error(
+      "Sorry, we were unable to find the user you are trying to give reputation to."
+    );
+  }
 
-  // Pre-checks
-  noSelfReputation(optionAccount, user);
+  if (user.id === reputationUser.id) {
+    throw new Error("It is not possible to give yourself reputation.");
+  }
 
-  // Check if user is on cooldown otherwise create one
   await cooldown(
     guild,
     user,
@@ -60,11 +61,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     parseInt(process.env.REPUTATION_TIMEOUT)
   );
 
-  switch (optionType) {
+  switch (reputationType) {
     case "positive": {
-      const createUser = await prisma.user.upsert({
+      await prisma.user.upsert({
         where: {
-          id: optionAccount.id,
+          id: reputationUser.id,
         },
         update: {
           reputationsEarned: {
@@ -72,18 +73,16 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
           },
         },
         create: {
-          id: optionAccount.id,
+          id: reputationUser.id,
           reputationsEarned: 1,
         },
       });
-
-      logger.silly(createUser);
       break;
     }
     case "negative": {
-      const createUser = await prisma.user.upsert({
+      await prisma.user.upsert({
         where: {
-          id: optionAccount.id,
+          id: reputationUser.id,
         },
         update: {
           reputationsEarned: {
@@ -91,12 +90,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
           },
         },
         create: {
-          id: optionAccount.id,
+          id: reputationUser.id,
           reputationsEarned: -1,
         },
       });
-
-      logger.silly(createUser);
       break;
     }
     default: {
@@ -105,9 +102,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const interactionEmbed = new EmbedBuilder()
-    .setTitle(`:loudspeaker:︱Reputing ${optionAccount.username}`)
+    .setTitle(`:loudspeaker:︱Reputing ${reputationUser.tag}`)
     .setDescription(
-      `You have given a ${optionType} repute to ${optionAccount}!`
+      `You have successfully given a ${reputationType} reputation to ${reputationUser}!`
     )
     .setTimestamp()
     .setColor(successColor)

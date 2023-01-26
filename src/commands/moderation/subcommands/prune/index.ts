@@ -19,66 +19,69 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     .addIntegerOption((option) =>
       option
         .setName("count")
-        .setDescription("How many messages you want to prune.")
+        .setDescription("How many messages you wish to prune")
         .setRequired(true)
+        .setMinValue(1)
+        .setMaxValue(99)
     )
     .addBooleanOption((option) =>
-      option.setName("bots").setDescription("Include bots.")
+      option
+        .setName("bots")
+        .setDescription("Should bot messages be pruned too?")
     );
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, false);
-
-  checkPermission(interaction, PermissionsBitField.Flags.ManageMessages);
-
-  const { errorColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  );
-
-  const count = interaction.options.getInteger("count");
-  if (count === null) return;
-  const bots = interaction.options.getBoolean("bots");
-
-  if (count < 1 || count > 100) {
-    const interactionEmbed = new EmbedBuilder()
-      .setTitle("[:police_car:] Prune")
-      .setDescription(`You can only prune between 1 and 100 messages.`)
-      .setTimestamp()
-      .setColor(errorColor)
-      .setFooter({ text: footerText, iconURL: footerIcon });
-
-    await interaction.editReply({
-      embeds: [interactionEmbed],
-    });
-    return;
+  const { guild, options, channel } = interaction;
+  if (!channel) {
+    throw new Error("The bot failed to find the channel to prune messages in.");
   }
 
-  if (interaction?.channel?.type !== ChannelType.GuildText) return;
-  await interaction.channel.messages.fetch().then(async (messages) => {
-    const messagesToDelete = (
-      bots
-        ? messages.filter((m) => m?.interaction?.id !== interaction.id)
-        : messages.filter(
-            (m) =>
-              m?.interaction?.id !== interaction.id && m?.author?.bot !== true
-          )
-    ).first(count);
+  await deferReply(interaction, false);
+  checkPermission(interaction, PermissionsBitField.Flags.ManageMessages);
 
-    if (interaction?.channel?.type !== ChannelType.GuildText) return;
-    await interaction.channel
-      .bulkDelete(messagesToDelete, true)
-      .then(async () => {
-        const interactionEmbed = new EmbedBuilder()
-          .setTitle("[:police_car:] Prune")
-          .setDescription(`Successfully pruned \`${count}\` messages.`)
-          .setTimestamp()
-          .setColor(errorColor)
-          .setFooter({ text: footerText, iconURL: footerIcon });
+  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
 
-        await interaction.editReply({
-          embeds: [interactionEmbed],
-        });
+  const count = options.getInteger("count");
+  const bots = options.getBoolean("bots");
+  if (typeof count !== "number")
+    throw new Error(
+      "Please provide a number between 1 and 99 for the prune command."
+    );
+
+  if (count <= 0 || count >= 100) {
+    throw new Error(
+      "The prune command can only be used to delete between 1 and 99 messages."
+    );
+  }
+
+  if (channel.type !== ChannelType.GuildText) return;
+
+  await channel.messages.fetch().then(async (messages) => {
+    let filteredMessages = messages.filter(
+      (message) =>
+        message.interaction && message.interaction.id !== interaction.id
+    );
+
+    if (!bots) {
+      filteredMessages = filteredMessages.filter(
+        (message) => message.author.bot === false
+      );
+    }
+
+    const messagesToDelete = filteredMessages.first(count);
+
+    await channel.bulkDelete(messagesToDelete, true).then(async () => {
+      const interactionEmbed = new EmbedBuilder()
+        .setTitle(":police_car:︱Prune")
+        .setDescription(`Successfully deleted a total of ${count} messages.`)
+        .setTimestamp(new Date())
+        .setColor(successColor)
+        .setFooter({ text: footerText, iconURL: footerIcon });
+
+      await interaction.editReply({
+        embeds: [interactionEmbed],
       });
+    });
   });
 };
