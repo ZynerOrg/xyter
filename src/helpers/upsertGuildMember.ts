@@ -1,5 +1,5 @@
 import { Guild, User } from "discord.js";
-import db from "../../handlers/database";
+import db from "../handlers/prisma";
 
 export default async (guild: Guild, user: User) => {
   return await db.guildMember.upsert({
