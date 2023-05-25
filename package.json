@@ -42,7 +42,7 @@
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "node-schedule": "^2.1.0",
-    "typescript": "^5.0.0",
+    "typescript": "^4.9.4",
     "uuid": "^9.0.0",
     "voca": "^1.4.0",
     "winston": "^3.8.2",
