@@ -62,7 +62,7 @@
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-no-loops": "0.3.0",
     "eslint-plugin-prettier": "4.2.1",
-    "lint-staged": "13.1.0",
+    "lint-staged": "13.2.2",
     "nodemon": "2.0.20",
     "prettier": "2.8.2",
     "prisma": "^4.9.0",
