@@ -48,24 +48,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            zyner/xyter
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -93,6 +75,14 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=semver,pattern=${{ steps.get_version.outputs.version }}
+            type=semver,pattern=${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}
+            type=semver,pattern=${{ steps.get_version.outputs.major }}
+            type=sha
           platforms: linux/amd64
+          context: .
