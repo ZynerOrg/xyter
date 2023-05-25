@@ -1,46 +1,65 @@
-# Xyter
+<h1 align="center">
+  <br>
+  Xyter
+  <br>
+</h1>
 
-A versatile Discord bot written in Typescript with Discord.js that prioritizes your privacy by offering optional features.
+<h4 align="center"> A multi purpose Discord bot written in Typescript with Discord.js that tries to respects your privacy by making features <b>opt-in</b>.</h4>
 
-[![Discord](https://img.shields.io/discord/774981996878626847.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge)](https://discord.zyner.org)
+  <br>
 
-- [Overview](#overview)
-- [Installation](#installation)
-- [Documentation](https://xyter.zyner.org/)
-- [Community](#join-the-community)
-- [License](#license)
+<p align="center">
+  <a href="https://discord.zyner.org">
+    <img src="https://img.shields.io/discord/774981996878626847.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge" alt="Support">
+  </a>
+</p>
 
-## Overview
+<p align="center">
+  <a href="#overview">Overview</a>
+  •
+  <a href="#installation">Installation</a>
+  •
+  <a href="https://xyter.zyner.org/">Documentation</a>
+  •
+  <a href="#join-the-community">Community</a>
+  •
+  <a href="#license">License</a>
+</p>
 
-Xyter is a privacy-focused bot that allows server owners to enable or disable features as per their preference. We prioritize open-source code and do not aim to monetize it. However, we accept donations to improve Xyter. You can either self-host the bot or use our cloud instance. We provide support for both options.
+# Overview
 
-To install Xyter, follow the instructions in the [Installation](#installation) section. The bot is officially supported on Linux. If you need assistance, join our [Discord server](https://discord.zyner.org). Once installed, you can manage settings directly from Discord.
+Xyter is a privacy-focused bot - by making a lot of features opt-in and can easily be enabled/disabled by server owners. We are not and will never be one of those who makes proprietary code and making money out of it, we are happily accepting donations to make Xyter even better. And of course, you can self-host this bot or use our cloud instance if you want. We are happily helping you setting up your own instance and we provide same support regardless of if you self-host it or if we host it.
 
-The default set of modules includes but is not limited to:
+[Installation](#installation) is easy, bot is only supported officially when hosted on **Linux**, if you don't have much Linux knowledge we are happy to help you out on our [Discord server](https://discord.zyner.org)! When you have installed the bot you manage settings from within Discord aside from global settings.
 
-- Credits (balance, gift, top, work, and administrative commands like give, take, set, transfer)
-- Counters (creates channels that allow only specific words, with a cooldown between messages)
+**The default set of modules includes and is not limited to:**
+
+- Credits (balance,gift,top,work including administrative commands such as give,take,set,transfer)
+- Counters (allows you to create channels that only allows a specific word to be sent, user needs to wait until someone else has sent before sending it again)
 - Fun (currently only includes meme)
-- Shop (users can purchase custom roles in the server and server hosting via [Controlpanel.gg](https://controlpanel.gg) if enabled by the server)
-- Moderation (currently only includes prune command, more commands will be added with improved permission system)
-- Reputation (users can give each other anonymous reputation, which is global across all servers connected to the bot instance)
+- Shop (allows users to purchase with their credits, custom roles in the discord server and server hosting via [Controlpanel.gg](https://controlpanel.gg) if the server has enabled and is hosting their own hosting solution)
+- Moderation (currently only includes a prune command, this is because we don't want to implement more damaging commands yet until we have a better solution for permissions)
+- Reputation (allows users to give each other a reputation anonymously, this is global which means all users will have their reputation shown across all server the bot instance is connected to)
 
-For additional commands, refer to our [Documentation](https://xyter.zyner.org/docs/commands).
+**Additionally, other [commands](https://xyter.zyner.org/docs/commands) can easily be found on our documentation site.**
 
-## Installation
+# Installation
 
-Xyter officially supports the following platforms:
+**The following platforms are officially supported:**
 
 - [Docker](https://xyter.zyner.org/docs/flavors/on-premise/docker)
 - [Node](https://xyter.zyner.org/docs/flavors/on-premise/node)
 - [Pterodactyl](https://xyter.zyner.org/docs/flavors/on-premise/pterodactyl)
 
-If you encounter any issues during installation, feel free to ask for help in the **#support** channel of our [Official Discord Server](https://discord.zyner.org).
+If after reading the guide you are still experiencing issues, feel free to join the
+[Official Discord Server](https://discord.zyner.org) and ask in the **#support** channel for help.
 
-## Join the community!
+# Join the community!
 
-Xyter is currently in beta and under continuous development. Join us on our [Official Discord Server](https://discord.zyner.org)!
+**Xyter** is in continuous development, and is currently still in **beta**!
 
-## License
+Join us on our [Official Discord Server](https://discord.zyner.org)!
+
+# License
 
 Released under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
