@@ -75,14 +75,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=semver,pattern=${{ steps.get_version.outputs.version }}
-            type=semver,pattern=${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}
-            type=semver,pattern=${{ steps.get_version.outputs.major }}
-            type=sha
+          tags: ZynerOrg/xyter:latest
           platforms: linux/amd64
           context: .
