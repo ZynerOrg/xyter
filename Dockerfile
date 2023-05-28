@@ -1,24 +1,36 @@
-FROM node:19-alpine3.16 AS builder
+# Dependencies
+FROM node:19-alpine3.17 AS dependencies
 
-# Create app directory
 WORKDIR /app
-
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
-COPY prisma ./prisma/
-
-# Install app dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
+# Build
+FROM node:19-alpine3.17 AS build
+
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
-RUN npm run build
+RUN npx prisma generate && npm run build
 
-FROM node:19-alpine3.16
+# Deploy
+FROM node:19-alpine3.17 as deploy
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+WORKDIR /app
 
+ENV NODE_ENV production
+
+# Add mysql precheck
+RUN apk add --no-cache mysql-client
+ADD docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# Copy files
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/dist ./dist
+
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD [ "npm", "run", "start:migrate:prod" ]

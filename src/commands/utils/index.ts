@@ -1,29 +1,22 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  SubcommandHandlers,
+  executeSubcommand,
+} from "../../handlers/executeSubcommand";
+import * as about from "./subcommands/about";
+import * as avatar from "./subcommands/avatar";
 
-// Modules
-import moduleAbout from "./modules/about";
-import moduleAvatar from "./modules/avatar";
+const subcommandHandlers: SubcommandHandlers = {
+  about: about.execute,
+  avatar: avatar.execute,
+};
 
 export const builder = new SlashCommandBuilder()
   .setName("utils")
   .setDescription("Common utility.")
+  .addSubcommand(about.builder)
+  .addSubcommand(avatar.builder);
 
-  // Modules
-  .addSubcommand(moduleAbout.builder)
-  .addSubcommand(moduleAvatar.builder);
-
-// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  switch (interaction.options.getSubcommand()) {
-    case "about":
-      await moduleAbout.execute(interaction);
-      break;
-    case "avatar":
-      await moduleAvatar.execute(interaction);
-      break;
-    default:
-      throw new Error(
-        `Unknown subcommand: ${interaction.options.getSubcommand()}`
-      );
-  }
+  await executeSubcommand(interaction, subcommandHandlers);
 };

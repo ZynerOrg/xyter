@@ -1,41 +1,21 @@
-// Dependencies
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import * as ctrlpanel from "./subcommands/ctrlpanel";
 
-// Modules
-import moduleCpgg from "./modules/cpgg";
-import moduleRoles from "./modules/roles";
+import {
+  SubcommandHandlers,
+  executeSubcommand,
+} from "../../handlers/executeSubcommand";
 
-// Function
+const subcommandHandlers: SubcommandHandlers = {
+  ctrlpanel: ctrlpanel.execute,
+};
+
 export const builder = new SlashCommandBuilder()
   .setName("shop")
-  .setDescription("Shop for credits and custom roles.")
+  .setDescription("Guild shop")
   .setDMPermission(false)
+  .addSubcommand(ctrlpanel.builder);
 
-  // Modules
-  .addSubcommand(moduleCpgg.builder)
-  .addSubcommandGroup(moduleRoles.builder);
-
-// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  const { options } = interaction;
-
-  switch (options.getSubcommand()) {
-    case "cpgg": {
-      await moduleCpgg.execute(interaction);
-      break;
-    }
-    default: {
-      throw new Error("Could not find module for that command.");
-    }
-  }
-
-  switch (options.getSubcommandGroup()) {
-    case "roles": {
-      await moduleRoles.execute(interaction);
-      break;
-    }
-    default: {
-      throw new Error("Could not find module for that command.");
-    }
-  }
+  await executeSubcommand(interaction, subcommandHandlers);
 };

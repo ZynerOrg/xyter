@@ -1,19 +1,27 @@
-// Dependencies
+/* eslint-disable no-loops/no-loops */
 import { Client } from "discord.js";
-// Helpers
-import deployCommands from "../../handlers/deployCommands";
+import registerCommands from "../../handlers/registerCommands";
 import updatePresence from "../../handlers/updatePresence";
 import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
+import logger from "../../utils/logger";
+import importOldData from "./importOldData";
 
 export const options: IEventOptions = {
   type: "once",
 };
 
-// Execute the event
 export const execute = async (client: Client) => {
-  logger.info("Discord's API client is ready!");
+  if (!client.user) {
+    logger.error("Client user unavailable");
+    throw new Error("Client user unavailable");
+  }
+
+  logger.info("Connected to Discord!");
 
   updatePresence(client);
-  await deployCommands(client);
+  await registerCommands(client);
+
+  if (process.env.IMPORT_DATA_FROM_V1 === "true") {
+    await importOldData(client);
+  }
 };

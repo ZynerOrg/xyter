@@ -1,24 +1,20 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  SubcommandHandlers,
+  executeSubcommand,
+} from "../../handlers/executeSubcommand";
 
-// Modules
-import moduleLookup from "./modules/lookup";
+import * as lookup from "./subcommands/lookup";
+
+const subcommandHandlers: SubcommandHandlers = {
+  lookup: lookup.execute,
+};
 
 export const builder = new SlashCommandBuilder()
   .setName("dns")
   .setDescription("DNS commands.")
+  .addSubcommand(lookup.builder);
 
-  // Modules
-  .addSubcommand(moduleLookup.builder);
-
-// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  switch (interaction.options.getSubcommand()) {
-    case "lookup":
-      await moduleLookup.execute(interaction);
-      break;
-    default:
-      throw new Error(
-        `Unknown subcommand: ${interaction.options.getSubcommand()}`
-      );
-  }
+  await executeSubcommand(interaction, subcommandHandlers);
 };

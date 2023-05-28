@@ -1,35 +1,48 @@
-// 3rd party dependencies
-import {
-  BaseInteraction,
-  CommandInteraction,
-  InteractionType,
-} from "discord.js";
+import { BaseInteraction } from "discord.js";
+import upsertGuildMember from "../../helpers/upsertGuildMember";
 import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
-// Dependencies
-import audits from "./audits";
-import { handleCommandInteraction as HandlersHandleCommandInteraction } from "./handlers";
+import logger from "../../utils/logger";
+import button from "./interactionTypes/button";
+import handleCommandInteraction from "./interactionTypes/handleCommandInteraction";
 
 export const options: IEventOptions = {
   type: "on",
 };
 
-// Execute the event
-export const execute = async (interaction: BaseInteraction) => {
-  const { guild, id } = interaction;
+export async function execute(interaction: BaseInteraction) {
+  const { guild, user } = interaction;
 
-  logger?.silly(
-    `New interaction: ${id} in guild: ${guild?.name} (${guild?.id})`
-  );
+  logInteraction();
 
-  switch (interaction.type) {
-    case InteractionType.ApplicationCommand:
-      await HandlersHandleCommandInteraction(<CommandInteraction>interaction);
-      break;
-
-    default:
-      logger?.error(`Unknown interaction type: ${interaction.type}`);
+  if (guild) {
+    await upsertGuildMember(guild, user);
   }
 
-  await audits.execute(interaction);
-};
+  if (interaction.isCommand()) {
+    await handleCommandInteraction(interaction);
+  } else if (interaction.isButton()) {
+    await button(interaction);
+  } else {
+    logError("Unknown interaction type");
+  }
+
+  function logInteraction() {
+    logger.verbose({
+      message: `New interaction created: ${interaction.id} by: ${user.tag} (${user.id})`,
+      interactionId: interaction.id,
+      userId: user.id,
+      guildId: guild?.id,
+    });
+  }
+
+  function logError(errorMessage: string) {
+    logger.error({
+      message: errorMessage,
+      error: new Error(errorMessage),
+      interactionId: interaction.id,
+      userId: user.id,
+      guildId: guild?.id,
+    });
+    throw new Error(errorMessage);
+  }
+}

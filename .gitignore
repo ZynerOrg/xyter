@@ -137,3 +137,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# NixOS
+.direnv
+
+# Docker
+docker-compose.override.yml

@@ -1,14 +1,12 @@
-// Dependencies
 import { Client } from "discord.js";
-// Helpers
 import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
+import logger from "../../utils/logger";
 
 export const options: IEventOptions = {
   type: "on",
 };
 
-// Function to execute the event
 export const execute = (client: Client) => {
-  logger.warn(`Discord's API client (${client?.user?.tag}) is rate-limited!`);
+  const clientTag = client?.user?.tag ?? "unknown";
+  logger.info(`Discord API client (${clientTag}) is rate-limited.`);
 };

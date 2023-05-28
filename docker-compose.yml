@@ -1,28 +1,36 @@
 version: "3.7"
-
 services:
-  app:
-    container_name: app
-    image: zyner/xyter:main
+  xyter:
+    container_name: xyter
+    # image: zyner/xyter
+    build:
+      context: .
     restart: unless-stopped
     env_file:
       - .env
     volumes:
       - ./logs:/logs
+    depends_on:
+      - mariadb
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:5
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=mariadb
+    depends_on:
+      - mariadb
 
   mariadb:
     container_name: mariadb
     image: lscr.io/linuxserver/mariadb:latest
     restart: unless-stopped
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Region/City
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=database
-      - MYSQL_USER=username
-      - MYSQL_PASSWORD=password
-    volumes:
-      - ./db:/config
     ports:
       - 3306:3306
+    volumes:
+      - ./db:/config
+    env_file:
+      - .env

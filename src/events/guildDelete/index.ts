@@ -1,37 +1,57 @@
-// 3rd party dependencies
 import { Guild } from "discord.js";
-import prisma from "../../handlers/database";
-import updatePresence from "../../handlers/updatePresence";
+import prisma from "../../handlers/prisma";
 import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
+import logger from "../../utils/logger";
 
 export const options: IEventOptions = {
   type: "on",
 };
 
-// Execute the function
 export const execute = async (guild: Guild) => {
-  const { client } = guild;
+  const guildId = guild.id; // Assuming guild.id is the unique ID of the guild
 
-  updatePresence(client);
+  try {
+    // Delete related models based on guildId
+    await prisma.guildMember.deleteMany({
+      where: {
+        guildId,
+      },
+    });
 
-  // Delete guildMember objects
-  const deleteGuildMembers = prisma.guildMember.deleteMany({
-    where: {
-      guildId: guild.id,
-    },
-  });
+    await prisma.apiCredentials.deleteMany({
+      where: {
+        guildId,
+      },
+    });
 
-  // Delete guild object
-  const deleteGuild = prisma.guild.deleteMany({
-    where: {
-      id: guild.id,
-    },
-  });
+    await prisma.guildCreditsSettings.deleteMany({
+      where: {
+        id: guildId,
+      },
+    });
 
-  // The transaction runs synchronously so deleteUsers must run last.
-  await prisma.$transaction([deleteGuildMembers, deleteGuild]);
+    await prisma.guildMemberCredit.deleteMany({
+      where: {
+        guildId,
+      },
+    });
 
-  logger.silly(deleteGuildMembers);
-  logger.silly(deleteGuild);
+    await prisma.guildSettings.deleteMany({
+      where: {
+        id: guildId,
+      },
+    });
+
+    // Delete the Guild model
+    await prisma.guild.deleteMany({
+      where: {
+        id: guildId,
+      },
+    });
+
+    logger.info(`Deleted guild and related records with ID: ${guildId}`);
+  } catch (error) {
+    logger.error(`Error executing guild deletion: ${error}`);
+    // Handle the error appropriately (e.g., logging, sending an error message, etc.)
+  }
 };

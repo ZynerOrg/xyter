@@ -1,28 +1,26 @@
-// Dependencies
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  SubcommandHandlers,
+  executeSubcommand,
+} from "../../handlers/executeSubcommand";
 
-// Modules
-import moduleCheck from "./modules/check";
-import moduleRepute from "./modules/repute";
+import * as check from "./subcommands/check";
+import * as repute from "./subcommands/repute";
 
-// Function
+const subcommandHandlers: SubcommandHandlers = {
+  repute: repute.execute,
+  check: check.execute,
+};
+
 export const builder = new SlashCommandBuilder()
   .setName("reputation")
-  .setDescription("See and repute users to show other how trustworthy they are")
+  .setDescription(
+    "See and give reputation to users to show others how trustworthy they are"
+  )
   .setDMPermission(false)
+  .addSubcommand(repute.builder)
+  .addSubcommand(check.builder);
 
-  // Modules
-  .addSubcommand(moduleRepute.builder)
-  .addSubcommand(moduleCheck.builder);
-
-// Execute function
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  if (interaction.options.getSubcommand() === "repute") {
-    await moduleRepute.execute(interaction);
-    return;
-  }
-  if (interaction.options.getSubcommand() === "check") {
-    await moduleCheck.execute(interaction);
-    return;
-  }
+  await executeSubcommand(interaction, subcommandHandlers);
 };
