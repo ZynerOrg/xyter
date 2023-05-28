@@ -4,15 +4,23 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import deferReply from "../../../../helpers/deferReply";
-import getEmbedConfig from "../../../../helpers/getEmbedConfig";
+import dns from "node:dns";
+import { promisify } from "util";
+import { default as CooldownManager } from "../../../../handlers/CooldownManager";
+import generateCooldownName from "../../../../helpers/generateCooldownName";
+import deferReply from "../../../../utils/deferReply";
+import sendResponse from "../../../../utils/sendResponse";
 
-export const builder = (command: SlashCommandSubcommandBuilder) => {
+const cooldownManager = new CooldownManager();
+
+const dnsLookup = promisify(dns.lookup);
+
+export const builder = (
+  command: SlashCommandSubcommandBuilder
+): SlashCommandSubcommandBuilder => {
   return command
     .setName("lookup")
-    .setDescription(
-      "Lookup a domain or ip. (Request sent over HTTP, proceed with caution!)"
-    )
+    .setDescription("Lookup a domain or IP.")
     .addStringOption((option) =>
       option
         .setName("query")
@@ -21,110 +29,63 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     );
 };
 
-export const execute = async (interaction: ChatInputCommandInteraction) => {
+export const execute = async (
+  interaction: ChatInputCommandInteraction
+): Promise<void> => {
   await deferReply(interaction, false);
 
-  const { errorColor, successColor, footerText, footerIcon } =
-    await getEmbedConfig(interaction.guild);
-  const embedTitle = "[:hammer:] Utility (Lookup)";
+  const { user, guild, options } = interaction;
+  const query = options.getString("query", true);
 
-  const { options } = interaction;
-  const query = options.getString("query");
+  try {
+    const { address } = await dnsLookup(query);
 
-  await axios.get(`http://ip-api.com/json/${query}`).then(async (response) => {
-    if (response.data.status !== "success") {
-      await interaction.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle(embedTitle)
-            .setFooter({
-              text: footerText,
-              iconURL: footerIcon,
-            })
-            .setTimestamp(new Date())
-            .setColor(errorColor)
-            .setFooter({ text: footerText, iconURL: footerIcon })
-            .setDescription(
-              `${response?.data?.message}: ${response?.data?.query}`
-            ),
-        ],
-      });
-      return;
-    }
+    const { data } = await axios.get(`https://ipinfo.io/${address}`);
 
-    await interaction.editReply({
+    await sendResponse(interaction, {
       embeds: [
         new EmbedBuilder()
-          .setTitle(embedTitle)
-          .setFooter({
-            text: footerText,
-            iconURL: footerIcon,
+          .setAuthor({
+            name: `Powered using IPinfo.io`,
+            url: "https://ipinfo.io",
+            iconURL: "https://ipinfo.io/static/favicon-96x96.png?v3",
           })
-          .setTimestamp(new Date())
-          .setColor(successColor)
-          .setFields([
-            {
-              name: ":classical_building: AS",
-              value: `${response.data.as || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":classical_building: ISP",
-              value: `${response.data.isp || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":classical_building: Organization",
-              value: `${response.data.org || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":compass: Latitude",
-              value: `${response.data.lat || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":compass: Longitude",
-              value: `${response.data.lon || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":clock4: Timezone",
-              value: `${response.data.timezone || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":globe_with_meridians: Country",
-              value: `${response.data.country || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":globe_with_meridians: Region",
-              value: `${response.data.regionName || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":globe_with_meridians: City",
-              value: `${response.data.city || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":globe_with_meridians: Country Code",
-              value: `${response.data.countryCode || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":globe_with_meridians: Region Code",
-              value: `${response.data.region || "Unknown"}`,
-              inline: true,
-            },
-            {
-              name: ":globe_with_meridians: ZIP",
-              value: `${response.data.zip || "Unknown"}`,
-              inline: true,
-            },
-          ]),
+          .setColor(process.env.EMBED_COLOR_SUCCESS)
+          .setFooter({
+            text: `Requested by ${user.username}`,
+            iconURL: user.displayAvatarURL(),
+          })
+          .setTimestamp().setDescription(`
+            **IP**: ${data.ip}
+            **Hostname**: ${data.hostname}
+            **Organization**: ${data.org}
+            **Anycast**: ${data.anycast ? "Yes" : "No"}
+            **City**: ${data.city}
+            **Region**: ${data.region}
+            **Country**: ${data.country}
+            **Location**: ${data.loc}
+            **Postal**: ${data.postal}
+            **Timezone**: ${data.timezone}
+          `),
       ],
     });
-  });
+
+    const cooldownName = await generateCooldownName(interaction);
+    const cooldownDuration = 5;
+
+    await cooldownManager.setCooldown(
+      cooldownName,
+      guild || null,
+      user,
+      cooldownDuration
+    );
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code === "ENOTFOUND") {
+      throw new Error(
+        `Sorry, we couldn't find the address for the requested query: ${query}.`
+      );
+    } else {
+      throw error;
+    }
+  }
 };

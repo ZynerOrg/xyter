@@ -1,29 +1,21 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-
-// Modules
 import {
-  builder as PruneBuilder,
-  execute as PruneExecute,
-} from "./subcommands/prune";
+  SubcommandHandlers,
+  executeSubcommand,
+} from "../../handlers/executeSubcommand";
+
+import * as prune from "./subcommands/prune";
+
+const subcommandHandlers: SubcommandHandlers = {
+  prune: prune.execute,
+};
 
 export const builder = new SlashCommandBuilder()
   .setName("moderation")
   .setDescription("Moderation.")
   .setDMPermission(false)
+  .addSubcommand(prune.builder);
 
-  .addSubcommand(PruneBuilder);
-
-// Execute the command
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  switch (interaction.options.getSubcommand()) {
-    case "prune": {
-      await PruneExecute(interaction);
-      break;
-    }
-    default: {
-      throw new Error(
-        `Unknown subcommand: ${interaction.options.getSubcommand()}`
-      );
-    }
-  }
+  await executeSubcommand(interaction, subcommandHandlers);
 };

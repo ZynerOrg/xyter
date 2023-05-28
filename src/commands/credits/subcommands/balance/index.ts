@@ -1,78 +1,105 @@
-import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
+import { GuildMemberCredit } from "@prisma/client";
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandSubcommandBuilder,
+  User,
+} from "discord.js";
+import CreditsManager from "../../../../handlers/CreditsManager";
+import deferReply from "../../../../utils/deferReply";
+import sendResponse from "../../../../utils/sendResponse";
 
-import prisma from "../../../../handlers/prisma";
-import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import deferReply from "../../../../helpers/deferReply";
-import upsertGuildMember from "../../../../helpers/upsertGuildMember";
-import logger from "../../../../middlewares/logger";
+const creditsManager = new CreditsManager();
 
-// 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("balance")
-    .setDescription(`Check balance`)
+    .setDescription(`View account balance`)
     .addUserOption((option) =>
-      option.setName("target").setDescription(`Account you want to check`)
+      option
+        .setName("account")
+        .setDescription(
+          "Enter the username of another user to check their balance"
+        )
     );
 };
 
-// 2. Export an execute function.
-export const execute = async (interaction: CommandInteraction) => {
-  // 1. Defer reply as ephemeral.
-  await deferReply(interaction, true);
-
-  // 2. Destructure interaction object.
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options, user, guild } = interaction;
-  if (!guild) throw new Error("Server unavailable");
-  if (!user) throw new Error("User unavailable");
-  if (!options) throw new Error("Options unavailable");
+  await deferReply(interaction, false);
 
-  // 3. Get options from interaction.
-  const target = options.getUser("target");
+  if (!guild) {
+    throw new Error("This command can only be used in guild environments. ❌");
+  }
 
-  // 4. Create base embeds.
-  const EmbedSuccess = await BaseEmbedSuccess(guild, ":credit_card:︱Balance");
+  const checkAccount = options.getUser("account") || user;
+  const creditAccount = await creditsManager.balance(guild, checkAccount);
 
-  // 5. Upsert the user in the database.
-  const createguildMemberCredit = await prisma.guildMemberCredit.upsert({
-    where: {
-      userId_guildId: {
-        userId: (target || user).id,
-        guildId: guild.id,
-      },
-    },
-    update: {},
-    create: {
-      GuildMember: {
-        connectOrCreate: {
-          create: {
-            userId: (target || user).id,
-            guildId: guild.id,
-          },
-          where: {
-            userId_guildId: {
-              userId: (target || user).id,
-              guildId: guild.id,
-            },
-          },
-        },
-      },
-    },
-    include: { GuildMember: true },
-  });
+  const isUserCheckAccount = checkAccount.id === user.id;
+  const pronoun = isUserCheckAccount ? "You" : "They";
+  const possessivePronoun = isUserCheckAccount ? "Your" : "Their";
 
-  logger.silly(createguildMemberCredit);
+  const description = getAccountBalanceDescription(
+    creditAccount,
+    checkAccount,
+    isUserCheckAccount,
+    pronoun,
+    possessivePronoun
+  );
 
-  await upsertGuildMember(guild, user);
+  await sendAccountBalanceEmbed(
+    interaction,
+    description,
+    checkAccount,
+    pronoun,
+    possessivePronoun
+  );
+};
 
-  // 6. Send embed.
-  await interaction.editReply({
+const getAccountBalanceDescription = (
+  creditAccount: GuildMemberCredit,
+  checkAccount: User,
+  isUserCheckAccount: boolean,
+  pronoun: string,
+  possessivePronoun: string
+) => {
+  let description = `${
+    isUserCheckAccount ? "You" : checkAccount
+  } currently have ${creditAccount.balance} credits. 💰\n\n`;
+
+  if (creditAccount.balance === 0) {
+    description += `${possessivePronoun} wallet is empty. Encourage ${
+      isUserCheckAccount ? "yourself" : "them"
+    } to start earning credits by participating in community events and challenges!`;
+  } else if (creditAccount.balance < 100) {
+    description += `${pronoun}'re making progress! Keep earning credits and unlock exciting rewards.`;
+  } else if (creditAccount.balance < 500) {
+    description += `Great job! ${possessivePronoun} account balance is growing. ${pronoun}'re on ${possessivePronoun.toLowerCase()} way to becoming a credit millionaire!`;
+  } else {
+    description += `Wow! ${pronoun}'re a credit master with a substantial account balance. Enjoy the perks and exclusive benefits!`;
+  }
+
+  return description;
+};
+
+const sendAccountBalanceEmbed = async (
+  interaction: ChatInputCommandInteraction,
+  description: string,
+  checkAccount: User,
+  pronoun: string,
+  possessivePronoun: string
+) => {
+  await sendResponse(interaction, {
     embeds: [
-      EmbedSuccess.setDescription(
-        target
-          ? `${target} has ${createguildMemberCredit.balance} coins in his account.`
-          : `You have ${createguildMemberCredit.balance} coins in your account.`
-      ),
+      new EmbedBuilder()
+        .setColor("#FDD835")
+        .setAuthor({ name: "💳 Account Balance" })
+        .setDescription(description)
+        .setThumbnail(checkAccount.displayAvatarURL())
+        .setFooter({
+          text: `${possessivePronoun} credit balance reflects ${possessivePronoun.toLowerCase()} community engagement!`,
+        })
+        .setTimestamp(),
     ],
   });
 };

@@ -1,62 +1,67 @@
-import { GuildMemberCredit } from "@prisma/client";
 import {
   CommandInteraction,
+  EmbedBuilder,
   SlashCommandSubcommandBuilder,
-  userMention,
+  User,
 } from "discord.js";
+import CreditsManager from "../../../../handlers/CreditsManager";
+import deferReply from "../../../../utils/deferReply";
+import sendResponse from "../../../../utils/sendResponse";
 
-import prisma from "../../../../handlers/prisma";
-import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import deferReply from "../../../../helpers/deferReply";
-import upsertGuildMember from "../../../../helpers/upsertGuildMember";
-import logger from "../../../../middlewares/logger";
+const creditsManager = new CreditsManager();
 
-// 1. Export a builder function.
 export const builder = (command: SlashCommandSubcommandBuilder) => {
-  return command.setName("top").setDescription(`View the top users`);
+  return command
+    .setName("top")
+    .setDescription("View the top users in the server.");
 };
 
-// 2. Export an execute function.
 export const execute = async (interaction: CommandInteraction) => {
-  // 1. Defer reply as permanent.
+  const { guild, client, user } = interaction;
+
   await deferReply(interaction, false);
 
-  // 2. Destructure interaction object.
-  const { guild, client, user } = interaction;
-  if (!guild) throw new Error("Guild not found");
-  if (!client) throw new Error("Client not found");
+  if (!guild) {
+    throw new Error("Unable to find the guild.");
+  }
 
-  await upsertGuildMember(guild, user);
+  const topTen = await creditsManager.topUsers(guild, 10);
 
-  // 3. Create base embeds.
-  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Top");
+  const embed = new EmbedBuilder()
+    .setTimestamp()
+    .setAuthor({ name: "🏅 Top Users" })
+    .setColor(process.env.EMBED_COLOR_SUCCESS)
+    .setFooter({
+      text: `Requested by ${user.username}`,
+      iconURL: user.displayAvatarURL(),
+    });
 
-  // 4. Get the top 10 users.
-  const topTen = await prisma.guildMemberCredit.findMany({
-    where: {
-      guildId: guild.id,
-    },
-    orderBy: {
-      balance: "desc",
-    },
-    take: 10,
-  });
-  logger.silly(topTen);
+  const medalEmojis = ["🥇", "🥈", "🥉"];
+  const genericMedalEmoji = "🏅";
 
-  // 5. Create the top 10 list.
-  const entry = (guildMemberCredit: GuildMemberCredit, index: number) =>
-    `${index + 1}. ${userMention(guildMemberCredit.userId)} | :coin: ${
-      guildMemberCredit.balance
-    }`;
+  const filteredTopTen = topTen.filter((topAccount) => topAccount.balance > 0);
 
-  // 6. Send embed
-  return interaction.editReply({
-    embeds: [
-      EmbedSuccess.setDescription(
-        `The top 10 users in this server are:\n\n${topTen
-          .map(entry)
-          .join("\n")}`
-      ),
-    ],
-  });
+  const fetchUser = async (userId: string): Promise<User | null> => {
+    const fetchedUser = await client.users.fetch(userId);
+    return fetchedUser;
+  };
+
+  const topUsersDescription = await Promise.all(
+    filteredTopTen.map(async (topAccount, index) => {
+      const position = index + 1;
+      const fetchedUser = await fetchUser(topAccount.userId);
+      const userDisplayName = fetchedUser?.username || "Unknown User";
+      const fieldContent = `${userDisplayName} with ${topAccount.balance} credits`;
+      const medalEmoji =
+        position <= 3 ? medalEmojis[position - 1] : genericMedalEmoji;
+      return `\`${medalEmoji} ${fieldContent}\``;
+    })
+  );
+
+  const description = `Here are the top users in this server:\n\n${topUsersDescription.join(
+    "\n"
+  )}`;
+  embed.setDescription(description);
+
+  await sendResponse(interaction, { embeds: [embed] });
 };

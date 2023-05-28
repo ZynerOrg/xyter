@@ -1,5 +1,4 @@
 // Dependencies
-import axios from "axios";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -11,13 +10,11 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
-import encryption from "../../../../../../helpers/encryption";
 // Configurations
-import prisma from "../../../../../../handlers/prisma";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import deferReply from "../../../../../../helpers/deferReply";
-import getEmbedConfig from "../../../../../../helpers/getEmbedConfig";
-import logger from "../../../../../../middlewares/logger";
+import CtrlPanelAPI from "../../../../../../services/CtrlPanelAPI";
+import checkPermission from "../../../../../../utils/checkPermission";
+import deferReply from "../../../../../../utils/deferReply";
+import sendResponse from "../../../../../../utils/sendResponse";
 
 // Function
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -46,14 +43,13 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
+  const { guild, options } = interaction;
 
+  await deferReply(interaction, true);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  const { successColor, footerText, footerIcon } = await getEmbedConfig(
-    interaction.guild
-  ); // Destructure
-  const { guild, options } = interaction;
+  if (!guild) throw new Error("This command can only be used in guilds");
+  const ctrlPanelAPI = new CtrlPanelAPI(guild);
 
   const uses = options?.getInteger("uses");
   const creditAmount = options?.getInteger("credit");
@@ -64,105 +60,48 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   if (!channel) throw new Error("Channel is required.");
   if (!guild) throw new Error("Guild is required.");
 
-  const embed = new EmbedBuilder()
-    .setTitle("[:toolbox:] Giveaway")
-    .setFooter({ text: footerText, iconURL: footerIcon });
+  const embedSuccess = new EmbedBuilder()
+    .setTitle(":toolbox:︱Giveaway")
+    .setColor("#FFFFFF")
+    .setTimestamp(new Date());
 
   const code = uuidv4();
+  const { redeemUrl } = await ctrlPanelAPI.generateVoucher(
+    code,
+    creditAmount,
+    uses
+  );
 
-  const createGuildMember = await prisma.guildConfigApisCpgg.upsert({
-    where: {
-      id: guild.id,
-    },
-    update: {},
-    create: {
-      guild: {
-        connectOrCreate: {
-          create: {
-            id: guild.id,
+  await sendResponse(interaction, {
+    embeds: [embedSuccess.setDescription(`Successfully created code: ${code}`)],
+  });
+
+  const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setLabel("Redeem it here")
+      .setStyle(ButtonStyle.Link)
+      .setEmoji("🏦")
+      .setURL(`${redeemUrl}`)
+  );
+
+  const discordChannel = await guild.channels.fetch(channel.id);
+  if (!discordChannel) return;
+  if (discordChannel.type !== ChannelType.GuildText) return;
+
+  discordChannel.send({
+    embeds: [
+      embedSuccess
+        .addFields([
+          {
+            name: "💶 Credits",
+            value: `${creditAmount}`,
+            inline: true,
           },
-          where: {
-            id: guild.id,
-          },
-        },
-      },
-    },
-    include: {
-      guild: true,
-    },
+        ])
+        .setDescription(
+          `${interaction.user} dropped a voucher for a maximum **${uses}** members!`
+        ),
+    ],
+    components: [buttons],
   });
-
-  logger.silly(createGuildMember);
-
-  if (!createGuildMember.urlIv || !createGuildMember.urlContent)
-    throw new Error("No API url available");
-
-  if (!createGuildMember.tokenIv || !createGuildMember.tokenContent)
-    throw new Error("No API token available");
-
-  const url = encryption.decrypt({
-    iv: createGuildMember.urlIv,
-    content: createGuildMember.urlContent,
-  });
-  const api = axios?.create({
-    baseURL: `${url}/api/`,
-    headers: {
-      Authorization: `Bearer ${encryption.decrypt({
-        iv: createGuildMember.tokenIv,
-        content: createGuildMember.tokenContent,
-      })}`,
-    },
-  });
-
-  const shopUrl = `${url}/store`;
-
-  await api
-    .post("vouchers", {
-      uses,
-      code,
-      credits: creditAmount,
-      memo: `[GIVEAWAY] ${interaction?.createdTimestamp} - ${interaction?.user?.id}`,
-    })
-    .then(async () => {
-      await interaction.editReply({
-        embeds: [
-          embed
-            .setColor(successColor)
-            .setDescription(`Successfully created code: ${code}`),
-        ],
-      });
-
-      const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-          .setLabel("Redeem it here")
-          .setStyle(ButtonStyle.Link)
-          .setEmoji("🏦")
-          .setURL(`${shopUrl}?voucher=${code}`)
-      );
-
-      const discordChannel = guild?.channels.cache.get(channel.id);
-
-      if (!discordChannel) return;
-
-      if (discordChannel.type !== ChannelType.GuildText) return;
-
-      discordChannel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("[:parachute:] Credits!")
-            .addFields([
-              {
-                name: "💶 Credits",
-                value: `${creditAmount}`,
-                inline: true,
-              },
-            ])
-            .setDescription(
-              `${interaction.user} dropped a voucher for a maximum **${uses}** members!`
-            )
-            .setColor(successColor),
-        ],
-        components: [buttons],
-      });
-    });
 };

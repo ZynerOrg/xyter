@@ -3,22 +3,23 @@ import {
   EmbedBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
-import getEmbedConfig from "../../../../helpers/getEmbedConfig";
-import logger from "../../../../middlewares/logger";
-import noSelfReputation from "./components/noSelfReputation";
+import CooldownManager from "../../../../handlers/CooldownManager";
+import ReputationManager from "../../../../handlers/ReputationManager";
+import generateCooldownName from "../../../../helpers/generateCooldownName";
+import deferReply from "../../../../utils/deferReply";
+import sendResponse from "../../../../utils/sendResponse";
 
-import prisma from "../../../../handlers/prisma";
-import deferReply from "../../../../helpers/deferReply";
-import cooldown from "../../../../middlewares/cooldown";
+const cooldownManager = new CooldownManager();
+const reputationManager = new ReputationManager();
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("repute")
-    .setDescription("Repute an account")
+    .setDescription("Repute a user")
     .addUserOption((option) =>
       option
-        .setName("account")
-        .setDescription("The account you repute")
+        .setName("user")
+        .setDescription("The user you repute")
         .setRequired(true)
     )
     .addStringOption((option) =>
@@ -28,92 +29,59 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setRequired(true)
         .addChoices(
           { name: "Positive", value: "positive" },
-          {
-            name: "Negative",
-            value: "negative",
-          }
+          { name: "Negative", value: "negative" }
         )
     );
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
+  const { options, user, guild } = interaction;
   await deferReply(interaction, true);
 
-  const { options, user, guild, commandId } = interaction;
-
-  const { successColor, footerText, footerIcon } = await getEmbedConfig(guild);
-
-  const optionAccount = options?.getUser("account");
-  const optionType = options?.getString("type");
-
-  if (!guild) throw new Error("Server unavailable");
-  if (!optionAccount) throw new Error("User unavailable");
-
-  // Pre-checks
-  noSelfReputation(optionAccount, user);
-
-  // Check if user is on cooldown otherwise create one
-  await cooldown(
-    guild,
-    user,
-    commandId,
-    parseInt(process.env.REPUTATION_TIMEOUT)
-  );
-
-  switch (optionType) {
-    case "positive": {
-      const createUser = await prisma.user.upsert({
-        where: {
-          id: optionAccount.id,
-        },
-        update: {
-          reputationsEarned: {
-            increment: 1,
-          },
-        },
-        create: {
-          id: optionAccount.id,
-          reputationsEarned: 1,
-        },
-      });
-
-      logger.silly(createUser);
-      break;
-    }
-    case "negative": {
-      const createUser = await prisma.user.upsert({
-        where: {
-          id: optionAccount.id,
-        },
-        update: {
-          reputationsEarned: {
-            decrement: 1,
-          },
-        },
-        create: {
-          id: optionAccount.id,
-          reputationsEarned: -1,
-        },
-      });
-
-      logger.silly(createUser);
-      break;
-    }
-    default: {
-      throw new Error("Invalid reputation type");
-    }
+  if (!guild) {
+    throw new Error("This command can only be used in guilds");
   }
 
-  const interactionEmbed = new EmbedBuilder()
-    .setTitle(`:loudspeaker:︱Reputing ${optionAccount.username}`)
-    .setDescription(
-      `You have given a ${optionType} repute to ${optionAccount}!`
-    )
-    .setTimestamp()
-    .setColor(successColor)
-    .setFooter({ text: footerText, iconURL: footerIcon });
+  const targetUser = options.getUser("user", true);
+  const reputationType = options.getString("type", true);
 
-  await interaction.editReply({
+  if (!targetUser) {
+    throw new Error(
+      "Sorry, we were unable to find the user you are trying to give reputation to."
+    );
+  }
+
+  if (reputationType !== "positive" && reputationType !== "negative") {
+    throw new Error("Invalid reputation type");
+  }
+
+  if (user.id === targetUser.id) {
+    throw new Error("It is not possible to give yourself reputation.");
+  }
+
+  await reputationManager.repute(targetUser, reputationType);
+
+  const emoji = reputationType === "positive" ? "😊" : "😔";
+
+  const interactionMessage = `You have successfully given ${emoji} ${reputationType} reputation to ${targetUser}!`;
+
+  const interactionEmbed = new EmbedBuilder()
+    .setAuthor({
+      name: `Reputing ${targetUser.username}`,
+      iconURL: targetUser.displayAvatarURL(),
+    })
+    .setDescription(interactionMessage)
+    .setTimestamp()
+    .setColor(process.env.EMBED_COLOR_SUCCESS);
+
+  await sendResponse(interaction, {
     embeds: [interactionEmbed],
   });
+
+  await cooldownManager.setCooldown(
+    await generateCooldownName(interaction),
+    guild,
+    user,
+    24 * 60 * 60
+  );
 };

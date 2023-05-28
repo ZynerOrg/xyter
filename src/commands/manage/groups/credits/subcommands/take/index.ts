@@ -1,15 +1,15 @@
-// Dependencies
-// Models
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
+import CreditsManager from "../../../../../../handlers/CreditsManager";
+import checkPermission from "../../../../../../utils/checkPermission";
+import deferReply from "../../../../../../utils/deferReply";
+import sendResponse from "../../../../../../utils/sendResponse";
 
-import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import deferReply from "../../../../../../helpers/deferReply";
-import economy from "../../../../../../modules/credits";
+const creditsManager = new CreditsManager();
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
@@ -26,39 +26,44 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setName("amount")
         .setDescription(`The amount of credits to take.`)
         .setRequired(true)
+        .setMinValue(1)
+        .setMaxValue(2147483647)
     );
 };
 
-export const execute = async (interaction: ChatInputCommandInteraction) => {
-  // 1. Defer reply as ephemeral.
-  await deferReply(interaction, true);
+export const execute = async (
+  interaction: ChatInputCommandInteraction
+): Promise<void> => {
+  const { guild, options, user } = interaction;
 
-  // 2. Check if the user has the MANAGE_GUILD permission.
+  await deferReply(interaction, false);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  // 3. Destructure interaction object.
-  const { guild, options } = interaction;
-  if (!guild) throw new Error("Invalid guild.");
-  if (!options) throw new Error("Invalid options.");
+  if (!guild) {
+    throw new Error("We could not get the current guild from Discord.");
+  }
 
-  // 4. Get the user and amount from the options.
   const discordReceiver = options.getUser("user");
-  const optionAmount = options.getInteger("amount");
-  if (typeof optionAmount !== "number") throw new Error("Invalid amount.");
-  if (!discordReceiver) throw new Error("Invalid user.");
+  const creditsAmount = options.getInteger("amount");
 
-  // 5. Create base embeds.
-  const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Take");
+  if (!discordReceiver || typeof creditsAmount !== "number") {
+    await sendResponse(interaction, "Invalid user or credit amount provided.");
+    return;
+  }
 
-  // 6. Take the credits.
-  await economy.take(guild, discordReceiver, optionAmount);
+  const embedSuccess = new EmbedBuilder()
+    .setColor(process.env.EMBED_COLOR_SUCCESS)
+    .setAuthor({ name: "💳 Credits Manager" })
+    .setDescription(
+      `    Successfully took ${creditsAmount} credits to the user.`
+    )
+    .setFooter({
+      text: `Action by ${user.username}`,
+      iconURL: user.displayAvatarURL(),
+    })
+    .setTimestamp();
 
-  // 7. Send embed.
-  return await interaction.editReply({
-    embeds: [
-      embedSuccess.setDescription(
-        `Took ${optionAmount} credits from ${discordReceiver}.`
-      ),
-    ],
-  });
+  await creditsManager.take(guild, discordReceiver, creditsAmount);
+
+  await sendResponse(interaction, { embeds: [embedSuccess] });
 };

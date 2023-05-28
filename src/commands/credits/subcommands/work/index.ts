@@ -1,71 +1,137 @@
 import Chance from "chance";
-import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
-
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  SlashCommandSubcommandBuilder,
+} from "discord.js";
+import CooldownManager from "../../../../handlers/CooldownManager";
+import CreditsManager from "../../../../handlers/CreditsManager";
 import prisma from "../../../../handlers/prisma";
-import { success as BaseEmbedSuccess } from "../../../../helpers/baseEmbeds";
-import deferReply from "../../../../helpers/deferReply";
-import upsertGuildMember from "../../../../helpers/upsertGuildMember";
-import cooldown from "../../../../middlewares/cooldown";
-import logger from "../../../../middlewares/logger";
-import economy from "../../../../modules/credits";
+import generateCooldownName from "../../../../helpers/generateCooldownName";
+import deferReply from "../../../../utils/deferReply";
+import sendResponse from "../../../../utils/sendResponse";
+import jobs from "./jobs";
 
-// 1. Export a builder function.
+const cooldownManager = new CooldownManager();
+const creditsManager = new CreditsManager();
+
 export const builder = (command: SlashCommandSubcommandBuilder) => {
-  return command.setName("work").setDescription(`Work to earn credits`);
+  return command
+    .setName("work")
+    .setDescription("Put in the hustle and earn some credits!");
 };
 
-// 2. Export an execute function.
-export const execute = async (interaction: CommandInteraction) => {
-  // 1. Defer reply as ephemeral.
-  await deferReply(interaction, true);
+const fallbackEmoji = "💼"; // Fallback work emoji
 
-  // 2. Destructure interaction object.
-  const { guild, user, commandId } = interaction;
-  if (!guild) throw new Error("Guild not found");
-  if (!user) throw new Error("User not found");
+export const execute = async (interaction: ChatInputCommandInteraction) => {
+  const { guild, user } = interaction;
 
-  await upsertGuildMember(guild, user);
+  await deferReply(interaction, false);
 
-  // 3. Create base embeds.
-  const EmbedSuccess = await BaseEmbedSuccess(guild, "[:dollar:] Work");
+  if (!guild) {
+    throw new Error(
+      "Oops! It seems like you're not part of a guild. Join a guild to use this command!"
+    );
+  }
 
-  // 4. Create new Chance instance.
+  if (!user) {
+    throw new Error(
+      "Oops! It looks like we couldn't find your user information. Please try again or contact support for assistance."
+    );
+  }
+
   const chance = new Chance();
 
-  // 5. Upsert the guild in the database.
-  const createGuild = await prisma.guildConfigCredits.upsert({
-    where: {
-      id: guild.id,
-    },
-    update: {},
-    create: {
-      id: guild.id,
-    },
-  });
-  logger.silly(createGuild);
-  if (!createGuild) throw new Error("Guild not found");
+  const getRandomWork = () => {
+    return chance.pickone(jobs);
+  };
 
-  // 6. Create a cooldown for the user.
-  await cooldown(guild, user, commandId, createGuild.workTimeout);
-
-  // 6. Generate a random number between 0 and creditsWorkRate.
-  const creditsEarned = chance.integer({
-    min: 0,
-    max: createGuild.workRate,
+  // Retrieve settings from the GuildSettings model
+  const guildCreditsSettings = await prisma.guildCreditsSettings.findUnique({
+    where: { id: guild.id },
   });
 
-  const upsertGuildMemberResult = await economy.give(
-    guild,
-    user,
-    creditsEarned
+  const baseCreditsRate = getRandomWork().creditsRate; // Get the base rate of credits earned per work action
+  const bonusChance = guildCreditsSettings?.workBonusChance || 30; // Retrieve bonus chance from guild settings or use default value
+  const penaltyChance = guildCreditsSettings?.workPenaltyChance || 10; // Retrieve penalty chance from guild settings or use default value
+  const baseCreditsEarned = chance.integer({ min: 1, max: baseCreditsRate }); // Generate a random base number of credits earned
+
+  let bonusCredits = 0; // Initialize bonus credits
+  let penaltyCredits = 0; // Initialize penalty credits
+  let creditsEarned = baseCreditsEarned; // Set the initial earned credits to the base amount
+  let work;
+
+  if (chance.bool({ likelihood: bonusChance })) {
+    // Earn bonus credits
+    const bonusMultiplier = chance.floating({ min: 1.1, max: 1.5 }); // Get a random multiplier for the bonus credits
+    bonusCredits = Math.ceil(baseCreditsEarned * bonusMultiplier); // Calculate the bonus credits
+    creditsEarned = baseCreditsEarned + bonusCredits; // Update the total earned credits
+    work = getRandomWork(); // Get a random work type
+  } else if (chance.bool({ likelihood: penaltyChance })) {
+    // Receive a penalty
+    const penaltyMultiplier = chance.floating({ min: 0.5, max: 0.8 }); // Get a random multiplier for the penalty credits
+    penaltyCredits = Math.ceil(baseCreditsEarned * penaltyMultiplier); // Calculate the penalty credits
+    creditsEarned = baseCreditsEarned - penaltyCredits; // Update the total earned credits
+    work = getRandomWork(); // Get a random work type
+  } else {
+    // Earn base credits
+    work = getRandomWork(); // Get a random work type
+  }
+
+  // Descriptions
+  const descriptions = [];
+
+  // Work Description
+  descriptions.push(
+    `Mission complete! You've earned **${baseCreditsEarned} credits**! 🎉`
   );
 
-  // 8. Send embed.
-  await interaction.editReply({
-    embeds: [
-      EmbedSuccess.setDescription(
-        `You worked and earned **${creditsEarned}** credits! You now have **${upsertGuildMemberResult.balance}** credits. :tada:`
-      ),
-    ],
-  });
+  // Bonus Description
+  if (bonusCredits > 0) {
+    descriptions.push(`💰 Bonus: **${bonusCredits} credits**!`);
+  }
+
+  // Penalty Description
+  if (penaltyCredits !== 0) {
+    descriptions.push(`😱 Penalty: **${penaltyCredits} credits** deducted.`);
+  }
+
+  // Total Credits Description
+  descriptions.push(
+    `Total earnings: **${creditsEarned} credits**. Keep up the hustle!`
+  );
+
+  if (creditsEarned > 0) {
+    await creditsManager.give(guild, user, creditsEarned); // Give the user the earned credits
+  }
+
+  // User Balance
+  const userBalance = await creditsManager.balance(guild, user);
+
+  const embedSuccess = new EmbedBuilder()
+    .setColor(process.env.EMBED_COLOR_SUCCESS)
+    .setAuthor({
+      name: `${user.username}'s Work Result`,
+      iconURL: user.displayAvatarURL(),
+    })
+    .setTimestamp()
+    .setDescription(descriptions.join("\n"))
+    .setFooter({
+      text: `${user.username} just worked as a ${work.name}! ${
+        work?.emoji || fallbackEmoji
+      }`,
+    })
+    .addFields({
+      name: "New Balance",
+      value: `${userBalance.balance} credits`,
+    });
+
+  await sendResponse(interaction, { embeds: [embedSuccess] });
+
+  await cooldownManager.setCooldown(
+    await generateCooldownName(interaction),
+    guild,
+    user,
+    86400
+  );
 };

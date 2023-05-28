@@ -1,7 +1,7 @@
 {
   "editor.bracketPairColorization.enabled": true,
   "editor.cursorBlinking": "phase",
-  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.fontLigatures": true,
   "editor.formatOnSave": true,
@@ -10,7 +10,7 @@
   "editor.minimap.renderCharacters": false,
   "editor.minimap.showSlider": "always",
   "editor.tabSize": 2,
-  "git.enableCommitSigning": true,
+  //  "git.enableCommitSigning": true,
   "editor.wordWrapColumn": 100,
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,

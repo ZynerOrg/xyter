@@ -1,25 +1,24 @@
-// Dependencies
-// Helpers
-// Models
 import {
   ChatInputCommandInteraction,
+  EmbedBuilder,
   PermissionsBitField,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
+import CreditsManager from "../../../../../../handlers/CreditsManager";
+import checkPermission from "../../../../../../utils/checkPermission";
+import deferReply from "../../../../../../utils/deferReply";
+import sendResponse from "../../../../../../utils/sendResponse";
 
-import { success as baseEmbedSuccess } from "../../../../../../helpers/baseEmbeds";
-import checkPermission from "../../../../../../helpers/checkPermission";
-import deferReply from "../../../../../../helpers/deferReply";
-import economy from "../../../../../../modules/credits";
+const creditsManager = new CreditsManager();
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("set")
-    .setDescription("Set the amount of credits a user has.")
+    .setDescription("Set credits to a user.")
     .addUserOption((option) =>
       option
         .setName("user")
-        .setDescription("The user to set the amount of credits for.")
+        .setDescription("The user to set credits to.")
         .setRequired(true)
     )
     .addIntegerOption((option) =>
@@ -27,39 +26,44 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setName("amount")
         .setDescription(`The amount of credits to set.`)
         .setRequired(true)
+        .setMinValue(1)
+        .setMaxValue(2147483647)
     );
 };
 
-export const execute = async (interaction: ChatInputCommandInteraction) => {
-  // 1. Defer reply as ephemeral.
-  await deferReply(interaction, true);
+export const execute = async (
+  interaction: ChatInputCommandInteraction
+): Promise<void> => {
+  const { guild, options, user } = interaction;
 
-  // 2. Check if the user has the permission to manage the guild.
+  await deferReply(interaction, false);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
 
-  // 3. Destructure interaction object.
-  const { options, guild } = interaction;
-  if (!guild) throw new Error(`We could not find this guild.`);
-  if (!options) throw new Error(`We could not find the options.`);
+  if (!guild) {
+    throw new Error("We could not get the current guild from Discord.");
+  }
 
-  // 4. Get the user and amount from the options.
-  const discordUser = options.getUser("user");
-  const creditAmount = options.getInteger("amount");
-  if (typeof creditAmount !== "number") throw new Error("Amount is not set.");
-  if (!discordUser) throw new Error("User is not specified");
+  const discordReceiver = options.getUser("user");
+  const creditsAmount = options.getInteger("amount");
 
-  // 5. Set the credits.
-  await economy.set(guild, discordUser, creditAmount);
+  if (!discordReceiver || typeof creditsAmount !== "number") {
+    await sendResponse(interaction, "Invalid user or credit amount provided.");
+    return;
+  }
 
-  // 6. Create base embeds.
-  const embedSuccess = await baseEmbedSuccess(guild, "[:toolbox:] Set");
+  const embedSuccess = new EmbedBuilder()
+    .setColor(process.env.EMBED_COLOR_SUCCESS)
+    .setAuthor({ name: "💳 Credits Manager" })
+    .setDescription(
+      `    Successfully set ${creditsAmount} credits to the user.`
+    )
+    .setFooter({
+      text: `Action by ${user.username}`,
+      iconURL: user.displayAvatarURL(),
+    })
+    .setTimestamp();
 
-  // 7. Send embed.
-  return await interaction.editReply({
-    embeds: [
-      embedSuccess.setDescription(
-        `Set **${discordUser}**'s credits to **${creditAmount}**.`
-      ),
-    ],
-  });
+  await creditsManager.set(guild, discordReceiver, creditsAmount);
+
+  await sendResponse(interaction, { embeds: [embedSuccess] });
 };

@@ -1,7 +1,9 @@
 # Custom Dictionary Words
 Controlpanel
 cooldown
+Cooldowns
 cpgg
+ctrlpanel
 dagen
 discordjs
 Följande

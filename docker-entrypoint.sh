@@ -1,10 +1,26 @@
 #!/usr/bin/env sh
 
-echo "Check DB!"
-while ! mysqladmin ping -h ${MYSQL_HOST} -u ${MYSQL_USER} -p${MYSQL_PASSWORD}; do
-    echo "Wait ..."
-    sleep 1
-done
-echo "DB ready!"
+check_db_connection() {
+    mysqladmin ping -h "${DB_HOST}" -u "${DB_USER}" -p"${DB_PASSWORD}" 2>/dev/null
+}
 
-${@}
+wait_for_db() {
+    echo "Checking database connection..."
+    until check_db_connection; do
+        echo "Waiting for the database..."
+        sleep 1
+    done
+    echo "Database is ready!"
+}
+
+# Parse the DATABASE_URL into individual variables
+DB_URL="${DATABASE_URL#*://}"
+DB_USER="${DB_URL%%:*}"
+DB_URL="${DB_URL#*:}"
+DB_PASSWORD="${DB_URL%%@*}"
+DB_HOST="${DB_URL#*@}"
+DB_HOST="${DB_HOST%%/*}"
+DB_NAME="${DB_URL#*/}"
+
+wait_for_db
+"$@"

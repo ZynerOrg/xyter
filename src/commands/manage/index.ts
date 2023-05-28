@@ -1,41 +1,26 @@
-//Dependencies
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-
-// Modules
 import {
-  builder as CountersBuilder,
-  execute as CountersExecute,
-} from "./groups/counters";
-import {
-  builder as CreditsBuilder,
-  execute as CreditsExecute,
-} from "./groups/credits";
+  SubcommandGroupHandlers,
+  executeSubcommand,
+} from "../../handlers/executeSubcommand";
+import * as credits from "./groups/credits";
 
-// Function
+const subcommandGroupHandlers: SubcommandGroupHandlers = {
+  credits: {
+    give: credits.subcommands.give.execute,
+    giveaway: credits.subcommands.giveaway.execute,
+    set: credits.subcommands.set.execute,
+    take: credits.subcommands.take.execute,
+    transfer: credits.subcommands.transfer.execute,
+  },
+};
+
 export const builder = new SlashCommandBuilder()
   .setName("manage")
   .setDescription("Manage the bot.")
   .setDMPermission(false)
-
-  // Modules
-  .addSubcommandGroup(CountersBuilder)
-  .addSubcommandGroup(CreditsBuilder);
+  .addSubcommandGroup(credits.builder);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  // Destructure
-  const { options } = interaction;
-
-  switch (options.getSubcommandGroup()) {
-    case "credits": {
-      await CreditsExecute(interaction);
-      break;
-    }
-    case "counters": {
-      await CountersExecute(interaction);
-      break;
-    }
-    default: {
-      throw new Error("Could not find an module for the command.");
-    }
-  }
+  await executeSubcommand(interaction, {}, subcommandGroupHandlers);
 };

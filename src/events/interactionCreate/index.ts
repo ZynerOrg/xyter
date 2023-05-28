@@ -1,46 +1,48 @@
-import { BaseInteraction, InteractionType } from "discord.js";
+import { BaseInteraction } from "discord.js";
 import upsertGuildMember from "../../helpers/upsertGuildMember";
 import { IEventOptions } from "../../interfaces/EventOptions";
-import logger from "../../middlewares/logger";
-import sendAuditEntry from "./components/sendAuditEntry";
-import button from "./handlers/button";
-import chatInputCommand from "./handlers/chatInputCommand";
+import logger from "../../utils/logger";
+import button from "./interactionTypes/button";
+import handleCommandInteraction from "./interactionTypes/handleCommandInteraction";
 
 export const options: IEventOptions = {
   type: "on",
 };
 
-export const execute = async (interaction: BaseInteraction) => {
+export async function execute(interaction: BaseInteraction) {
   const { guild, user } = interaction;
 
-  logger.verbose({
-    message: `New interaction created: ${interaction.id} by: ${user.tag} (${user.id})`,
-    interaction,
-    guild,
-    user,
-  });
+  logInteraction();
 
   if (guild) {
     await upsertGuildMember(guild, user);
   }
 
-  switch (interaction.type) {
-    case InteractionType.ApplicationCommand: {
-      if (interaction.isChatInputCommand()) {
-        await chatInputCommand(interaction);
-        return;
-      }
-
-      if (interaction.isButton()) {
-        await button(interaction);
-        return;
-      }
-
-      break;
-    }
-    default:
-      throw new Error("Unknown interaction type");
+  if (interaction.isCommand()) {
+    await handleCommandInteraction(interaction);
+  } else if (interaction.isButton()) {
+    await button(interaction);
+  } else {
+    logError("Unknown interaction type");
   }
 
-  await sendAuditEntry(interaction);
-};
+  function logInteraction() {
+    logger.verbose({
+      message: `New interaction created: ${interaction.id} by: ${user.tag} (${user.id})`,
+      interactionId: interaction.id,
+      userId: user.id,
+      guildId: guild?.id,
+    });
+  }
+
+  function logError(errorMessage: string) {
+    logger.error({
+      message: errorMessage,
+      error: new Error(errorMessage),
+      interactionId: interaction.id,
+      userId: user.id,
+      guildId: guild?.id,
+    });
+    throw new Error(errorMessage);
+  }
+}

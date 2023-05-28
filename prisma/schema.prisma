@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,247 +7,137 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//
-
 model Guild {
+  id                   String                @unique
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  guildMembers         GuildMember[]
+  guildSettings        GuildSettings?
+  guildCreditsSettings GuildCreditsSettings?
+  apiCredentials       ApiCredentials[]
+  cooldowns            Cooldown[]
+}
+
+model User {
+  id             String           @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  guildMembers   GuildMember[]
+  apiCredentials ApiCredentials[]
+  cooldowns      Cooldown[]
+
+  userReputation UserReputation?
+}
+
+model GuildMember {
+  guildId           String
+  userId            String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now())
+  guild             Guild              @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guildMemberCredit GuildMemberCredit?
+  apiCredentials    ApiCredentials[]
+  cooldowns         Cooldown[]
+
+  @@unique([guildId, userId])
+}
+
+model GuildMemberCredit {
+  guildId   String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  guildMember GuildMember @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
+  balance     Int         @default(0)
+
+  @@unique([guildId, userId])
+}
+
+model UserReputation {
+  id        String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  negative Int @default(0)
+  positive Int @default(0)
+}
+
+model GuildSettings {
   id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  GuildConfigEmbeds     GuildConfigEmbeds?
-  GuildConfigCredits    GuildConfigCredits?
-  GuildConfigPoints     GuildConfigPoints?
-  GuildConfigReputation GuildConfigReputation?
-  GuildConfigCounters   GuildConfigCounters?
-  GuildConfigApisCpgg   GuildConfigApisCpgg?
-  GuildConfigAudits     GuildConfigAudits?
-  GuildConfigShop       GuildConfigShop?
-  GuildConfigShopRoles  GuildConfigShopRoles?
-  GuildConfigWelcome    GuildConfigWelcome?
-  GuildShopRoles        GuildShopRoles[]
-  GuildMember           GuildMember[]
-  Cooldown              Cooldown[]
-  GuildCounters         GuildCounters[]
+  guild                  Guild                 @relation(fields: [id], references: [id], onDelete: Cascade)
+  creditsSettings        GuildCreditsSettings? @relation(fields: [guildCreditsSettingsId], references: [id], onDelete: Cascade)
+  guildCreditsSettingsId String?
 }
 
-model User {
-  id          String        @unique
-  GuildMember GuildMember[]
-
-  // Settings
-
-  // Modules
-  reputationsEarned Int        @default(0)
-  Cooldown          Cooldown[]
-
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  GuildShopRoles GuildShopRoles[]
-}
-
-model GuildMember {
-  userId  String
-  guildId String
-
-  user  User  @relation(fields: [userId], references: [id])
-  guild Guild @relation(fields: [guildId], references: [id])
-
-  // Settings
-
-  pointsEarned Int @default(0)
-
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  GuildShopRoles    GuildShopRoles[]
-  GuildMemberCredit GuildMemberCredit?
-
-  // Unique Identifier
-  @@unique([userId, guildId])
-}
-
-//
-
-model GuildConfigEmbeds {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+model GuildCreditsSettings {
+  id        String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  successColor String @default("#22bb33")
-  waitColor    String @default("#f0ad4e")
-  errorColor   String @default("#bb2124")
-  footerText   String @default("https://github.com/ZynerOrg/xyter")
-  footerIcon   String @default("https://github.com/ZynerOrg.png")
+  guild Guild @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  // Work commands
+  workBonusChance   Int @default(30)
+  workPenaltyChance Int @default(10)
+
+  // Bonus commands
+  dailyBonusAmount   Int @default(25)
+  weeklyBonusAmount  Int @default(50)
+  monthlyBonusAmount Int @default(150)
+
+  status        Boolean         @default(false)
+  rate          Int             @default(1)
+  timeout       Int             @default(5)
+  workRate      Int             @default(25)
+  workTimeout   Int             @default(86400)
+  minimumLength Int             @default(5)
+  guildSettings GuildSettings[]
 }
 
-model GuildConfigCredits {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
+model ApiCredentials {
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  status        Boolean @default(false)
-  rate          Int     @default(1)
-  timeout       Int     @default(5)
-  workRate      Int     @default(25)
-  workTimeout   Int     @default(86400)
-  minimumLength Int     @default(5)
-}
+  guild   Guild?  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guildId String?
 
-model GuildConfigPoints {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  guildMember GuildMember? @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
 
-  status        Boolean @default(false)
-  rate          Int     @default(1)
-  timeout       Int     @default(5)
-  minimumLength Int     @default(5)
-}
+  apiName     String
+  credentials Json
 
-model GuildConfigReputation {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status Boolean @default(false)
-}
-
-model GuildConfigCounters {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status Boolean @default(false)
-}
-
-model GuildConfigApisCpgg {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  urlIv        String?
-  urlContent   String?
-  tokenIv      String?
-  tokenContent String?
-}
-
-model GuildConfigAudits {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status    Boolean @default(false)
-  channelId String
-}
-
-model GuildConfigShop {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status                 Boolean               @default(false)
-  roles                  GuildConfigShopRoles? @relation(fields: [guildConfigShopRolesId], references: [id])
-  guildConfigShopRolesId String?
-}
-
-model GuildConfigShopRoles {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status          Boolean           @default(false)
-  pricePerHour    Int               @default(5)
-  GuildConfigShop GuildConfigShop[]
-}
-
-model GuildConfigWelcome {
-  id    String @unique
-  guild Guild  @relation(fields: [id], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  status              Boolean @default(false)
-  joinChannelId       String?
-  joinChannelMessage  String?
-  leaveChannelId      String?
-  leaveChannelMessage String?
-}
-
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-
-model GuildCounters {
-  guildId     String
-  channelId   String
-  triggerWord String
-  count       Int    @default(0)
-  guild       Guild  @relation(fields: [guildId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([guildId, channelId])
-}
-
-model GuildMemberCredit {
-  userId  String
-  guildId String
-
-  GuildMember GuildMember @relation(fields: [userId, guildId], references: [userId, guildId])
-
-  balance Int @default(0)
-
-  @@unique([userId, guildId])
+  @@unique([guildId, apiName])
+  @@unique([userId, apiName])
 }
 
 model Cooldown {
-  guild     Guild  @relation(fields: [guildId], references: [id])
-  user      User   @relation(fields: [userId], references: [id])
-  guildId   String
-  userId    String
-  cooldown  Int
-  timeoutId String
+  id           Int          @id @default(autoincrement())
+  cooldownItem String
+  expiresAt    DateTime
+  guild        Guild?       @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guildId      String?
+  user         User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String?
+  guildMember  GuildMember? @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([guildId, userId, timeoutId])
+  @@index([cooldownItem, guildId], name: "cooldownItem_guildId_idx")
+  @@index([cooldownItem, userId], name: "cooldownItem_userId_idx")
+  @@index([cooldownItem, guildId, userId], name: "cooldownItem_guildId_userId_idx")
 }
 
-model GuildShopRoles {
-  guildId      String
-  roleId       String
-  userId       String
-  pricePerHour Int      @default(5)
-  lastPayed    DateTime
-
-  guild Guild @relation(fields: [guildId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
-
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  member    GuildMember? @relation(fields: [userId, guildId], references: [userId, guildId])
-
-  @@unique([guildId, userId, roleId])
+model ImportOldData {
+  id              String  @unique
+  done            Boolean @default(false)
+  beforeMessageId String?
 }
