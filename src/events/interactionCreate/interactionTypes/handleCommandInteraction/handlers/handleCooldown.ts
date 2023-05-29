@@ -32,6 +32,7 @@ export default async function handleCooldown(
   const response = {
     embeds: [cooldownEmbed],
     components: [buttons],
+    ephemeral: true,
   };
 
   await sendResponse(interaction, response);
