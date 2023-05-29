@@ -18,7 +18,27 @@ class CooldownManager {
       user: user ? { connect: { id: user.id } } : undefined,
     };
 
-    await prisma.cooldown.create({ data });
+    const { guildCooldown, guildMemberCooldown, userCooldown } =
+      await this.checkCooldowns(cooldownItem, guild, user);
+
+    if (guildCooldown || guildMemberCooldown || userCooldown) {
+      await prisma.cooldown.updateMany({
+        where: {
+          cooldownItem,
+          expiresAt,
+          guild: guild ? { id: guild.id } : undefined,
+          user: user ? { id: user.id } : undefined,
+        },
+        data: {
+          cooldownItem,
+          expiresAt,
+          guildId: guild ? guild.id : undefined,
+          userId: user ? user.id : undefined,
+        },
+      });
+    } else {
+      await prisma.cooldown.create({ data });
+    }
 
     if (guild && user) {
       logger.verbose(
@@ -68,7 +88,7 @@ class CooldownManager {
   async checkCooldowns(
     cooldownItem: string,
     guild: Guild | null,
-    user: User
+    user: User | null
   ): Promise<{
     guildCooldown: Cooldown | null;
     userCooldown: Cooldown | null;
