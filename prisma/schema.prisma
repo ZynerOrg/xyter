@@ -30,12 +30,14 @@ model User {
 }
 
 model GuildMember {
-  guildId           String
-  userId            String
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @default(now())
-  guild             Guild              @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guildId   String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   guildMemberCredit GuildMemberCredit?
   apiCredentials    ApiCredentials[]
   cooldowns         Cooldown[]
@@ -53,6 +55,9 @@ model GuildMemberCredit {
   balance     Int         @default(0)
 
   @@unique([guildId, userId])
+  @@index([guildId])
+  @@index([userId])
+  @@index([guildId, userId])
 }
 
 model UserReputation {
@@ -71,8 +76,10 @@ model GuildSettings {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  guild                  Guild                 @relation(fields: [id], references: [id], onDelete: Cascade)
-  creditsSettings        GuildCreditsSettings? @relation(fields: [guildCreditsSettingsId], references: [id], onDelete: Cascade)
+  guild Guild @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  creditsSettings GuildCreditsSettings? @relation(fields: [guildCreditsSettingsId], references: [id], onDelete: Cascade)
+
   guildCreditsSettingsId String?
 }
 
@@ -92,12 +99,6 @@ model GuildCreditsSettings {
   weeklyBonusAmount  Int @default(50)
   monthlyBonusAmount Int @default(150)
 
-  status        Boolean         @default(false)
-  rate          Int             @default(1)
-  timeout       Int             @default(5)
-  workRate      Int             @default(25)
-  workTimeout   Int             @default(86400)
-  minimumLength Int             @default(5)
   guildSettings GuildSettings[]
 }
 
@@ -122,14 +123,19 @@ model ApiCredentials {
 }
 
 model Cooldown {
-  id           Int          @id @default(autoincrement())
-  cooldownItem String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   expiresAt    DateTime
-  guild        Guild?       @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  guildId      String?
-  user         User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String?
-  guildMember  GuildMember? @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
+  cooldownItem String
+
+  guild       Guild?       @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guildMember GuildMember? @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
+
+  guildId String?
+  userId  String?
 
   @@index([cooldownItem, guildId], name: "cooldownItem_guildId_idx")
   @@index([cooldownItem, userId], name: "cooldownItem_userId_idx")
