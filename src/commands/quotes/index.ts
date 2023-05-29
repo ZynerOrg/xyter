@@ -12,7 +12,7 @@ const subcommandHandlers: SubcommandHandlers = {
 };
 
 export const builder = new SlashCommandBuilder()
-  .setName("quote")
+  .setName("quotes")
   .setDescription("Fun commands.")
 
   .addSubcommand(post.builder);
