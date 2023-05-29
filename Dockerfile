@@ -23,7 +23,7 @@ ENV NODE_ENV production
 
 # Add mysql precheck
 RUN apk add --no-cache mysql-client
-ADD docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 # Copy files
