@@ -32,6 +32,7 @@ export default async function handleCooldown(
   const response = {
     embeds: [cooldownEmbed],
     components: [buttons],
+    ephemeral: true,
   };
 
   await sendResponse(interaction, response);
@@ -47,7 +48,7 @@ function createButtons() {
   );
 }
 
-function createCooldownEmbed(timeLeft: string, cooldownId: number) {
+function createCooldownEmbed(timeLeft: string, cooldownId: string) {
   return new EmbedBuilder()
     .setAuthor({ name: "⚠️ | Request Failed" })
     .setDescription(

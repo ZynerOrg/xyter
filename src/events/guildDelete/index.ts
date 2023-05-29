@@ -11,37 +11,6 @@ export const execute = async (guild: Guild) => {
   const guildId = guild.id; // Assuming guild.id is the unique ID of the guild
 
   try {
-    // Delete related models based on guildId
-    await prisma.guildMember.deleteMany({
-      where: {
-        guildId,
-      },
-    });
-
-    await prisma.apiCredentials.deleteMany({
-      where: {
-        guildId,
-      },
-    });
-
-    await prisma.guildCreditsSettings.deleteMany({
-      where: {
-        id: guildId,
-      },
-    });
-
-    await prisma.guildMemberCredit.deleteMany({
-      where: {
-        guildId,
-      },
-    });
-
-    await prisma.guildSettings.deleteMany({
-      where: {
-        id: guildId,
-      },
-    });
-
     // Delete the Guild model
     await prisma.guild.deleteMany({
       where: {
