@@ -7,6 +7,7 @@ import {
 import CooldownManager from "../../../../handlers/CooldownManager";
 import prisma from "../../../../handlers/prisma";
 import generateCooldownName from "../../../../helpers/generateCooldownName";
+import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import deferReply from "../../../../utils/deferReply";
 import sendResponse from "../../../../utils/sendResponse";
 
@@ -36,11 +37,13 @@ export const execute = async (
   await deferReply(interaction, true);
 
   const { options, guild, user } = interaction;
+  if (!guild) throw new Error("A guild is required.");
 
   const quoteUser = options.getUser("user", true);
   const quoteString = options.getString("message", true);
 
-  if (!guild) throw new Error("A guild is required.");
+  await upsertGuildMember(guild, user);
+  await upsertGuildMember(guild, quoteUser);
 
   const guildQuotesSettings = await prisma.guildQuotesSettings.findUnique({
     where: { id: guild.id },
