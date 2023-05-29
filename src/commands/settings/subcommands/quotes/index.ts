@@ -12,7 +12,7 @@ import sendResponse from "../../../../utils/sendResponse";
 export const builder = (command: SlashCommandSubcommandBuilder) => {
   return command
     .setName("quotes")
-    .setDescription(`Configure quotes module`)
+    .setDescription("Configure quotes module")
     .addBooleanOption((option) =>
       option.setName("status").setDescription("Status").setRequired(true)
     )
