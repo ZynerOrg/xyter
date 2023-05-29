@@ -8,14 +8,17 @@ datasource db {
 }
 
 model Guild {
-  id                   String                @unique
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  id        String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   guildMembers         GuildMember[]
   guildSettings        GuildSettings?
   guildCreditsSettings GuildCreditsSettings?
+  guildQuotesSettings  GuildQuotesSettings?
   apiCredentials       ApiCredentials[]
   cooldowns            Cooldown[]
+  Quotes               Quotes[]
 }
 
 model User {
@@ -27,6 +30,8 @@ model User {
   cooldowns      Cooldown[]
 
   userReputation UserReputation?
+  Quotes         Quotes[]        @relation(name: "Quotes")
+  PostedQuotes   Quotes[]        @relation(name: "PostedQuotes")
 }
 
 model GuildMember {
@@ -81,6 +86,8 @@ model GuildSettings {
   creditsSettings GuildCreditsSettings? @relation(fields: [guildCreditsSettingsId], references: [id], onDelete: Cascade)
 
   guildCreditsSettingsId String?
+  GuildQuotesSettings    GuildQuotesSettings? @relation(fields: [guildQuotesSettingsId], references: [id])
+  guildQuotesSettingsId  String?
 }
 
 model GuildCreditsSettings {
@@ -100,6 +107,36 @@ model GuildCreditsSettings {
   monthlyBonusAmount Int @default(150)
 
   guildSettings GuildSettings[]
+}
+
+model GuildQuotesSettings {
+  id        String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  guild Guild @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  status         Boolean @default(false)
+  quoteChannelId String
+
+  guildSettings GuildSettings[]
+}
+
+model Quotes {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], name: "Quotes")
+  userId String
+
+  guild   Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guildId String
+
+  message String
+
+  posterUserId String
+  posterUser   User   @relation(fields: [posterUserId], references: [id], name: "PostedQuotes")
 }
 
 model ApiCredentials {
