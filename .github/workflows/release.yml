@@ -41,6 +41,7 @@ jobs:
         run: npx semantic-release
 
   docker:
+    needs: build # Add this line to ensure the build job is completed before starting the docker job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
