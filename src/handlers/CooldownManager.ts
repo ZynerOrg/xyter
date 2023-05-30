@@ -25,7 +25,6 @@ class CooldownManager {
       await prisma.cooldown.updateMany({
         where: {
           cooldownItem,
-          expiresAt,
           guild: guild ? { id: guild.id } : undefined,
           user: user ? { id: user.id } : undefined,
         },
