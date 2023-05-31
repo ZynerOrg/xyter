@@ -27,7 +27,11 @@ export default async function handleCommandInteraction(
     const { guildCooldown, userCooldown, guildMemberCooldown } =
       await cooldownManager.checkCooldowns(cooldownItem, guild, user);
 
-    if (guildCooldown || userCooldown || guildMemberCooldown) {
+    if (
+      (guildCooldown && guildCooldown.expiresAt > new Date()) ||
+      (userCooldown && userCooldown.expiresAt > new Date()) ||
+      (guildMemberCooldown && guildMemberCooldown.expiresAt > new Date())
+    ) {
       await handleCooldown(
         interaction,
         guildCooldown,

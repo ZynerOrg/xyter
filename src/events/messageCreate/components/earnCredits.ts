@@ -56,7 +56,10 @@ async function isUserOnCooldown(guild: Guild, author: User): Promise<boolean> {
     guild,
     author
   );
-  return cooldownActive !== null;
+
+  if (!cooldownActive) return false;
+
+  return cooldownActive.expiresAt > new Date();
 }
 
 async function setCooldown(guild: Guild, user: User) {
