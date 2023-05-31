@@ -18,21 +18,19 @@ class CooldownManager {
       user: user ? { connect: { id: user.id } } : undefined,
     };
 
-    const { guildCooldown, guildMemberCooldown, userCooldown } =
-      await this.checkCooldowns(cooldownItem, guild, user);
+    const existingCooldown = await this.checkCooldown(
+      cooldownItem,
+      guild,
+      user
+    );
 
-    if (guildCooldown || guildMemberCooldown || userCooldown) {
-      await prisma.cooldown.updateMany({
+    if (existingCooldown) {
+      await prisma.cooldown.update({
         where: {
-          cooldownItem,
-          guild: guild ? { id: guild.id } : undefined,
-          user: user ? { id: user.id } : undefined,
+          id: existingCooldown.id,
         },
         data: {
-          cooldownItem,
           expiresAt,
-          guildId: guild ? guild.id : undefined,
-          userId: user ? user.id : undefined,
         },
       });
     } else {
@@ -62,7 +60,6 @@ class CooldownManager {
       cooldownItem,
       guild: guild ? { id: guild.id } : null,
       user: user ? { id: user.id } : null,
-      expiresAt: { gte: new Date() },
     };
     const cooldown = await prisma.cooldown.findFirst({ where });
     const duration = Date.now() - start;
