@@ -132,6 +132,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await generateCooldownName(interaction),
     guild,
     user,
-    86400
+    24 * 60 * 60
   );
 };
