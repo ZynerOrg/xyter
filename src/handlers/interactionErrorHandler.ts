@@ -25,17 +25,11 @@ export default async (
     const errorEmbed = new EmbedBuilder()
       .setAuthor({ name: "⚠️ | Request Failed" })
       .setDescription(
-        "An error occurred while processing your request. Please try again later."
+        error.message ??
+          "An error occurred while processing your request. Please try again later."
       )
       .setColor("#FFCC66")
       .setTimestamp();
-
-    if (error.message !== undefined) {
-      errorEmbed.addFields({
-        name: "Error Message",
-        value: codeBlock(error.message),
-      });
-    }
 
     if (process.env.NODE_ENV === "development" && error.stack !== undefined) {
       errorEmbed.addFields({
