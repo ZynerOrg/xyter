@@ -1,4 +1,4 @@
-import { addMonths } from "date-fns";
+import { addMonths, startOfDay } from "date-fns";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
@@ -71,6 +71,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await generateCooldownName(interaction),
     guild,
     user,
-    addMonths(new Date(), 1)
+    startOfDay(addMonths(new Date(), 1))
   );
 };
