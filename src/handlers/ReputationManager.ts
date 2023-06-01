@@ -1,3 +1,4 @@
+import { UserReputation } from "@prisma/client";
 import { User } from "discord.js";
 import prisma from "./prisma";
 
@@ -38,42 +39,30 @@ class ReputationManager {
   }
 
   async repute(user: User, type: "positive" | "negative") {
-    const userData = await prisma.user.upsert({
-      where: { id: user.id },
-      update: {},
-      create: {
-        id: user.id,
-        userReputation: {
-          create: {
-            positive: 0,
-            negative: 0,
-          },
-        },
-      },
-      include: {
-        userReputation: true,
-      },
-    });
-
-    let userReputation: any = {};
-
-    if (!userData.userReputation) return null;
+    let userReputation: UserReputation | null = null;
 
     if (type === "positive") {
       userReputation = await prisma.userReputation.upsert({
-        where: { id: userData.userReputation.id },
+        where: { id: user.id },
         update: { positive: { increment: 1 } },
         create: {
           positive: 1,
           negative: 0,
-          user: { connect: { id: user.id } },
+          user: {
+            connectOrCreate: {
+              where: {
+                id: user.id,
+              },
+              create: { id: user.id },
+            },
+          },
         },
       });
     }
 
     if (type === "negative") {
       userReputation = await prisma.userReputation.upsert({
-        where: { id: userData.userReputation.id },
+        where: { id: user.id },
         update: { negative: { increment: 1 } },
         create: {
           positive: 0,
