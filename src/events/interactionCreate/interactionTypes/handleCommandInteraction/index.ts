@@ -5,6 +5,9 @@ import generateCooldownName from "../../../../helpers/generateCooldownName";
 import handleCooldown from "./handlers/handleCooldown";
 import handleUnavailableCommand from "./handlers/handleUnavailableCommand";
 
+// Create a map to store locks for each identifier (guild ID + user ID + cooldown item)
+const commandLocks = new Map();
+
 const cooldownManager = new CooldownManager();
 
 export default async function handleCommandInteraction(
@@ -24,6 +27,14 @@ export default async function handleCommandInteraction(
 
   try {
     const cooldownItem = await generateCooldownName(interaction);
+
+    // Check if the identifier is already locked
+    if (commandLocks.has(cooldownItem)) {
+      throw new Error(
+        "You are unable to execute the same command simultaneously."
+      );
+    }
+
     const { guildCooldown, userCooldown, guildMemberCooldown } =
       await cooldownManager.checkCooldowns(cooldownItem, guild, user);
 
@@ -38,10 +49,23 @@ export default async function handleCommandInteraction(
         userCooldown,
         guildMemberCooldown
       );
-    } else {
-      await currentCommand.execute(interaction);
+      return;
     }
+
+    // Create a promise that represents the current command execution
+    const commandExecutionPromise = currentCommand.execute(interaction);
+
+    // Acquire the lock for the identifier and store the command execution promise
+    commandLocks.set(cooldownItem, commandExecutionPromise);
+
+    // Wait for the current command execution to complete
+    await commandExecutionPromise;
   } catch (error) {
     await interactionErrorHandler(interaction, error);
+  } finally {
+    const cooldownItem = await generateCooldownName(interaction);
+
+    // Release the lock for the identifier
+    commandLocks.delete(cooldownItem);
   }
 }
