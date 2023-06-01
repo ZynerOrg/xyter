@@ -1,4 +1,5 @@
 import axios from "axios";
+import { addSeconds } from "date-fns";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
@@ -70,14 +71,11 @@ export const execute = async (
       ],
     });
 
-    const cooldownName = await generateCooldownName(interaction);
-    const cooldownDuration = 5;
-
     await cooldownManager.setCooldown(
-      cooldownName,
+      await generateCooldownName(interaction),
       guild || null,
       user,
-      cooldownDuration
+      addSeconds(new Date(), 5)
     );
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code === "ENOTFOUND") {

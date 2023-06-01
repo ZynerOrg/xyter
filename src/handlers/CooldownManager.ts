@@ -8,9 +8,8 @@ class CooldownManager {
     cooldownItem: string,
     guild: Guild | null,
     user: User | null,
-    cooldownSeconds: number
+    expiresAt: Date
   ): Promise<void> {
-    const expiresAt = new Date(Date.now() + cooldownSeconds * 1000);
     const data = {
       cooldownItem,
       expiresAt,
