@@ -41,11 +41,14 @@ jobs:
         run: npx semantic-release
 
       - name: Store build artifacts
-        uses: actions/upload-artifact@v3
+        run: |
+          find . -not -path "./node_modules/*" -type f -print0 | xargs -0 tar -czvf build-artifacts.tar.gz
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: build-artifacts
-          path: .  # Include all files in the artifact
-          path-ignore: node_modules
+          path: build-artifacts.tar.gz
 
   docker:
     needs: build
