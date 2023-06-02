@@ -45,6 +45,7 @@ jobs:
         with:
           name: build-artifacts
           path: .  # Include all files in the artifact
+          path-ignore: node_modules
 
   docker:
     needs: build
