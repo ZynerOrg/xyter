@@ -1,3 +1,4 @@
+import { addMinutes } from "date-fns";
 import {
   ChannelType,
   ChatInputCommandInteraction,
@@ -99,6 +100,6 @@ export const execute = async (
     await generateCooldownName(interaction),
     guild,
     user,
-    5 * 60
+    addMinutes(new Date(), 5)
   );
 };

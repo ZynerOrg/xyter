@@ -1,3 +1,4 @@
+import { addSeconds } from "date-fns";
 import { Channel, ChannelType, Guild, Message, User } from "discord.js";
 import CooldownManager from "../../../handlers/CooldownManager";
 import CreditsManager from "../../../handlers/CreditsManager";
@@ -93,5 +94,10 @@ async function isUserOnCooldown(guild: Guild, author: User): Promise<boolean> {
 }
 
 async function setCooldown(guild: Guild, user: User) {
-  await cooldownManager.setCooldown(cooldownName, guild, user, 5);
+  await cooldownManager.setCooldown(
+    cooldownName,
+    guild,
+    user,
+    addSeconds(new Date(), 5)
+  );
 }

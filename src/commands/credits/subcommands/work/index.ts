@@ -1,4 +1,5 @@
 import Chance from "chance";
+import { addHours } from "date-fns";
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
@@ -132,6 +133,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await generateCooldownName(interaction),
     guild,
     user,
-    86400
+    addHours(new Date(), 1)
   );
 };
