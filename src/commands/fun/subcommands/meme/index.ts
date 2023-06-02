@@ -1,4 +1,5 @@
 import axios from "axios";
+import { addSeconds } from "date-fns";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -39,8 +40,6 @@ export const execute = async (
   await deferReply(interaction, false);
 
   const { channel, guild, user } = interaction;
-  const cooldownItem = await generateCooldownName(interaction);
-  const cooldownDuration = 15; // 10 seconds
 
   try {
     const content: MemeContent = await fetchRandomMeme();
@@ -65,10 +64,10 @@ export const execute = async (
   }
 
   await cooldownManager.setCooldown(
-    cooldownItem,
+    await generateCooldownName(interaction),
     guild || null,
     user,
-    cooldownDuration
+    addSeconds(new Date(), 5)
   );
 };
 
