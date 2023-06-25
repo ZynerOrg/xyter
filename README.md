@@ -6,7 +6,7 @@
 
 <h3 align="center">
   <br>
-  Please use [git.zyner.org](https://git.zyner.org/xyter/bot) instead for collaboration, this is due to mirroring!
+  Please use <a href="https://git.zyner.org/xyter/bot">git.zyner.org</a> instead for collaboration, this is due to mirroring!
   <br>
 </h3>
 
