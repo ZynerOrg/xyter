@@ -28,6 +28,8 @@ build:
 docker:
   stage: docker
   image: docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
   script:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
