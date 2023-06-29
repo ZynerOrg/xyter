@@ -1,0 +1,37 @@
+stages:
+  - build
+  - docker
+
+variables:
+  NODE_VERSION: "20"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - ~/.npm/
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq curl
+  - curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
+  - apt-get install -y -qq nodejs
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+    - npx semantic-release
+    - find . -not -path "./node_modules/*" -type f -print0 | xargs -0 tar -czvf build-artifacts.tar.gz
+  artifacts:
+    paths:
+      - build-artifacts.tar.gz
+
+docker:
+  stage: docker
+  script:
+    - apt-get install -y -qq tar
+    - tar -xzvf build-artifacts.tar.gz
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker buildx create --use --name mybuilder
+    - docker buildx build --push --platform linux/amd64 --tag zyner/xyter:latest --build-arg TAGS="$(cat tags.txt | tr '\n' ',')"
