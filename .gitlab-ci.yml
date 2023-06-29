@@ -27,12 +27,13 @@ build:
 
 docker:
   stage: docker
-  image: docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375/
+  image:
+    name: docker:latest
+  services:
+    - docker:dind
   script:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
-    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-    - docker buildx create --use --name mybuilder
-    - docker buildx build --push --platform linux/amd64 --tag zyner/xyter:latest --build-arg TAGS="$(cat tags.txt | tr '\n' ',')"
+    - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+    - docker build -t zyner/xyter:latest .
+    - docker push zyner/xyter:latest
