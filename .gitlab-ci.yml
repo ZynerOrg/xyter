@@ -11,9 +11,7 @@ cache:
     - ~/.npm/
 
 before_script:
-  - apk update && apk add curl bash
-  - curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
-  - apk add --no-cache nodejs
+  - apk update && apk add nodejs npm
 
 build:
   stage: build
