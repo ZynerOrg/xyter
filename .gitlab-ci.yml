@@ -11,9 +11,9 @@ cache:
     - ~/.npm/
 
 before_script:
-  - apt-get update -qq && apt-get install -y -qq curl
+  - apk update && apk add curl bash
   - curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
-  - apt-get install -y -qq nodejs
+  - apk add --no-cache nodejs
 
 build:
   stage: build
@@ -29,7 +29,7 @@ build:
 docker:
   stage: docker
   script:
-    - apt-get install -y -qq tar
+    - apk add tar
     - tar -xzvf build-artifacts.tar.gz
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
