@@ -33,7 +33,6 @@ docker:
     - docker:dind
   script:
     - apk add tar
-    - rc-service docker start
     - tar -xzvf build-artifacts.tar.gz
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
     - docker buildx create --use --name mybuilder
