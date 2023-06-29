@@ -27,8 +27,9 @@ build:
 
 docker:
   stage: docker
-  image:
-    name: docker:dind
+  image: docker:git
+  services:
+    - docker:dind
   script:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
