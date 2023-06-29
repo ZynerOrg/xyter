@@ -29,6 +29,7 @@ docker:
   stage: docker
   script:
     - apk add tar docker
+    - systemctl start docker
     - tar -xzvf build-artifacts.tar.gz
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
     - docker buildx create --use --name mybuilder
