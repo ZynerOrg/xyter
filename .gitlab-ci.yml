@@ -30,6 +30,8 @@ docker:
   image: docker:git
   services:
     - docker:dind
+  before_script:
+    - docker info
   script:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
