@@ -27,8 +27,10 @@ build:
 
 docker:
   stage: docker
+  services:
+    - docker:dind
   script:
-    - apk add tar docker
+    - apk add tar
     - rc-service docker start
     - tar -xzvf build-artifacts.tar.gz
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
