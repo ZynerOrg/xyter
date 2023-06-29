@@ -31,8 +31,6 @@ docker:
     name: docker:latest
   services:
     - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2376
   script:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
