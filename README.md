@@ -43,7 +43,7 @@ Xyter is a privacy-focused bot - by making a lot of features opt-in and can easi
 - Credits (balance,gift,top,work including administrative commands such as give,take,set,transfer)
 - Counters (allows you to create channels that only allows a specific word to be sent, user needs to wait until someone else has sent before sending it again)
 - Fun (currently only includes meme)
-- Shop (allows users to purchase with their credits, custom roles in the discord server and server hosting via [Controlpanel.gg](https://controlpanel.gg) if the server has enabled and is hosting their own hosting solution)
+- Shop (allows users to purchase with their credits, custom roles in the discord server and server hosting via [Ctrlpanel.gg](https://ctrlpanel.gg/) if the server has enabled and is hosting their own hosting solution)
 - Moderation (currently only includes a prune command, this is because we don't want to implement more damaging commands yet until we have a better solution for permissions)
 - Reputation (allows users to give each other a reputation anonymously, this is global which means all users will have their reputation shown across all server the bot instance is connected to)
 
