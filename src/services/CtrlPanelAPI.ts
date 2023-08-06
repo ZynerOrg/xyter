@@ -77,7 +77,7 @@ class CtrlPanelAPI {
     const plainUrl = await this.getPlainUrl();
     const plainToken = await this.getPlainToken();
 
-    this.api.defaults.baseURL = plainUrl;
+    this.api.defaults.baseURL = `${plainUrl}/api`;
     this.api.defaults.headers.common["Authorization"] = plainToken
       ? `Bearer ${plainToken}`
       : undefined;
