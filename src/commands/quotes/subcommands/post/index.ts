@@ -43,6 +43,8 @@ export const execute = async (
   const quoteUser = options.getUser("user", true);
   const quoteString = options.getString("message", true);
 
+  if (quoteUser.id == user.id) throw new Error("One cannot quote oneself.");
+  
   await upsertGuildMember(guild, user);
   await upsertGuildMember(guild, quoteUser);
 
