@@ -22,18 +22,18 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("user")
         .setDescription("The user who said this")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addStringOption((option) =>
       option
         .setName("message")
         .setDescription("What the user said")
-        .setRequired(true)
+        .setRequired(true),
     );
 };
 
 export const execute = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   await deferReply(interaction, true);
 
@@ -44,7 +44,7 @@ export const execute = async (
   const quoteString = options.getString("message", true);
 
   if (quoteUser.id == user.id) throw new Error("One cannot quote oneself.");
-  
+
   await upsertGuildMember(guild, user);
   await upsertGuildMember(guild, quoteUser);
 
@@ -58,7 +58,7 @@ export const execute = async (
     throw new Error("Quotes are disabled in this server.");
 
   const channel = await interaction.client.channels.fetch(
-    guildQuotesSettings.quoteChannelId
+    guildQuotesSettings.quoteChannelId,
   );
 
   if (!channel) throw new Error("No channel found.");
@@ -102,6 +102,6 @@ export const execute = async (
     await generateCooldownName(interaction),
     guild,
     user,
-    addMinutes(new Date(), 5)
+    addMinutes(new Date(), 5),
   );
 };
