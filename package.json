@@ -60,7 +60,7 @@
     "eslint-plugin-no-loops": "0.3.0",
     "eslint-plugin-prettier": "4.2.1",
     "lint-staged": "^13.2.2",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.1",
     "prettier": "^2.8.8",
     "prisma": "^4.9.0",
     "semantic-release": "^21.0.0",
