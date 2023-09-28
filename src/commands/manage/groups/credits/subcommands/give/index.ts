@@ -12,7 +12,7 @@ import sendResponse from "../../../../../../utils/sendResponse";
 const creditsManager = new CreditsManager();
 
 export const builder = (
-  command: SlashCommandSubcommandBuilder
+  command: SlashCommandSubcommandBuilder,
 ): SlashCommandSubcommandBuilder => {
   return command
     .setName("give")
@@ -21,7 +21,7 @@ export const builder = (
       option
         .setName("user")
         .setDescription("The user to give credits to.")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addIntegerOption((option) =>
       option
@@ -29,12 +29,12 @@ export const builder = (
         .setDescription("The amount of credits to give.")
         .setRequired(true)
         .setMinValue(1)
-        .setMaxValue(2147483647)
+        .setMaxValue(2147483647),
     );
 };
 
 export const execute = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   const { guild, options, user } = interaction;
 
@@ -57,7 +57,7 @@ export const execute = async (
     .setColor(process.env.EMBED_COLOR_SUCCESS)
     .setAuthor({ name: "💳 Credits Manager" })
     .setDescription(
-      `    Successfully gave ${creditsAmount} credits to the user.`
+      `    Successfully gave ${creditsAmount} credits to the user.`,
     )
     .setFooter({
       text: `Action by ${user.username}`,

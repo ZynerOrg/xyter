@@ -8,7 +8,7 @@ class CooldownManager {
     cooldownItem: string,
     guild: Guild | null,
     user: User | null,
-    expiresAt: Date
+    expiresAt: Date,
   ): Promise<void> {
     const data = {
       cooldownItem,
@@ -20,7 +20,7 @@ class CooldownManager {
     const existingCooldown = await this.checkCooldown(
       cooldownItem,
       guild,
-      user
+      user,
     );
 
     if (existingCooldown) {
@@ -38,11 +38,11 @@ class CooldownManager {
 
     if (guild && user) {
       logger.verbose(
-        `Set guild member cooldown: ${cooldownItem} in guild ${guild.id} for user ${user.id}`
+        `Set guild member cooldown: ${cooldownItem} in guild ${guild.id} for user ${user.id}`,
       );
     } else if (guild) {
       logger.verbose(
-        `Set guild cooldown: ${cooldownItem} in guild ${guild.id}`
+        `Set guild cooldown: ${cooldownItem} in guild ${guild.id}`,
       );
     } else if (user) {
       logger.verbose(`Set user cooldown: ${cooldownItem} for user ${user.id}`);
@@ -52,7 +52,7 @@ class CooldownManager {
   async checkCooldown(
     cooldownItem: string,
     guild: Guild | null,
-    user: User | null
+    user: User | null,
   ): Promise<Cooldown | null> {
     const start = Date.now();
     const where = {
@@ -65,15 +65,15 @@ class CooldownManager {
 
     if (guild && user) {
       logger.verbose(
-        `Checked guild member cooldown: ${cooldownItem} in guild ${guild.id} for user ${user.id}. Duration: ${duration}ms`
+        `Checked guild member cooldown: ${cooldownItem} in guild ${guild.id} for user ${user.id}. Duration: ${duration}ms`,
       );
     } else if (guild) {
       logger.verbose(
-        `Checked guild cooldown: ${cooldownItem} in guild ${guild.id}. Duration: ${duration}ms`
+        `Checked guild cooldown: ${cooldownItem} in guild ${guild.id}. Duration: ${duration}ms`,
       );
     } else if (user) {
       logger.verbose(
-        `Checked user cooldown: ${cooldownItem} for user ${user.id}. Duration: ${duration}ms`
+        `Checked user cooldown: ${cooldownItem} for user ${user.id}. Duration: ${duration}ms`,
       );
     }
 
@@ -83,7 +83,7 @@ class CooldownManager {
   async checkCooldowns(
     cooldownItem: string,
     guild: Guild | null,
-    user: User | null
+    user: User | null,
   ): Promise<{
     guildCooldown: Cooldown | null;
     userCooldown: Cooldown | null;

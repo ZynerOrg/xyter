@@ -21,12 +21,12 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription("How many messages you wish to prune")
         .setRequired(true)
         .setMinValue(1)
-        .setMaxValue(99)
+        .setMaxValue(99),
     )
     .addBooleanOption((option) =>
       option
         .setName("bots")
-        .setDescription("Should bot messages be pruned too?")
+        .setDescription("Should bot messages be pruned too?"),
     );
 };
 
@@ -43,7 +43,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const bots = options.getBoolean("bots");
   if (!count || count < 1 || count > 99) {
     throw new Error(
-      "Please provide a number between 1 and 99 for the prune command."
+      "Please provide a number between 1 and 99 for the prune command.",
     );
   }
 
@@ -55,7 +55,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       let filteredMessages = messages;
       if (!bots) {
         filteredMessages = filteredMessages.filter(
-          (message) => !message.author.bot
+          (message) => !message.author.bot,
         );
       }
       return filteredMessages;
@@ -71,7 +71,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       .setColor(process.env.EMBED_COLOR_SUCCESS)
       .setAuthor({ name: "🤖 Moderation" })
       .setDescription(
-        `Successfully deleted ${messagesToDeleteArray.length} messages.`
+        `Successfully deleted ${messagesToDeleteArray.length} messages.`,
       )
       .setFooter({
         text: `Action by ${user.username}`,

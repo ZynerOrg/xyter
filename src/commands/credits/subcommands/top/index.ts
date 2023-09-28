@@ -55,11 +55,11 @@ export const execute = async (interaction: CommandInteraction) => {
       const medalEmoji =
         position <= 3 ? medalEmojis[position - 1] : genericMedalEmoji;
       return `\`${medalEmoji} ${fieldContent}\``;
-    })
+    }),
   );
 
   const description = `Here are the top users in this server:\n\n${topUsersDescription.join(
-    "\n"
+    "\n",
   )}`;
   embed.setDescription(description);
 

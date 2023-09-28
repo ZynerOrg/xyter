@@ -21,7 +21,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("user")
         .setDescription("The user you repute")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addStringOption((option) =>
       option
@@ -30,8 +30,8 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setRequired(true)
         .addChoices(
           { name: "Positive", value: "positive" },
-          { name: "Negative", value: "negative" }
-        )
+          { name: "Negative", value: "negative" },
+        ),
     );
 };
 
@@ -48,7 +48,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   if (!targetUser) {
     throw new Error(
-      "Sorry, we were unable to find the user you are trying to give reputation to."
+      "Sorry, we were unable to find the user you are trying to give reputation to.",
     );
   }
 
@@ -83,6 +83,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await generateCooldownName(interaction),
     guild,
     user,
-    addDays(new Date(), 1)
+    addDays(new Date(), 1),
   );
 };

@@ -9,7 +9,7 @@ export const upsertApiCredentials = async (
     | Prisma.NullTypes.JsonNull
     | Prisma.InputJsonValue
     | Prisma.JsonObject
-    | Prisma.InputJsonObject
+    | Prisma.InputJsonObject,
 ) => {
   await prisma.apiCredentials.upsert({
     where: {

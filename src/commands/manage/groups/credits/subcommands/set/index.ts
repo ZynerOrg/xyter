@@ -19,7 +19,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("user")
         .setDescription("The user to set credits to.")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addIntegerOption((option) =>
       option
@@ -27,12 +27,12 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription(`The amount of credits to set.`)
         .setRequired(true)
         .setMinValue(1)
-        .setMaxValue(2147483647)
+        .setMaxValue(2147483647),
     );
 };
 
 export const execute = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   const { guild, options, user } = interaction;
 
@@ -55,7 +55,7 @@ export const execute = async (
     .setColor(process.env.EMBED_COLOR_SUCCESS)
     .setAuthor({ name: "💳 Credits Manager" })
     .setDescription(
-      `    Successfully set ${creditsAmount} credits to the user.`
+      `    Successfully set ${creditsAmount} credits to the user.`,
     )
     .setFooter({
       text: `Action by ${user.username}`,

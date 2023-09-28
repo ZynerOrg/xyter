@@ -11,7 +11,7 @@ const commandLocks = new Map();
 const cooldownManager = new CooldownManager();
 
 export default async function handleCommandInteraction(
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
 ) {
   if (!interaction.isCommand()) {
     return;
@@ -31,7 +31,7 @@ export default async function handleCommandInteraction(
     // Check if the identifier is already locked
     if (commandLocks.has(cooldownItem)) {
       throw new Error(
-        "You are unable to execute the same command simultaneously."
+        "You are unable to execute the same command simultaneously.",
       );
     }
 
@@ -47,7 +47,7 @@ export default async function handleCommandInteraction(
         interaction,
         guildCooldown,
         userCooldown,
-        guildMemberCooldown
+        guildMemberCooldown,
       );
       return;
     }

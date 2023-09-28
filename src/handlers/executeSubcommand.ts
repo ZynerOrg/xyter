@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 
 export interface SubcommandHandlers {
   [subcommand: string]: (
-    interaction: ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction,
   ) => Promise<void>;
 }
 
@@ -13,7 +13,7 @@ export interface SubcommandGroupHandlers {
 export const executeSubcommand = async (
   interaction: ChatInputCommandInteraction,
   subcommandHandlers: SubcommandHandlers,
-  subcommandGroupHandlers?: SubcommandGroupHandlers
+  subcommandGroupHandlers?: SubcommandGroupHandlers,
 ) => {
   const subcommandGroup = interaction.options.getSubcommandGroup();
   if (subcommandGroupHandlers && subcommandGroup) {

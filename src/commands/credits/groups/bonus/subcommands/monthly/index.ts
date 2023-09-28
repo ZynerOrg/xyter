@@ -27,13 +27,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   if (!guild) {
     throw new Error(
-      "Oops! It looks like you're not part of a guild. Join a guild to embark on this adventure!"
+      "Oops! It looks like you're not part of a guild. Join a guild to embark on this adventure!",
     );
   }
 
   if (!user) {
     throw new Error(
-      "Oops! We couldn't find your user information. Please try again or contact support for assistance."
+      "Oops! We couldn't find your user information. Please try again or contact support for assistance.",
     );
   }
 
@@ -47,7 +47,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const userEconomy = await creditsManager.give(
     guild,
     user,
-    monthlyBonusAmount
+    monthlyBonusAmount,
   );
 
   const embed = new EmbedBuilder()
@@ -57,7 +57,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     })
     .setThumbnail(user.displayAvatarURL())
     .setDescription(
-      `You've just claimed your monthly treasure of **${monthlyBonusAmount} credits**! 🎉\nEmbark on an epic adventure and spend your riches wisely.\n\n💰 **Your balance**: ${userEconomy.balance} credits`
+      `You've just claimed your monthly treasure of **${monthlyBonusAmount} credits**! 🎉\nEmbark on an epic adventure and spend your riches wisely.\n\n💰 **Your balance**: ${userEconomy.balance} credits`,
     )
     .setFooter({
       text: `Claimed by ${user.username}`,
@@ -71,6 +71,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await generateCooldownName(interaction),
     guild,
     user,
-    startOfDay(addMonths(new Date(), 1))
+    startOfDay(addMonths(new Date(), 1)),
   );
 };

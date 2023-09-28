@@ -25,7 +25,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription("How much credits you want to withdraw.")
         .setRequired(true)
         .setMinValue(100)
-        .setMaxValue(999999)
+        .setMaxValue(999999),
     );
 };
 
@@ -45,7 +45,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { redeemUrl } = await ctrlPanelAPI.generateVoucher(
     voucherCode,
     withdrawalAmount,
-    1
+    1,
   );
 
   const userDM = await client.users.fetch(user.id);
@@ -67,7 +67,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     .setURL(redeemUrl);
 
   const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-    redemptionButton
+    redemptionButton,
   );
 
   const dmMessage: Message = await userDM.send({

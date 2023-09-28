@@ -21,7 +21,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("account")
         .setDescription("👤 The account you want to gift to")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addIntegerOption((option) =>
       option
@@ -29,12 +29,12 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription("💰 The amount you want to gift")
         .setRequired(true)
         .setMinValue(1)
-        .setMaxValue(2147483647)
+        .setMaxValue(2147483647),
     )
     .addStringOption((option) =>
       option
         .setName("message")
-        .setDescription("💬 Your personalized message to the account")
+        .setDescription("💬 Your personalized message to the account"),
     );
 };
 
@@ -63,14 +63,14 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     guild,
     recipient,
     amount,
-    message
+    message,
   );
   const senderEmbed = await createSenderEmbed(
     guild,
     user,
     recipient,
     amount,
-    message
+    message,
   );
 
   await recipient.send({ embeds: [recipientEmbed] });
@@ -83,7 +83,7 @@ const createRecipientEmbed = async (
   guild: Guild,
   recipient: User,
   amount: number,
-  message: string | null
+  message: string | null,
 ) => {
   const recipientEmbed = new EmbedBuilder()
     .setTimestamp()
@@ -113,7 +113,7 @@ const createSenderEmbed = async (
   sender: User,
   recipient: User,
   amount: number,
-  message: string | null
+  message: string | null,
 ) => {
   const senderEmbed = new EmbedBuilder()
     .setTimestamp()

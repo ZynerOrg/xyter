@@ -10,7 +10,7 @@ export default async (client: Client) => {
 
   const memberCount = guilds.cache.reduce(
     (acc, guild) => acc + (guild.memberCount || 0),
-    0
+    0,
   );
   const guildCount = guilds.cache.size;
 

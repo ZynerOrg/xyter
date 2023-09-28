@@ -15,7 +15,7 @@ const subcommandHandlers: SubcommandHandlers = {
 export const builder = new SlashCommandBuilder()
   .setName("reputation")
   .setDescription(
-    "See and give reputation to users to show others how trustworthy they are"
+    "See and give reputation to users to show others how trustworthy they are",
   )
   .setDMPermission(false)
   .addSubcommand(repute.builder)

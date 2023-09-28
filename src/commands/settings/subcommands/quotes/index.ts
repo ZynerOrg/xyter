@@ -14,10 +14,10 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     .setName("quotes")
     .setDescription("Configure quotes module")
     .addBooleanOption((option) =>
-      option.setName("status").setDescription("Status").setRequired(true)
+      option.setName("status").setDescription("Status").setRequired(true),
     )
     .addChannelOption((option) =>
-      option.setName("channel").setDescription("channel").setRequired(true)
+      option.setName("channel").setDescription("channel").setRequired(true),
     );
 };
 

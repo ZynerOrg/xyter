@@ -2,7 +2,7 @@ import { ButtonInteraction } from "discord.js";
 import interactionErrorHandler from "../../../../handlers/interactionErrorHandler";
 
 export default async function handleButtonInteraction(
-  interaction: ButtonInteraction
+  interaction: ButtonInteraction,
 ) {
   const { customId } = interaction;
 

@@ -49,7 +49,7 @@ class Encryption {
 
   private transformData(
     data: Buffer,
-    transform: crypto.CipherGCM | crypto.DecipherGCM
+    transform: crypto.CipherGCM | crypto.DecipherGCM,
   ): Buffer {
     return Buffer.concat([transform.update(data), transform.final()]);
   }

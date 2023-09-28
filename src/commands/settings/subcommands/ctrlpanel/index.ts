@@ -23,14 +23,14 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setRequired(true)
         .addChoices(
           { name: "HTTPS (secure)", value: "https" },
-          { name: "HTTP (insecure)", value: "http" }
-        )
+          { name: "HTTP (insecure)", value: "http" },
+        ),
     )
     .addStringOption((option) =>
-      option.setName("domain").setDescription("API domain").setRequired(true)
+      option.setName("domain").setDescription("API domain").setRequired(true),
     )
     .addStringOption((option) =>
-      option.setName("token").setDescription("API Token").setRequired(true)
+      option.setName("token").setDescription("API Token").setRequired(true),
     );
 };
 
