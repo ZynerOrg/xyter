@@ -42,5 +42,5 @@ docker:
     - docker build -t zyner/xyter:latest .
     - docker push zyner/xyter:latest
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY/group/project/image:latest .
-    - docker push $CI_REGISTRY/group/project/image:latest
+    - docker build -t $CI_REGISTRY/zyner/xyter/bot:latest .
+    - docker push $CI_REGISTRY/zyner/xyter/bot:latest
