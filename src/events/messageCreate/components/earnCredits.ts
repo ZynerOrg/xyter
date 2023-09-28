@@ -20,7 +20,7 @@ export default async (message: Message) => {
 
   if (await isUserOnCooldown(guild, author)) {
     logger.verbose(
-      `User "${author.username}" is on cooldown for "${cooldownName}" in guild "${guild.name}"`
+      `User "${author.username}" is on cooldown for "${cooldownName}" in guild "${guild.name}"`,
     );
     return;
   }
@@ -61,7 +61,7 @@ export default async (message: Message) => {
     logger.error(
       `Failed to give credits to user ${author.username} in guild ${
         guild.name
-      } when sending a message: ${String(error)}`
+      } when sending a message: ${String(error)}`,
     );
   }
 };
@@ -70,7 +70,7 @@ function isMessageValid(
   guild: Guild,
   author: User,
   channel: Channel,
-  content: string
+  content: string,
 ): boolean {
   return (
     guild &&
@@ -85,7 +85,7 @@ async function isUserOnCooldown(guild: Guild, author: User): Promise<boolean> {
   const cooldownActive = await cooldownManager.checkCooldown(
     cooldownName,
     guild,
-    author
+    author,
   );
 
   if (!cooldownActive) return false;
@@ -98,6 +98,6 @@ async function setCooldown(guild: Guild, user: User) {
     cooldownName,
     guild,
     user,
-    addSeconds(new Date(), 5)
+    addSeconds(new Date(), 5),
   );
 }

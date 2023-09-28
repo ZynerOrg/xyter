@@ -13,7 +13,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
     .addUserOption((option) =>
       option
         .setName("user")
-        .setDescription("The user whose avatar you want to check")
+        .setDescription("The user whose avatar you want to check"),
     );
 };
 
@@ -45,7 +45,7 @@ export const execute = async (interaction: CommandInteraction) => {
         .setDescription(
           userOption
             ? `You can also [download it here](${avatarUrl})!`
-            : `Your avatar is available to [download here](${avatarUrl}).`
+            : `Your avatar is available to [download here](${avatarUrl}).`,
         )
         .setThumbnail(avatarUrl)
         .setColor(process.env.EMBED_COLOR_SUCCESS),

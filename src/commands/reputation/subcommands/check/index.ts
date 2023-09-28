@@ -17,7 +17,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("user")
         .setDescription("The user you are checking")
-        .setRequired(false)
+        .setRequired(false),
     );
 };
 
@@ -41,7 +41,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         `**Reputation:**\n` +
         `- Negative: ${userReputation.negative}\n` +
         `- Positive: ${userReputation.positive}\n` +
-        `- Total: ${userReputation.total}`
+        `- Total: ${userReputation.total}`,
     )
     .setFooter({
       text: `Requested by ${user.username}`,

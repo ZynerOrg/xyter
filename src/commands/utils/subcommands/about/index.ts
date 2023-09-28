@@ -28,7 +28,7 @@ export const execute = async (interaction: CommandInteraction) => {
   const guildCount = client.guilds.cache.size;
   const memberCount = client.guilds.cache.reduce(
     (a, g) => a + g.memberCount,
-    0
+    0,
   );
   const version = process.env.npm_package_version;
 
@@ -42,7 +42,7 @@ export const execute = async (interaction: CommandInteraction) => {
       .setLabel("Discord Server")
       .setStyle(ButtonStyle.Link)
       .setEmoji("💬")
-      .setURL("https://discord.zyner.org")
+      .setURL("https://discord.zyner.org"),
   );
 
   const uptimeDuration = intervalToDuration({

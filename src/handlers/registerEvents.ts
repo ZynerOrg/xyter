@@ -42,7 +42,7 @@ export default async (client: Client) => {
       } catch (error) {
         logger.error(
           `Error occurred while registering event '${name}':`,
-          error
+          error,
         );
       }
     };

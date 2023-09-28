@@ -28,7 +28,7 @@ export default async (client: Client) => {
 
       // Fetch all channels in the guild
       const channels = guild.channels.cache.filter(
-        (channel) => channel.type === ChannelType.GuildText
+        (channel) => channel.type === ChannelType.GuildText,
       );
 
       // Object to store message counts per user
@@ -59,7 +59,7 @@ export default async (client: Client) => {
               } else {
                 messageCounts[userId]++;
                 logger.silly(
-                  `Guild: ${message.guild.name} User: ${message.author.username} => ${messageCounts[userId]}`
+                  `Guild: ${message.guild.name} User: ${message.author.username} => ${messageCounts[userId]}`,
                 );
               }
             }
@@ -124,11 +124,11 @@ export default async (client: Client) => {
             await creditsManager.set(
               member.guild,
               member.user,
-              messageCounts[userId]
+              messageCounts[userId],
             );
 
             logger.info(
-              `${member?.user.username}: ${messageCounts[userId]} messages`
+              `${member?.user.username}: ${messageCounts[userId]} messages`,
             );
           } catch (error: unknown) {
             if (error.code === 429) {

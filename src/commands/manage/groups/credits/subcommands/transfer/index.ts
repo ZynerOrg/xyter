@@ -19,13 +19,13 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("from-user")
         .setDescription("The user to take credits from.")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addUserOption((option) =>
       option
         .setName("to-user")
         .setDescription("The user to give credits to.")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addIntegerOption((option) =>
       option
@@ -33,12 +33,12 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription(`The amount of credits to set.`)
         .setRequired(true)
         .setMinValue(1)
-        .setMaxValue(2147483647)
+        .setMaxValue(2147483647),
     );
 };
 
 export const execute = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   const { guild, options, user } = interaction;
 
@@ -61,7 +61,7 @@ export const execute = async (
     guild,
     fromUser,
     toUser,
-    creditsAmount
+    creditsAmount,
   );
 
   // Constructing the transfer embed
@@ -84,7 +84,7 @@ export const execute = async (
         name: "🪙 Recipient Balance",
         value: `${transactionResult.toTransaction.balance}`,
         inline: true,
-      }
+      },
     )
     .setAuthor({ name: "This is an administrative action." })
     //.setThumbnail(user.displayAvatarURL())

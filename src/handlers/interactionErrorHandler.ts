@@ -11,7 +11,7 @@ import sendResponse from "../utils/sendResponse";
 
 export default async (
   interaction: CommandInteraction | ButtonInteraction,
-  error: unknown
+  error: unknown,
 ) => {
   if (error instanceof Error) {
     const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -19,14 +19,14 @@ export default async (
         .setLabel("Report Problem")
         .setStyle(ButtonStyle.Link)
         .setEmoji("✏️")
-        .setURL("https://discord.zyner.org")
+        .setURL("https://discord.zyner.org"),
     );
 
     const errorEmbed = new EmbedBuilder()
       .setAuthor({ name: "⚠️ | Request Failed" })
       .setDescription(
         error.message ??
-          "An error occurred while processing your request. Please try again later."
+          "An error occurred while processing your request. Please try again later.",
       )
       .setColor("#FFCC66")
       .setTimestamp();

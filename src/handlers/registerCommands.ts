@@ -47,7 +47,7 @@ export default async (client: Client) => {
           level: "error",
         });
       }
-    })
+    }),
   );
 
   await Promise.all([

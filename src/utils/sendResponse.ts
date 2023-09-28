@@ -8,21 +8,21 @@ import logger from "./logger";
 
 export default async (
   interaction: CommandInteraction | ButtonInteraction,
-  response: InteractionReplyOptions | InteractionEditReplyOptions | string
+  response: InteractionReplyOptions | InteractionEditReplyOptions | string,
 ) => {
   try {
     if (interaction instanceof ButtonInteraction) {
       await (interaction as ButtonInteraction).reply(
-        response as InteractionReplyOptions
+        response as InteractionReplyOptions,
       );
     } else {
       if (interaction.deferred) {
         await (interaction as CommandInteraction).editReply(
-          response as InteractionEditReplyOptions
+          response as InteractionEditReplyOptions,
         );
       } else {
         await (interaction as CommandInteraction).reply(
-          response as InteractionReplyOptions
+          response as InteractionReplyOptions,
         );
       }
     }

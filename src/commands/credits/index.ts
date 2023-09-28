@@ -40,6 +40,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await executeSubcommand(
     interaction,
     subcommandHandlers,
-    subcommandGroupHandlers
+    subcommandGroupHandlers,
   );
 };

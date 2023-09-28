@@ -19,7 +19,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription("work-bonus-chance")
         .setRequired(true)
         .setMinValue(0)
-        .setMaxValue(100)
+        .setMaxValue(100),
     )
     .addNumberOption((option) =>
       option
@@ -27,7 +27,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
         .setDescription("work-penalty-chance")
         .setRequired(true)
         .setMinValue(0)
-        .setMaxValue(100)
+        .setMaxValue(100),
     );
 };
 
@@ -103,7 +103,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             name: "Work Penalty Chance",
             value: `${upsertGuildCreditsSettings.workPenaltyChance}`,
             inline: true,
-          }
+          },
         ),
     ],
   });

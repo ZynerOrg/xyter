@@ -14,7 +14,7 @@ const logger = winston.createLogger({
   format: combine(
     errors({ stack: true }),
     timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    json()
+    json(),
   ),
   transports: [
     new winston.transports.DailyRotateFile({
@@ -24,7 +24,7 @@ const logger = winston.createLogger({
       format: combine(
         errors({ stack: true }),
         timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        json()
+        json(),
       ),
     }),
     new winston.transports.Console({
@@ -33,7 +33,7 @@ const logger = winston.createLogger({
         colorize({ all: true }),
         timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
         align(),
-        logFormat
+        logFormat,
       ),
     }),
   ],

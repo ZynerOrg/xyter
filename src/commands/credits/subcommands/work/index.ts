@@ -31,13 +31,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   if (!guild) {
     throw new Error(
-      "Oops! It seems like you're not part of a guild. Join a guild to use this command!"
+      "Oops! It seems like you're not part of a guild. Join a guild to use this command!",
     );
   }
 
   if (!user) {
     throw new Error(
-      "Oops! It looks like we couldn't find your user information. Please try again or contact support for assistance."
+      "Oops! It looks like we couldn't find your user information. Please try again or contact support for assistance.",
     );
   }
 
@@ -84,7 +84,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   // Work Description
   descriptions.push(
-    `Mission complete! You've earned **${baseCreditsEarned} credits**! 🎉`
+    `Mission complete! You've earned **${baseCreditsEarned} credits**! 🎉`,
   );
 
   // Bonus Description
@@ -99,7 +99,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   // Total Credits Description
   descriptions.push(
-    `Total earnings: **${creditsEarned} credits**. Keep up the hustle!`
+    `Total earnings: **${creditsEarned} credits**. Keep up the hustle!`,
   );
 
   if (creditsEarned > 0) {
@@ -133,6 +133,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await generateCooldownName(interaction),
     guild,
     user,
-    addHours(new Date(), 1)
+    addHours(new Date(), 1),
   );
 };

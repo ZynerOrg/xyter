@@ -17,7 +17,7 @@ const cooldownManager = new CooldownManager();
 const dnsLookup = promisify(dns.lookup);
 
 export const builder = (
-  command: SlashCommandSubcommandBuilder
+  command: SlashCommandSubcommandBuilder,
 ): SlashCommandSubcommandBuilder => {
   return command
     .setName("lookup")
@@ -26,12 +26,12 @@ export const builder = (
       option
         .setName("query")
         .setDescription("The query you want to look up.")
-        .setRequired(true)
+        .setRequired(true),
     );
 };
 
 export const execute = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   await deferReply(interaction, false);
 
@@ -75,12 +75,12 @@ export const execute = async (
       await generateCooldownName(interaction),
       guild || null,
       user,
-      addSeconds(new Date(), 5)
+      addSeconds(new Date(), 5),
     );
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code === "ENOTFOUND") {
       throw new Error(
-        `Sorry, we couldn't find the address for the requested query: ${query}.`
+        `Sorry, we couldn't find the address for the requested query: ${query}.`,
       );
     } else {
       throw error;

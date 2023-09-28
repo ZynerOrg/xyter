@@ -19,8 +19,8 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("account")
         .setDescription(
-          "Enter the username of another user to check their balance"
-        )
+          "Enter the username of another user to check their balance",
+        ),
     );
 };
 
@@ -44,7 +44,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     checkAccount,
     isUserCheckAccount,
     pronoun,
-    possessivePronoun
+    possessivePronoun,
   );
 
   await sendAccountBalanceEmbed(
@@ -52,7 +52,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     description,
     checkAccount,
     pronoun,
-    possessivePronoun
+    possessivePronoun,
   );
 };
 
@@ -61,7 +61,7 @@ const getAccountBalanceDescription = (
   checkAccount: User,
   isUserCheckAccount: boolean,
   pronoun: string,
-  possessivePronoun: string
+  possessivePronoun: string,
 ) => {
   let description = `${
     isUserCheckAccount ? "You" : checkAccount
@@ -87,7 +87,7 @@ const sendAccountBalanceEmbed = async (
   description: string,
   checkAccount: User,
   pronoun: string,
-  possessivePronoun: string
+  possessivePronoun: string,
 ) => {
   await sendResponse(interaction, {
     embeds: [

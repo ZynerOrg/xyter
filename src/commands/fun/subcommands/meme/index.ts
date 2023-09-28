@@ -35,7 +35,7 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   await deferReply(interaction, false);
 
@@ -59,7 +59,7 @@ export const execute = async (
     });
   } catch (error) {
     throw new Error(
-      "Sorry, we couldn't fetch a meme at the moment. Please try again later."
+      "Sorry, we couldn't fetch a meme at the moment. Please try again later.",
     );
   }
 
@@ -67,13 +67,13 @@ export const execute = async (
     await generateCooldownName(interaction),
     guild || null,
     user,
-    addSeconds(new Date(), 5)
+    addSeconds(new Date(), 5),
   );
 };
 
 async function fetchRandomMeme(): Promise<MemeContent> {
   const { data } = await axios.get(
-    "https://www.reddit.com/r/memes/random/.json"
+    "https://www.reddit.com/r/memes/random/.json",
   );
   const { children } = data[0].data;
   const content: MemeContent = children[0].data;
@@ -82,7 +82,7 @@ async function fetchRandomMeme(): Promise<MemeContent> {
 
 async function fetchAuthorData(author: string): Promise<AuthorData> {
   const { data } = await axios.get(
-    `https://www.reddit.com/user/${author}/about.json`
+    `https://www.reddit.com/user/${author}/about.json`,
   );
   const authorData: AuthorData = data.data;
   return authorData;
@@ -94,7 +94,7 @@ function createButtons(permalink: string) {
       .setLabel("View post")
       .setStyle(ButtonStyle.Link)
       .setEmoji("🔗")
-      .setURL(`https://reddit.com${permalink}`)
+      .setURL(`https://reddit.com${permalink}`),
   );
 }
 

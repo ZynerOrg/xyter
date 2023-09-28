@@ -13,7 +13,7 @@ export default async function handleCooldown(
   interaction: CommandInteraction,
   guildCooldown: Cooldown | null,
   userCooldown: Cooldown | null,
-  guildMemberCooldown: Cooldown | null
+  guildMemberCooldown: Cooldown | null,
 ) {
   const cooldown = guildCooldown || userCooldown || guildMemberCooldown;
 
@@ -44,7 +44,7 @@ function createButtons() {
       .setLabel("Report Problem")
       .setStyle(ButtonStyle.Link)
       .setEmoji("✏️")
-      .setURL("https://discord.zyner.org")
+      .setURL("https://discord.zyner.org"),
   );
 }
 
@@ -52,7 +52,7 @@ function createCooldownEmbed(timeLeft: string, cooldownId: string) {
   return new EmbedBuilder()
     .setAuthor({ name: "⚠️ | Request Failed" })
     .setDescription(
-      `Sorry, but you're currently on cooldown. Please try again later.\n\nRemaining cooldown time: ${timeLeft}`
+      `Sorry, but you're currently on cooldown. Please try again later.\n\nRemaining cooldown time: ${timeLeft}`,
     )
     .setColor("#FF6699")
     .setTimestamp()

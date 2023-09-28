@@ -25,20 +25,20 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
       option
         .setName("uses")
         .setDescription("How many users should be able to use this.")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addIntegerOption((option) =>
       option
         .setName("credit")
         .setDescription(`How much credits provided per use.`)
-        .setRequired(true)
+        .setRequired(true),
     )
     .addChannelOption((option) =>
       option
         .setName("channel")
         .setDescription("The channel to send the message to.")
         .setRequired(true)
-        .addChannelTypes(ChannelType.GuildText)
+        .addChannelTypes(ChannelType.GuildText),
     );
 };
 
@@ -69,7 +69,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { redeemUrl } = await ctrlPanelAPI.generateVoucher(
     code,
     creditAmount,
-    uses
+    uses,
   );
 
   await sendResponse(interaction, {
@@ -81,7 +81,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       .setLabel("Redeem it here")
       .setStyle(ButtonStyle.Link)
       .setEmoji("🏦")
-      .setURL(`${redeemUrl}`)
+      .setURL(`${redeemUrl}`),
   );
 
   const discordChannel = await guild.channels.fetch(channel.id);
@@ -99,7 +99,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
           },
         ])
         .setDescription(
-          `${interaction.user} dropped a voucher for a maximum **${uses}** members!`
+          `${interaction.user} dropped a voucher for a maximum **${uses}** members!`,
         ),
     ],
     components: [buttons],

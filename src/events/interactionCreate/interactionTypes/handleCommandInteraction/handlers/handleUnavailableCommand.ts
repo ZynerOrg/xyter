@@ -10,7 +10,7 @@ import sendResponse from "../../../../../utils/sendResponse";
 
 export default async function handleUnavailableCommand(
   interaction: CommandInteraction,
-  commandName: string
+  commandName: string,
 ) {
   const commandErrorMessage = `Command '${commandName}' is unavailable`;
   logger.error(commandErrorMessage);
@@ -26,7 +26,7 @@ export default async function handleUnavailableCommand(
       .setLabel("Report Problem")
       .setStyle(ButtonStyle.Link)
       .setEmoji("✏️")
-      .setURL("https://discord.zyner.org")
+      .setURL("https://discord.zyner.org"),
   );
 
   const response = {

@@ -63,7 +63,7 @@ class CreditsManager {
   async give(guild: Guild, user: User, amount: number) {
     try {
       logger.debug(
-        `Starting give transaction for guild: ${guild.id}, user: ${user.id}`
+        `Starting give transaction for guild: ${guild.id}, user: ${user.id}`,
       );
 
       const recipient = await prisma.$transaction(async (tx) => {
@@ -80,7 +80,7 @@ class CreditsManager {
 
         if (existingRecipient && existingRecipient.balance > 2147483647) {
           throw new Error(
-            "Oops! That's more credits than the user can have. The maximum allowed is 2,147,483,647."
+            "Oops! That's more credits than the user can have. The maximum allowed is 2,147,483,647.",
           );
         }
 
@@ -131,7 +131,7 @@ class CreditsManager {
       });
 
       logger.debug(
-        `Give transaction completed for guild: ${guild.id}, user: ${user.id}`
+        `Give transaction completed for guild: ${guild.id}, user: ${user.id}`,
       );
 
       return recipient;
@@ -144,7 +144,7 @@ class CreditsManager {
   async take(guild: Guild, user: User, amount: number) {
     try {
       logger.debug(
-        `Starting take transaction for guild: ${guild.id}, user: ${user.id}`
+        `Starting take transaction for guild: ${guild.id}, user: ${user.id}`,
       );
 
       const recipient = await prisma.$transaction(async (tx) => {
@@ -210,7 +210,7 @@ class CreditsManager {
       });
 
       logger.debug(
-        `Take transaction completed for guild: ${guild.id}, user: ${user.id}`
+        `Take transaction completed for guild: ${guild.id}, user: ${user.id}`,
       );
 
       return recipient;
@@ -223,7 +223,7 @@ class CreditsManager {
   async set(guild: Guild, user: User, amount: number) {
     try {
       logger.debug(
-        `Starting set transaction for guild: ${guild.id}, user: ${user.id}`
+        `Starting set transaction for guild: ${guild.id}, user: ${user.id}`,
       );
 
       const recipient = await prisma.$transaction(async (tx) => {
@@ -274,7 +274,7 @@ class CreditsManager {
       });
 
       logger.debug(
-        `Set transaction completed for guild: ${guild.id}, user: ${user.id}`
+        `Set transaction completed for guild: ${guild.id}, user: ${user.id}`,
       );
 
       return recipient;
@@ -410,13 +410,13 @@ class CreditsManager {
 
       if (!updatedFromTransaction) {
         throw new Error(
-          "Failed to fetch the updated sender's transaction record."
+          "Failed to fetch the updated sender's transaction record.",
         );
       }
 
       if (!updatedToTransaction) {
         throw new Error(
-          "Failed to fetch the updated recipient's transaction record."
+          "Failed to fetch the updated recipient's transaction record.",
         );
       }
 
@@ -429,7 +429,7 @@ class CreditsManager {
       };
     } catch (error: any) {
       logger.error(
-        `Error in transaction for guild: ${guild.id}, sender: ${fromUser.id}, recipient: ${toUser.id}: ${error.message}`
+        `Error in transaction for guild: ${guild.id}, sender: ${fromUser.id}, recipient: ${toUser.id}: ${error.message}`,
       );
       throw error;
     }
