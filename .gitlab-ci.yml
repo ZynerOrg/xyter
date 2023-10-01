@@ -29,7 +29,7 @@ docker:
   stage: docker
   image: docker:20.10.16
   variables:
-#    DOCKER_HOST: tcp://dind:2375
+    #    DOCKER_HOST: tcp://dind:2375
     DOCKER_TLS_CERTDIR: ""
   services:
     - docker:20.10.16-dind
@@ -39,6 +39,13 @@ docker:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
     - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+    # Tag name
+    - docker build -t zyner/xyter:$CI_COMMIT_TAG .
+    - docker push zyner/xyter:$CI_COMMIT_TAG
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/zyner/xyter/bot:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY/zyner/xyter/bot:$CI_COMMIT_TAG
+    # Latest
     - docker build -t zyner/xyter:latest .
     - docker push zyner/xyter:latest
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
