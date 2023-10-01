@@ -49,3 +49,4 @@ docker:
     - docker push $CI_REGISTRY/zyner/xyter/bot:latest
   only:
     - tags
+    - merge_requests
