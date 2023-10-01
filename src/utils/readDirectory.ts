@@ -14,11 +14,8 @@ export default async (filePath: string) => {
     });
     return result;
   } catch (error) {
-    logger.error({
-      message: `Error checking directory ${filePath}`,
-      error,
-      directoryPath,
-    });
-    throw new Error(`Error checking directory ${filePath}: ${error}`);
+    const errorMessage = `Error checking directory ${filePath}: ${error}`;
+    logger.error({ message: errorMessage, error, directoryPath });
+    throw new Error(errorMessage);
   }
 };
