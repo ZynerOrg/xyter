@@ -2,9 +2,9 @@ version: "3.7"
 services:
   xyter:
     container_name: xyter
-    # image: zyner/xyter
-    build:
-      context: .
+    image: registry.zyner.org/zyner/xyter/bot
+    #build:
+    #  context: .
     restart: unless-stopped
     env_file:
       - .env
