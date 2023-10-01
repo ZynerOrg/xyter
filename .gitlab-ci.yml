@@ -10,14 +10,12 @@ cache:
   paths:
     - ~/.npm/
 
-before_script:
-  - apk update && apk add git
-  - apk add nodejs npm
-
 build:
   stage: build
-  script:
+  before_script:
+    - apk update && apk add git tar nodejs npm
     - npm ci
+  script:
     - npm run build
     - npx semantic-release
     - find . -not -path "./node_modules/*" -type f -print0 | xargs -0 tar -czvf build-artifacts.tar.gz
@@ -30,12 +28,7 @@ build:
 
 docker:
   stage: docker
-  image: docker:20.10.16
-  variables:
-    #    DOCKER_HOST: tcp://dind:2375
-    DOCKER_TLS_CERTDIR: ""
-  services:
-    - docker:20.10.16-dind
+  image: docker:stable
   before_script:
     - docker info
   script:
