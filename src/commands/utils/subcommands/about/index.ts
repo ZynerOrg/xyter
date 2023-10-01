@@ -49,7 +49,7 @@ export const execute = async (interaction: CommandInteraction) => {
   });
   const uptimeString = formatDuration(uptimeDuration);
 
-  const botDescription = `This bot, developed by [**Zyner**](https://zyner.org), serves **${guildCount}** servers and has a vast user base of **${memberCount}**. The current version is **${version}**, accessible on [**GitHub**](https://github.com/ZynerOrg/xyter). It has been active since the last restart, with an uptime of **${uptimeString}**.`;
+  const botDescription = `This bot, developed by [**Zyner**](https://zyner.org), serves **${guildCount}** servers and has a vast user base of **${memberCount}**. The current version is **${version}**, accessible on [**Zyner Git**](https://git.zyner.org/zyner/xyter/bot). It has been active since the last restart, with an uptime of **${uptimeString}**.`;
 
   const interactionEmbed = new EmbedBuilder()
     .setDescription(botDescription)
