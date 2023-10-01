@@ -1,46 +1,52 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-  - build
-  - docker
-
+- build
+- docker
+- test
 variables:
-  NODE_VERSION: "20"
-
+  NODE_VERSION: '20'
 cache:
   key: "$CI_COMMIT_REF_SLUG"
   paths:
-    - ~/.npm/
-
+  - "~/.npm/"
 before_script:
-  - apk update && apk add git
-  - apk add nodejs npm
-
+- apk update && apk add git
+- apk add nodejs npm
 build:
   stage: build
   script:
-    - npm ci
-    - npm run build
-    - npx semantic-release
-    - find . -not -path "./node_modules/*" -type f -print0 | xargs -0 tar -czvf build-artifacts.tar.gz
+  - npm ci
+  - npm run build
+  - npx semantic-release
+  - find . -not -path "./node_modules/*" -type f -print0 | xargs -0 tar -czvf build-artifacts.tar.gz
   artifacts:
     paths:
-      - build-artifacts.tar.gz
-
+    - build-artifacts.tar.gz
 docker:
   stage: docker
   image: docker:20.10.16
   variables:
-#    DOCKER_HOST: tcp://dind:2375
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_TLS_CERTDIR: ''
   services:
-    - docker:20.10.16-dind
+  - docker:20.10.16-dind
   before_script:
-    - docker info
+  - docker info
   script:
-    - apk add tar
-    - tar -xzvf build-artifacts.tar.gz
-    - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
-    - docker build -t zyner/xyter:latest .
-    - docker push zyner/xyter:latest
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY/zyner/xyter/bot:latest .
-    - docker push $CI_REGISTRY/zyner/xyter/bot:latest
+  - apk add tar
+  - tar -xzvf build-artifacts.tar.gz
+  - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+  - docker build -t zyner/xyter:latest .
+  - docker push zyner/xyter:latest
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker build -t $CI_REGISTRY/zyner/xyter/bot:latest .
+  - docker push $CI_REGISTRY/zyner/xyter/bot:latest
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
