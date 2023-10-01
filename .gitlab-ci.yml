@@ -24,6 +24,9 @@ build:
   artifacts:
     paths:
       - build-artifacts.tar.gz
+  only:
+    - merge_requests
+    - pushes
 
 docker:
   stage: docker
@@ -51,3 +54,5 @@ docker:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CI_REGISTRY/zyner/xyter/bot:latest .
     - docker push $CI_REGISTRY/zyner/xyter/bot:latest
+  only:
+    - tags
