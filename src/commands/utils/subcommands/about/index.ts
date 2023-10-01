@@ -8,6 +8,7 @@ import {
   SlashCommandSubcommandBuilder,
 } from "discord.js";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -17,13 +18,10 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: CommandInteraction) => {
-  await deferReply(interaction, false);
-
   const { user, guild, client } = interaction;
 
-  if (!guild) {
-    throw new Error("This command is only available in guilds");
-  }
+  await deferReply(interaction, false);
+  if (!guild) throw new GuildNotFoundError();
 
   const guildCount = client.guilds.cache.size;
   const memberCount = client.guilds.cache.reduce(

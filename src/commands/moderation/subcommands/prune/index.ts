@@ -8,6 +8,10 @@ import {
 } from "discord.js";
 import checkPermission from "../../../../utils/checkPermission";
 import deferReply from "../../../../utils/deferReply";
+import {
+  ChannelNotFoundError,
+  GuildNotFoundError,
+} from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 // Function
@@ -31,23 +35,23 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  const { user, options, channel } = interaction;
-  if (!channel) {
-    throw new Error("The bot failed to find the channel to prune messages in.");
-  }
+  const { guild, user, options, channel } = interaction;
 
   await deferReply(interaction, false);
   checkPermission(interaction, PermissionsBitField.Flags.ManageMessages);
+  if (!guild) throw new GuildNotFoundError();
+  if (!channel) throw new ChannelNotFoundError();
 
-  const count = options.getInteger("count");
+  const count = options.getInteger("count", true);
   const bots = options.getBoolean("bots");
-  if (!count || count < 1 || count > 99) {
+  if (count < 1 || count > 99) {
     throw new Error(
       "Please provide a number between 1 and 99 for the prune command."
     );
   }
 
-  if (channel.type !== ChannelType.GuildText) return;
+  if (channel.type !== ChannelType.GuildText)
+    throw new Error("This channel is not a text channel in a guild!");
 
   const messagesToDelete = await channel.messages
     .fetch({ limit: count + 1 }) // Fetch count + 1 messages to exclude the interaction message itself

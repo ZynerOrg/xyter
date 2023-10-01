@@ -9,6 +9,7 @@ import CtrlPanelAPI, {
 } from "../../../../services/CtrlPanelAPI";
 import checkPermission from "../../../../utils/checkPermission";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import logger from "../../../../utils/logger";
 import sendResponse from "../../../../utils/sendResponse";
 
@@ -35,12 +36,11 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
-
-  checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
-
   const { guild, options, user } = interaction;
-  if (!guild) throw new Error("Guild unavailable");
+
+  await deferReply(interaction, true);
+  checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+  if (!guild) throw new GuildNotFoundError();
 
   const scheme = options.getString("scheme", true);
   const domain = options.getString("domain", true);

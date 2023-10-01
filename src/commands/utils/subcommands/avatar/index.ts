@@ -18,12 +18,10 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: CommandInteraction) => {
-  await deferReply(interaction, false);
-
   const { options, user } = interaction;
 
+  await deferReply(interaction, false);
   const userOption = options.getUser("user");
-
   const targetUser = userOption || user;
 
   const embed = new EmbedBuilder()

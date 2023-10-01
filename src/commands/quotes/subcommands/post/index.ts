@@ -10,6 +10,10 @@ import prisma from "../../../../handlers/prisma";
 import generateCooldownName from "../../../../helpers/generateCooldownName";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import deferReply from "../../../../utils/deferReply";
+import {
+  ChannelNotFoundError,
+  GuildNotFoundError,
+} from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 const cooldownManager = new CooldownManager();
@@ -35,16 +39,16 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 export const execute = async (
   interaction: ChatInputCommandInteraction
 ): Promise<void> => {
-  await deferReply(interaction, true);
-
   const { options, guild, user } = interaction;
-  if (!guild) throw new Error("A guild is required.");
+
+  await deferReply(interaction, true);
+  if (!guild) throw new GuildNotFoundError();
 
   const quoteUser = options.getUser("user", true);
   const quoteString = options.getString("message", true);
 
   if (quoteUser.id == user.id) throw new Error("One cannot quote oneself.");
-  
+
   await upsertGuildMember(guild, user);
   await upsertGuildMember(guild, quoteUser);
 
@@ -61,7 +65,7 @@ export const execute = async (
     guildQuotesSettings.quoteChannelId
   );
 
-  if (!channel) throw new Error("No channel found.");
+  if (!channel) throw new ChannelNotFoundError();
 
   if (channel.type !== ChannelType.GuildText)
     throw new Error("The channel is not a text channel.");

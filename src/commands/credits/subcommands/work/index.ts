@@ -10,6 +10,7 @@ import CreditsManager from "../../../../handlers/CreditsManager";
 import prisma from "../../../../handlers/prisma";
 import generateCooldownName from "../../../../helpers/generateCooldownName";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 import jobs from "./jobs";
 
@@ -28,18 +29,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { guild, user } = interaction;
 
   await deferReply(interaction, false);
-
-  if (!guild) {
-    throw new Error(
-      "Oops! It seems like you're not part of a guild. Join a guild to use this command!"
-    );
-  }
-
-  if (!user) {
-    throw new Error(
-      "Oops! It looks like we couldn't find your user information. Please try again or contact support for assistance."
-    );
-  }
+  if (!guild) throw new GuildNotFoundError();
 
   const chance = new Chance();
 

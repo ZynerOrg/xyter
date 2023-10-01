@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import CreditsManager from "../../../handlers/CreditsManager";
 import CtrlPanelAPI from "../../../services/CtrlPanelAPI";
 import deferReply from "../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../utils/errors";
 import sendResponse from "../../../utils/sendResponse";
 
 const creditsManager = new CreditsManager();
@@ -30,15 +31,13 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
-
   const { options, guild, user, client } = interaction;
-  if (!guild) throw new Error("This command can only be executed in a guild");
+
+  await deferReply(interaction, true);
+  if (!guild) throw new GuildNotFoundError();
 
   const ctrlPanelAPI = new CtrlPanelAPI(guild);
-
   const withdrawalAmount = options.getInteger("withdraw", true);
-
   await creditsManager.take(guild, user, withdrawalAmount);
 
   const voucherCode = uuidv4();

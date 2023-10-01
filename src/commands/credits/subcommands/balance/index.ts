@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import CreditsManager from "../../../../handlers/CreditsManager";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 const creditsManager = new CreditsManager();
@@ -26,11 +27,9 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options, user, guild } = interaction;
-  await deferReply(interaction, false);
 
-  if (!guild) {
-    throw new Error("This command can only be used in guild environments. ❌");
-  }
+  await deferReply(interaction, false);
+  if (!guild) throw new GuildNotFoundError();
 
   const checkAccount = options.getUser("account") || user;
   const creditAccount = await creditsManager.balance(guild, checkAccount);

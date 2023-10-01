@@ -7,6 +7,7 @@ import {
 import CreditsManager from "../../../../../../handlers/CreditsManager";
 import checkPermission from "../../../../../../utils/checkPermission";
 import deferReply from "../../../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../../../utils/errors";
 import sendResponse from "../../../../../../utils/sendResponse";
 
 const creditsManager = new CreditsManager();
@@ -44,18 +45,11 @@ export const execute = async (
 
   await deferReply(interaction, false);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+  if (!guild) throw new GuildNotFoundError();
 
-  if (!guild) {
-    throw new Error("We could not get the current guild from Discord.");
-  }
-
-  const fromUser = options.getUser("from-user");
-  const toUser = options.getUser("to-user");
-  const creditsAmount = options.getInteger("amount");
-
-  if (!fromUser || !toUser || typeof creditsAmount !== "number") {
-    throw new Error("Invalid user(s) or credit amount provided.");
-  }
+  const fromUser = options.getUser("from-user", true);
+  const toUser = options.getUser("to-user", true);
+  const creditsAmount = options.getInteger("amount", true);
 
   const transactionResult = await creditsManager.transfer(
     guild,

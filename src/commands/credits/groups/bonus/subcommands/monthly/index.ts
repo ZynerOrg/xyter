@@ -9,6 +9,10 @@ import CreditsManager from "../../../../../../handlers/CreditsManager";
 import prisma from "../../../../../../handlers/prisma";
 import generateCooldownName from "../../../../../../helpers/generateCooldownName";
 import deferReply from "../../../../../../utils/deferReply";
+import {
+  GuildNotFoundError,
+  UserNotFoundError,
+} from "../../../../../../utils/errors";
 import sendResponse from "../../../../../../utils/sendResponse";
 
 const cooldownManager = new CooldownManager();
@@ -25,17 +29,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   await deferReply(interaction, false);
 
-  if (!guild) {
-    throw new Error(
-      "Oops! It looks like you're not part of a guild. Join a guild to embark on this adventure!"
-    );
-  }
-
-  if (!user) {
-    throw new Error(
-      "Oops! We couldn't find your user information. Please try again or contact support for assistance."
-    );
-  }
+  if (!guild) throw new GuildNotFoundError();
+  if (!user) throw new UserNotFoundError();
 
   const guildCreditsSettings = await prisma.guildCreditsSettings.upsert({
     where: { id: guild.id },

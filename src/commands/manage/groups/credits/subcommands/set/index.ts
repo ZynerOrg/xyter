@@ -7,6 +7,7 @@ import {
 import CreditsManager from "../../../../../../handlers/CreditsManager";
 import checkPermission from "../../../../../../utils/checkPermission";
 import deferReply from "../../../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../../../utils/errors";
 import sendResponse from "../../../../../../utils/sendResponse";
 
 const creditsManager = new CreditsManager();
@@ -38,18 +39,10 @@ export const execute = async (
 
   await deferReply(interaction, false);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+  if (!guild) throw new GuildNotFoundError();
 
-  if (!guild) {
-    throw new Error("We could not get the current guild from Discord.");
-  }
-
-  const discordReceiver = options.getUser("user");
-  const creditsAmount = options.getInteger("amount");
-
-  if (!discordReceiver || typeof creditsAmount !== "number") {
-    await sendResponse(interaction, "Invalid user or credit amount provided.");
-    return;
-  }
+  const discordReceiver = options.getUser("user", true);
+  const creditsAmount = options.getInteger("amount", true);
 
   const embedSuccess = new EmbedBuilder()
     .setColor(process.env.EMBED_COLOR_SUCCESS)

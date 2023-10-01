@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import CtrlPanelAPI from "../../../../../../services/CtrlPanelAPI";
 import checkPermission from "../../../../../../utils/checkPermission";
 import deferReply from "../../../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../../../utils/errors";
 import sendResponse from "../../../../../../utils/sendResponse";
 
 // Function
@@ -47,18 +48,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   await deferReply(interaction, true);
   checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+  if (!guild) throw new GuildNotFoundError();
 
-  if (!guild) throw new Error("This command can only be used in guilds");
   const ctrlPanelAPI = new CtrlPanelAPI(guild);
 
-  const uses = options?.getInteger("uses");
-  const creditAmount = options?.getInteger("credit");
-  const channel = options?.getChannel("channel");
-
-  if (!uses) throw new Error("Amount of uses is required.");
-  if (!creditAmount) throw new Error("Amount of credits is required.");
-  if (!channel) throw new Error("Channel is required.");
-  if (!guild) throw new Error("Guild is required.");
+  const uses = options?.getInteger("uses", true);
+  const creditAmount = options?.getInteger("credit", true);
+  const channel = options?.getChannel("channel", true);
 
   const embedSuccess = new EmbedBuilder()
     .setTitle(":toolbox:︱Giveaway")

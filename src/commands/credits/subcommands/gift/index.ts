@@ -9,6 +9,7 @@ import {
 import CreditsManager from "../../../../handlers/CreditsManager";
 import upsertGuildMember from "../../../../helpers/upsertGuildMember";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 const creditsManager = new CreditsManager();
@@ -39,16 +40,14 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
-
   const { options, user, guild } = interaction;
-  const recipient = options.getUser("account");
+
+  await deferReply(interaction, true);
+  if (!guild) throw new GuildNotFoundError();
+
+  const recipient = options.getUser("account", true);
   const amount = options.getInteger("amount");
   const message = options.getString("message");
-
-  if (!guild || !user || !recipient) {
-    throw new Error("Invalid interaction data");
-  }
 
   if (typeof amount !== "number" || amount < 1) {
     throw new Error("Please enter a valid number of credits to gift");

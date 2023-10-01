@@ -7,6 +7,7 @@ import {
 import prisma from "../../../../handlers/prisma";
 import checkPermission from "../../../../utils/checkPermission";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 export const builder = (command: SlashCommandSubcommandBuilder) => {
@@ -32,26 +33,14 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, true);
-
-  checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
-
   const { guild, options, user } = interaction;
 
-  const workBonusChance = options.getNumber("work-bonus-chance");
-  const workPenaltyChance = options.getNumber("work-penalty-chance");
+  await deferReply(interaction, true);
+  checkPermission(interaction, PermissionsBitField.Flags.ManageGuild);
+  if (!guild) throw new GuildNotFoundError();
 
-  if (!guild) {
-    throw new Error("Guild not found.");
-  }
-
-  if (typeof workBonusChance !== "number") {
-    throw new Error("Work Bonus Chance must be a number.");
-  }
-
-  if (typeof workPenaltyChance !== "number") {
-    throw new Error("Work Penalty Chance must be a number.");
-  }
+  const workBonusChance = options.getNumber("work-bonus-chance", true);
+  const workPenaltyChance = options.getNumber("work-penalty-chance", true);
 
   const upsertGuildCreditsSettings = await prisma.guildCreditsSettings.upsert({
     where: {

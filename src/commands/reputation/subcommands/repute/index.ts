@@ -8,6 +8,7 @@ import CooldownManager from "../../../../handlers/CooldownManager";
 import ReputationManager from "../../../../handlers/ReputationManager";
 import generateCooldownName from "../../../../helpers/generateCooldownName";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 const cooldownManager = new CooldownManager();
@@ -37,20 +38,12 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const { options, user, guild } = interaction;
-  await deferReply(interaction, true);
 
-  if (!guild) {
-    throw new Error("This command can only be used in guilds");
-  }
+  await deferReply(interaction, true);
+  if (!guild) throw new GuildNotFoundError();
 
   const targetUser = options.getUser("user", true);
   const reputationType = options.getString("type", true);
-
-  if (!targetUser) {
-    throw new Error(
-      "Sorry, we were unable to find the user you are trying to give reputation to."
-    );
-  }
 
   if (reputationType !== "positive" && reputationType !== "negative") {
     throw new Error("Invalid reputation type");

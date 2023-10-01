@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import CreditsManager from "../../../../handlers/CreditsManager";
 import deferReply from "../../../../utils/deferReply";
+import { GuildNotFoundError } from "../../../../utils/errors";
 import sendResponse from "../../../../utils/sendResponse";
 
 const creditsManager = new CreditsManager();
@@ -20,10 +21,7 @@ export const execute = async (interaction: CommandInteraction) => {
   const { guild, client, user } = interaction;
 
   await deferReply(interaction, false);
-
-  if (!guild) {
-    throw new Error("Unable to find the guild.");
-  }
+  if (!guild) throw new GuildNotFoundError();
 
   const topTen = await creditsManager.topUsers(guild, 10);
 

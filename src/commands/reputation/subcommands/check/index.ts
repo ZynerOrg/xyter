@@ -22,13 +22,10 @@ export const builder = (command: SlashCommandSubcommandBuilder) => {
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  await deferReply(interaction, false);
-
   const { options, user } = interaction;
 
+  await deferReply(interaction, false);
   const checkUser = options.getUser("user") || user;
-
-  if (!user) throw new Error("User unavailable");
 
   const userReputation = await reputationManager.check(checkUser);
 
