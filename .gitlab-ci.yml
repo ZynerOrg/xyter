@@ -12,6 +12,7 @@ cache:
 
 build:
   stage: build
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/alpine:latest
   before_script:
     - apk update && apk add git tar nodejs npm
     - npm ci
@@ -28,7 +29,7 @@ build:
 
 docker:
   stage: docker
-  image: docker:stable
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/docker:stable
   before_script:
     - docker info
   script:
