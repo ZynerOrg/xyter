@@ -64,7 +64,7 @@ const getAccountBalanceDescription = (
 ) => {
   let description = `${
     isUserCheckAccount ? "You" : checkAccount
-  } currently have ${creditAccount.balance} credits. 💰\n\n`;
+  } currently ${ isUserCheckAccount ? "have" : "has" } ${creditAccount.balance} credits. 💰\n\n`;
 
   if (creditAccount.balance === 0) {
     description += `${possessivePronoun} wallet is empty. Encourage ${
