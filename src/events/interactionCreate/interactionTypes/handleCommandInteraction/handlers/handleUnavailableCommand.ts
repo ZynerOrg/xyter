@@ -26,7 +26,7 @@ export default async function handleUnavailableCommand(
       .setLabel("Report Problem")
       .setStyle(ButtonStyle.Link)
       .setEmoji("✏️")
-      .setURL("https://discord.zyner.org")
+      .setURL("https://s.zyner.org/discord")
   );
 
   const response = {
