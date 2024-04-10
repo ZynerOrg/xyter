@@ -6,7 +6,7 @@
 
 <h3 align="center">
   <br>
-  Please use <a href="https://git.zyner.org/xyter/bot">git.zyner.org</a> instead for collaboration, this is due to mirroring!
+  Please use <a href="https://s.zyner.org/xyter-code">git.zyner.org</a> instead for collaboration, this is due to mirroring!
   <br>
 </h3>
 
@@ -15,7 +15,7 @@
   <br>
 
 <p align="center">
-  <a href="https://discord.zyner.org">
+  <a href="https://s.zyner.org/discord">
     <img src="https://img.shields.io/discord/774981996878626847.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge" alt="Support">
   </a>
 </p>
@@ -25,7 +25,7 @@
   •
   <a href="#installation">Installation</a>
   •
-  <a href="https://xyter.zyner.org/">Documentation</a>
+  <a href="https://s.zyner.org/xyter-docs">Documentation</a>
   •
   <a href="#join-the-community">Community</a>
   •
@@ -36,7 +36,7 @@
 
 Xyter is a privacy-focused bot - by making a lot of features opt-in and can easily be enabled/disabled by server owners. We are not and will never be one of those who makes proprietary code and making money out of it, we are happily accepting donations to make Xyter even better. And of course, you can self-host this bot or use our cloud instance if you want. We are happily helping you setting up your own instance and we provide same support regardless of if you self-host it or if we host it.
 
-[Installation](#installation) is easy, bot is only supported officially when hosted on **Linux**, if you don't have much Linux knowledge we are happy to help you out on our [Discord server](https://discord.zyner.org)! When you have installed the bot you manage settings from within Discord aside from global settings.
+[Installation](#installation) is easy, bot is only supported officially when hosted on **Linux**, if you don't have much Linux knowledge we are happy to help you out on our [Discord server](https://s.zyner.org/discord)! When you have installed the bot you manage settings from within Discord aside from global settings.
 
 **The default set of modules includes and is not limited to:**
 
@@ -58,13 +58,13 @@ Xyter is a privacy-focused bot - by making a lot of features opt-in and can easi
 - [Pterodactyl](https://xyter.zyner.org/docs/flavors/on-premise/pterodactyl)
 
 If after reading the guide you are still experiencing issues, feel free to join the
-[Official Discord Server](https://discord.zyner.org) and ask in the **#support** channel for help.
+[Official Discord Server](https://s.zyner.org/discord) and ask in the **#support** channel for help.
 
 # Join the community!
 
 **Xyter** is in continuous development, and is currently still in **beta**!
 
-Join us on our [Official Discord Server](https://discord.zyner.org)!
+Join us on our [Official Discord Server](https://s.zyner.org/discord)!
 
 # License
 
