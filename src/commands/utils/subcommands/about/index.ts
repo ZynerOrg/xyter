@@ -35,12 +35,12 @@ export const execute = async (interaction: CommandInteraction) => {
       .setLabel("Documentation")
       .setStyle(ButtonStyle.Link)
       .setEmoji("📚")
-      .setURL("https://xyter.zyner.org"),
+      .setURL("https://s.zyner.org/xyter-docs"),
     new ButtonBuilder()
       .setLabel("Discord Server")
       .setStyle(ButtonStyle.Link)
       .setEmoji("💬")
-      .setURL("https://discord.zyner.org")
+      .setURL("https://s.zyner.org/discord")
   );
 
   const uptimeDuration = intervalToDuration({
