@@ -33,7 +33,6 @@ docker:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
   script:
-    - apt install -y tar
     - tar -xzvf build-artifacts.tar.gz
     - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
     - /kaniko/executor
