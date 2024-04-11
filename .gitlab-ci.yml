@@ -29,23 +29,26 @@ build:
 
 docker:
   stage: docker
-  image: docker:stable
-  before_script:
-    - docker info
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
   script:
     - apk add tar
     - tar -xzvf build-artifacts.tar.gz
     - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "zyner/xyter:${CI_COMMIT_TAG}"
     # Tag name
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t zyner/xyter:$CI_COMMIT_TAG .
-    - docker tag zyner/xyter:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} $CI_REGISTRY_IMAGE:latest
     - docker tag zyner/xyter:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
-    - docker push zyner/xyter:$CI_COMMIT_TAG
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     # Latest
     - docker push zyner/xyter:latest
     - docker push $CI_REGISTRY_IMAGE:latest
-  only:
-    - tags
+#  only:
+#    - tags
