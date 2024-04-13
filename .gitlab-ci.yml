@@ -26,28 +26,32 @@ build:
   only:
     - merge_requests
     - pushes
+    - web
 
 docker:
   stage: docker
+  dependencies:
+    - build
   image:
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
     entrypoint: [""]
   script:
     - tar -xzvf build-artifacts.tar.gz
-    - echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+    - |
+      # If pipeline runs on the default branch: Set tag to "latest"
+      if test "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH"; then
+        tag="latest"
+      # If pipeline is a tag pipeline, set tag to the git commit tag
+      elif test -n "$CI_COMMIT_TAG"; then
+        tag="$CI_COMMIT_TAG"
+      # Else set the tag to the git commit sha
+      else
+        tag="$CI_COMMIT_SHA"
+      fi
+    - |
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "zyner/xyter:${CI_COMMIT_TAG}"
-    # Tag name
-    - docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} $CI_REGISTRY_IMAGE:latest
-    - docker tag zyner/xyter:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
-    # Latest
-    - docker push zyner/xyter:latest
-    - docker push $CI_REGISTRY_IMAGE:latest
+      --destination "${CI_REGISTRY_IMAGE}:${tag}"
 #  only:
 #    - tags
